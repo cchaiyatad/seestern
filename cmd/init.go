@@ -6,7 +6,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// initCmd represents the init command
+// TODO-2: second usecase
+// TODO-2-1: add flag
+
+// TODO-3: create config file pkg
+
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Create a configuration file (.ss.toml)",

@@ -6,7 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// generateCmd represents the generate command
+// TODO-4: fourth usecase
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate a test data from configuration file (.ss.toml)",
