@@ -31,36 +31,49 @@ func (w *mongoDBWorker) ping() error {
 }
 
 func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) {
-	info := make(databaseCollectionInfo)
-
-	client, err := w.connect()
-	if err != nil {
+	info, err := w.getDatabaseCollectionInfo()
+	if err != nil || dbNameFilter == "" {
 		return info, err
 	}
 
-	dbs, err := client.ListDatabaseNames(context.TODO(), bson.D{})
-	if err != nil {
-		return info, err
+	specificDBInfo := make(databaseCollectionInfo)
+	if colls, ok := info[dbNameFilter]; ok {
+		specificDBInfo[dbNameFilter] = colls
 	}
 
-	for _, db := range dbs {
-
-		if dbNameFilter != "" && db != dbNameFilter {
-			continue
-		}
-
-		colls, err := client.Database(db).ListCollectionNames(context.TODO(), bson.D{})
-		if err != nil {
-			fmt.Printf("skip database %s :%s", db, err)
-			continue
-		}
-		info[db] = colls
-	}
-	return info, nil
+	return specificDBInfo, nil
 }
 
 func (w *mongoDBWorker) connect() (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	return mongo.Connect(ctx, options.Client().ApplyURI(w.cntStr))
+}
+
+func (w *mongoDBWorker) getDatabaseCollectionInfo() (databaseCollectionInfo, error) {
+	info := make(databaseCollectionInfo)
+
+	client, err := w.connect()
+	if err != nil {
+		return nil, err
+	}
+
+	dbs, err := client.ListDatabaseNames(context.TODO(), bson.D{})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, db := range dbs {
+		colls, err := client.Database(db).ListCollectionNames(context.TODO(), bson.D{})
+		if err != nil {
+			fmt.Printf("skip database %s :%s", db, err)
+			continue
+		}
+
+		info[db] = make(map[string]struct{})
+		for _, coll := range colls {
+			info[db][coll] = struct{}{}
+		}
+	}
+	return info, nil
 }

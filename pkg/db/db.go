@@ -11,7 +11,7 @@ type dbWorker interface {
 	ps(string) (databaseCollectionInfo, error)
 }
 
-type databaseCollectionInfo map[string][]string
+type databaseCollectionInfo map[string]map[string]struct{}
 
 func createDBController(cntStr string, vendor string) (*DBController, error) {
 	controller := DBController{}
@@ -39,17 +39,20 @@ func PS(cntStr string, vendor string, dbName string) (databaseCollectionInfo, er
 
 func (info databaseCollectionInfo) String() string {
 	if len(info) == 0 {
-		return "there are no exist database\n"
+		return "database not exists\n"
 	}
 
 	for dbName, collNames := range info {
 		fmt.Printf("database: %s\n", dbName)
 		if len(collNames) == 0 {
 			fmt.Println(" None")
+			continue
 		}
 
-		for idx, collName := range collNames {
-			fmt.Printf(" %-2d: %s\n", idx+1, collName)
+		idx := 1
+		for collName := range collNames {
+			fmt.Printf(" %-2d: %s\n", idx, collName)
+			idx += 1
 		}
 	}
 	return ""
