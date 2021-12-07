@@ -1,6 +1,9 @@
 package db
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type DBController struct {
 	worker dbWorker
@@ -39,21 +42,24 @@ func PS(cntStr string, vendor string, dbName string) (databaseCollectionInfo, er
 
 func (info databaseCollectionInfo) String() string {
 	if len(info) == 0 {
-		return "database not exists\n"
+		return "database does not exists\n"
 	}
 
+	var strBuilder strings.Builder
+
 	for dbName, collNames := range info {
-		fmt.Printf("database: %s\n", dbName)
+		fmt.Fprintf(&strBuilder, "database: %s\n", dbName)
+
 		if len(collNames) == 0 {
-			fmt.Println(" None")
+			strBuilder.WriteString(" None\n")
 			continue
 		}
 
 		idx := 1
 		for collName := range collNames {
-			fmt.Printf(" %-2d: %s\n", idx, collName)
+			fmt.Fprintf(&strBuilder, " %-2d: %s\n", idx, collName)
 			idx += 1
 		}
 	}
-	return ""
+	return strBuilder.String()
 }
