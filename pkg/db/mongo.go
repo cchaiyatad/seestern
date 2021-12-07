@@ -30,38 +30,37 @@ func (w *mongoDBWorker) ping() error {
 	return client.Ping(ctx, readpref.Primary())
 }
 
-func (*mongoDBWorker) ps(dbName string) ([]string, error) {
-	panic("not implement")
+func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) {
+	info := make(databaseCollectionInfo)
+
+	client, err := w.connect()
+	if err != nil {
+		return info, err
+	}
+
+	dbs, err := client.ListDatabaseNames(context.TODO(), bson.D{})
+	if err != nil {
+		return info, err
+	}
+
+	for _, db := range dbs {
+
+		if dbNameFilter != "" && db != dbNameFilter {
+			continue
+		}
+
+		colls, err := client.Database(db).ListCollectionNames(context.TODO(), bson.D{})
+		if err != nil {
+			fmt.Printf("skip database %s :%s", db, err)
+			continue
+		}
+		info[db] = colls
+	}
+	return info, nil
 }
 
 func (w *mongoDBWorker) connect() (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	return mongo.Connect(ctx, options.Client().ApplyURI(w.cntStr))
-}
-
-func TestMongo() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("123"))
-	if err != nil {
-		panic(err)
-	}
-
-	ctx2, cancelPing := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancelPing()
-	err = client.Ping(ctx2, readpref.Primary())
-	fmt.Println(err)
-
-	dbs, err := client.ListDatabaseNames(context.TODO(), bson.D{})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(dbs)
-
-	colls, err := client.Database("localsdaf").ListCollectionNames(context.TODO(), bson.D{})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(colls)
 }
