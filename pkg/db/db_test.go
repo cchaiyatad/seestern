@@ -8,6 +8,7 @@ import (
 )
 
 func TestCreateDBController(t *testing.T) {
+	t.Parallel()
 	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
 
 	t.Run("createDBController with valid connection string and correct vendor (mongo)", func(t *testing.T) {
@@ -66,6 +67,7 @@ func TestCreateDBController(t *testing.T) {
 }
 
 func TestDatabaseCollectionInfoString(t *testing.T) {
+	t.Parallel()
 	t.Run("String on len == 0", func(t *testing.T) {
 		givenInfo := make(databaseCollectionInfo)
 
