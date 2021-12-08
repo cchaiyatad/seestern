@@ -15,7 +15,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		givenArgs := []string{}
 
 		expected := map[string][]string{}
-		got := ParseCollectionInputFromArgs(givenArgs)
+		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
@@ -24,7 +24,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		givenArgs := []string{"db1.coll1"}
 
 		expected := map[string][]string{"db1": {"coll1"}}
-		got := ParseCollectionInputFromArgs(givenArgs)
+		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
@@ -33,7 +33,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		givenArgs := []string{"db1.coll1", "db1.coll2"}
 
 		expected := map[string][]string{"db1": {"coll1", "coll2"}}
-		got := ParseCollectionInputFromArgs(givenArgs)
+		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
@@ -42,7 +42,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		givenArgs := []string{"db1.coll1", "db1.coll1"}
 
 		expected := map[string][]string{"db1": {"coll1"}}
-		got := ParseCollectionInputFromArgs(givenArgs)
+		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
@@ -51,7 +51,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		givenArgs := []string{"db1.coll1", "db2.coll1"}
 
 		expected := map[string][]string{"db1": {"coll1"}, "db2": {"coll1"}}
-		got := ParseCollectionInputFromArgs(givenArgs)
+		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
@@ -60,7 +60,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		givenArgs := []string{"db1coll1"}
 
 		expected := map[string][]string{}
-		got := ParseCollectionInputFromArgs(givenArgs)
+		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
@@ -68,7 +68,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		givenArgs := []string{"db1.coll1.sub"}
 
 		expected := map[string][]string{"db1": {"coll1.sub"}}
-		got := ParseCollectionInputFromArgs(givenArgs)
+		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})

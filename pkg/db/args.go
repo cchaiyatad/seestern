@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func ParseCollectionInputFromArgs(args []string) map[string][]string {
+func parseCollectionInputFromArgs(args []string) map[string][]string {
 	output := make(map[string][]string)
 
 	for _, arg := range args {

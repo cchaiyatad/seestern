@@ -7,7 +7,8 @@ type PSParam struct {
 }
 
 type InitParam struct {
-	CntStr   string
-	TargetDB []string
-	Verbose  bool
+	CntStr      string
+	Vendor      string
+	TargetColls []string
+	Verbose     bool
 }

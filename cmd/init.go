@@ -47,10 +47,15 @@ func initFunc(cmd *cobra.Command, args []string) {
 	fmt.Printf("init with %s connection string\n", connectionStr)
 
 	param := &db.InitParam{
-		CntStr:   connectionStr,
-		TargetDB: collections,
-		Verbose:  verbose,
+		CntStr:      connectionStr,
+		Vendor:      "mongo",
+		TargetColls: collections,
+		Verbose:     verbose,
 	}
+
+	err := db.Init(param)
+	cobra.CheckErr(err)
+
 	fmt.Println(out)
 	fmt.Println(param)
 	fmt.Println(collections)

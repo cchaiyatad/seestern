@@ -44,6 +44,28 @@ func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) 
 	return specificDBInfo, nil
 }
 
+func (w *mongoDBWorker) initConfigFile(param *InitParam) error {
+	infos, err := w.getDatabaseCollectionInfo()
+	if err != nil {
+		return err
+	}
+
+	toGenColls := parseCollectionInputFromArgs(param.TargetColls)
+
+	for db, colls := range toGenColls {
+		for _, coll := range colls {
+
+			if _, ok := infos[db][coll]; !ok {
+				if param.Verbose {
+					fmt.Printf("skip: database %s collection %s: not exist\n", db, coll)
+				}
+				continue
+			}
+			fmt.Printf("generate: database %s collection %s", db, coll)
+		}
+	}
+	return nil
+}
 func (w *mongoDBWorker) connect() (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
