@@ -3,6 +3,8 @@ package db
 import (
 	"fmt"
 	"strings"
+
+	"github.com/cchaiyatad/seestern/internal/file"
 )
 
 type DBController struct {
@@ -44,12 +46,18 @@ func PS(param *PSParam) (databaseCollectionInfo, error) {
 }
 
 func Init(param *InitParam) (string, error) {
+	if param.Outpath != "" {
+		if err := file.PrepareDir(param.Outpath); err != nil {
+			return "", err
+		}
+	}
+
 	controller, err := createDBController(param.CntStr, param.Vendor)
 	if err != nil {
 		return "", err
 	}
-	return controller.worker.initConfigFile(param)
 
+	return controller.worker.initConfigFile(param)
 }
 
 func (info databaseCollectionInfo) String() string {

@@ -50,7 +50,7 @@ func initFunc(cmd *cobra.Command, args []string) {
 		CntStr:      connectionStr,
 		Vendor:      "mongo",
 		TargetColls: collections,
-		Output:      out,
+		Outpath:     out,
 		Verbose:     verbose,
 	}
 

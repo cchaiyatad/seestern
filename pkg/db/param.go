@@ -10,6 +10,6 @@ type InitParam struct {
 	CntStr      string
 	Vendor      string
 	TargetColls []string
-	Output      string
+	Outpath     string
 	Verbose     bool
 }
