@@ -1,6 +1,8 @@
 package file
 
-import "os"
+import (
+	"os"
+)
 
 func PrepareDir(path string) error {
 	_ = createDir(path)
