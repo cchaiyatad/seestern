@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -44,10 +45,10 @@ func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) 
 	return specificDBInfo, nil
 }
 
-func (w *mongoDBWorker) initConfigFile(param *InitParam) error {
+func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 	infos, err := w.getDatabaseCollectionInfo()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	toGenColls := parseCollectionInputFromArgs(param.TargetColls)
@@ -56,15 +57,22 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) error {
 		for _, coll := range colls {
 
 			if _, ok := infos[db][coll]; !ok {
-				if param.Verbose {
-					fmt.Printf("skip: database %s collection %s: not exist\n", db, coll)
-				}
+				fmt.Fprintf(os.Stderr, "skip: database %s collection %s: not exist\n", db, coll)
 				continue
 			}
-			fmt.Printf("generate: database %s collection %s", db, coll)
+			// fmt.Printf("generate: database %s collection %s", db, coll)
+
+			// get documents ...
+
+			// create config file
+
 		}
 	}
-	return nil
+
+	// save to file
+
+	// return path, error
+	return "", nil
 }
 func (w *mongoDBWorker) connect() (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

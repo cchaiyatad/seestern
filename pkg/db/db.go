@@ -12,7 +12,7 @@ type DBController struct {
 type dbWorker interface {
 	ping() error
 	ps(string) (databaseCollectionInfo, error)
-	initConfigFile(*InitParam) error
+	initConfigFile(*InitParam) (string, error)
 }
 
 type databaseCollectionInfo map[string]map[string]struct{}
@@ -41,10 +41,10 @@ func PS(param *PSParam) (databaseCollectionInfo, error) {
 	return controller.worker.ps(param.DBName)
 }
 
-func Init(param *InitParam) error {
+func Init(param *InitParam) (string, error) {
 	controller, err := createDBController(param.CntStr, param.Vendor)
 	if err != nil {
-		return err
+		return "", err
 	}
 	return controller.worker.initConfigFile(param)
 

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/cchaiyatad/seestern/pkg/db"
@@ -45,18 +46,26 @@ func initFunc(cmd *cobra.Command, args []string) {
 	out := cmd.Flag(outputKey).Value.String()
 
 	fmt.Printf("init with %s connection string\n", connectionStr)
-
 	param := &db.InitParam{
 		CntStr:      connectionStr,
 		Vendor:      "mongo",
 		TargetColls: collections,
+		Output:      out,
 		Verbose:     verbose,
 	}
 
-	err := db.Init(param)
-	cobra.CheckErr(err)
+	cobra.CheckErr(isFlagValid(out, verbose))
 
-	fmt.Println(out)
-	fmt.Println(param)
-	fmt.Println(collections)
+	path, err := db.Init(param)
+	cobra.CheckErr(err)
+	if out != "" {
+		fmt.Println(path)
+	}
+}
+
+func isFlagValid(out string, verbose bool) error {
+	if out == "" && !verbose {
+		return errors.New("if verbose is not set, output has to be set")
+	}
+	return nil
 }
