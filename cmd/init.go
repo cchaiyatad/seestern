@@ -6,29 +6,45 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	collectionKey = "collection"
+	outputKey     = "output"
+	verboseKey    = "verbose"
+)
+
 // TODO-2: second usecase
-// TODO-2-1: add flag
 
 // TODO-3: create config file pkg
 
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Create a configuration file (.ss.toml)",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
-	},
+	Run:   initFunc,
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
 
-	// Here you will define your flags and configuration settings.
+	initCmd.Flags().StringP(connectionStringKey, "s", "", "connection string to database")
+	initCmd.Flags().StringSliceP(collectionKey, "c", []string{}, "specific database and collection to create (in <database>.<collection> format)")
+	initCmd.Flags().StringP(outputKey, "o", "", "write output to <file>")
+	initCmd.Flags().BoolP(verboseKey, "v", false, "verbose output")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
+	initCmd.MarkFlagRequired(connectionStringKey)
+	initCmd.MarkFlagRequired(collectionKey)
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func initFunc(cmd *cobra.Command, args []string) {
+	fmt.Println("init called")
+	connectionStr := cmd.Flag(connectionStringKey).Value.String()
+	out := cmd.Flag(outputKey).Value.String()
+	verbose := cmd.Flag(verboseKey).Value
+
+	collections := cmd.Flag(collectionKey).Value.String()
+
+	fmt.Println(connectionStr)
+	fmt.Println(out)
+	fmt.Println(verbose)
+	fmt.Println(collections)
 }
