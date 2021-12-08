@@ -31,7 +31,7 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 
 	initCmd.Flags().StringP(connectionStringKey, "s", "", "connection string to database")
-	initCmd.Flags().StringP(outputKey, "o", "", "write output to <file>")
+	initCmd.Flags().StringP(outputKey, "o", "", "path to create output file")
 
 	initCmd.Flags().StringSliceVarP(&collections, collectionKey, "c", []string{}, "specific database and collection to create (in <database>.<collection> format)")
 	initCmd.Flags().BoolVarP(&verbose, verboseKey, "v", false, "verbose output")

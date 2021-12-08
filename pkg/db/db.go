@@ -13,6 +13,8 @@ type dbWorker interface {
 	ping() error
 	ps(string) (databaseCollectionInfo, error)
 	initConfigFile(*InitParam) (string, error)
+	insert()
+	drop()
 }
 
 type databaseCollectionInfo map[string]map[string]struct{}

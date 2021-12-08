@@ -74,6 +74,17 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 	// return path, error
 	return "", nil
 }
+
+func (w *mongoDBWorker) insert() {
+	fmt.Println("insert")
+	panic("Not implemented")
+}
+
+func (w *mongoDBWorker) drop() {
+	fmt.Println("drop")
+	panic("Not implemented")
+}
+
 func (w *mongoDBWorker) connect() (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
