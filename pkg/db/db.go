@@ -32,12 +32,12 @@ func createDBController(cntStr string, vendor string) (*DBController, error) {
 	return &controller, nil
 }
 
-func PS(cntStr string, vendor string, dbName string) (databaseCollectionInfo, error) {
-	controller, err := createDBController(cntStr, vendor)
+func PS(param *PSParam) (databaseCollectionInfo, error) {
+	controller, err := createDBController(param.CntStr, param.Vendor)
 	if err != nil {
 		return nil, err
 	}
-	return controller.worker.ps(dbName)
+	return controller.worker.ps(param.DBName)
 }
 
 func (info databaseCollectionInfo) String() string {

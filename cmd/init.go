@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/cchaiyatad/seestern/pkg/db"
 	"github.com/spf13/cobra"
 )
 
@@ -22,13 +23,17 @@ var initCmd = &cobra.Command{
 	Run:   initFunc,
 }
 
+var verbose bool
+var collections []string
+
 func init() {
 	rootCmd.AddCommand(initCmd)
 
 	initCmd.Flags().StringP(connectionStringKey, "s", "", "connection string to database")
-	initCmd.Flags().StringSliceP(collectionKey, "c", []string{}, "specific database and collection to create (in <database>.<collection> format)")
 	initCmd.Flags().StringP(outputKey, "o", "", "write output to <file>")
-	initCmd.Flags().BoolP(verboseKey, "v", false, "verbose output")
+
+	initCmd.Flags().StringSliceVarP(&collections, collectionKey, "c", []string{}, "specific database and collection to create (in <database>.<collection> format)")
+	initCmd.Flags().BoolVarP(&verbose, verboseKey, "v", false, "verbose output")
 
 	initCmd.MarkFlagRequired(connectionStringKey)
 	initCmd.MarkFlagRequired(collectionKey)
@@ -36,15 +41,17 @@ func init() {
 }
 
 func initFunc(cmd *cobra.Command, args []string) {
-	fmt.Println("init called")
 	connectionStr := cmd.Flag(connectionStringKey).Value.String()
 	out := cmd.Flag(outputKey).Value.String()
-	verbose := cmd.Flag(verboseKey).Value
 
-	collections := cmd.Flag(collectionKey).Value.String()
+	fmt.Printf("init with %s connection string\n", connectionStr)
 
-	fmt.Println(connectionStr)
+	param := &db.InitParam{
+		CntStr:   connectionStr,
+		TargetDB: collections,
+		Verbose:  verbose,
+	}
 	fmt.Println(out)
-	fmt.Println(verbose)
+	fmt.Println(param)
 	fmt.Println(collections)
 }

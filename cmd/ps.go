@@ -32,7 +32,13 @@ func ps(cmd *cobra.Command, args []string) {
 
 	fmt.Printf("list collections form %s connection string\n", connectionStr)
 
-	info, err := db.PS(connectionStr, "mongo", database)
+	param := &db.PSParam{
+		CntStr: connectionStr,
+		Vendor: "mongo",
+		DBName: database,
+	}
+
+	info, err := db.PS(param)
 	cobra.CheckErr(err)
 	fmt.Print(info)
 }

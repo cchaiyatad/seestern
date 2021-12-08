@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -21,7 +20,6 @@ func ParseCollectionInputFromArgs(args []string) map[string][]string {
 			output[db] = append(output[db], coll)
 		}
 	}
-	fmt.Println(output)
 	return output
 }
 
