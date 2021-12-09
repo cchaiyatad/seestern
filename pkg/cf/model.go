@@ -47,6 +47,8 @@ type Enum struct {
 }
 
 type Type struct {
-	Type   string                 `json:"type" toml:"type"`
-	Params map[string]interface{} `json:"params" toml:"params"`
+	Type   string `json:"type" toml:"type"`
+	Params `json:"params" toml:"params"`
 }
+
+type Params map[string]interface{}
