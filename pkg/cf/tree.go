@@ -29,7 +29,6 @@ type NodeType struct {
 }
 
 var (
-	// nullNode     *NodeType = &NodeType{DataType: Null}
 	stringNode   *NodeType = &NodeType{DataType: String}
 	integerNode  *NodeType = &NodeType{DataType: Integer}
 	doubleNode   *NodeType = &NodeType{DataType: Double}
@@ -113,8 +112,6 @@ func parse(key string, value reflect.Value) *Node {
 			}
 		}
 		return node
-	case reflect.Struct:
-		return nil
 	case reflect.Interface:
 		if value.IsNil() {
 			return nil
