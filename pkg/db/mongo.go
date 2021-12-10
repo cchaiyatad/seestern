@@ -118,3 +118,8 @@ func (w *mongoDBWorker) getDatabaseCollectionInfo() (databaseCollectionInfo, err
 	}
 	return info, nil
 }
+
+func (w *mongoDBWorker) getCursor(client *mongo.Client, dbName string, collName string) (*mongo.Cursor, error) {
+	coll := client.Database(dbName).Collection(collName)
+	return coll.Find(context.TODO(), bson.M{})
+}
