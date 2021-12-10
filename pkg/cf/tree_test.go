@@ -19,6 +19,9 @@ func TestParseSchemaTree(t *testing.T) {
 			{map[string]interface{}{"pi": 3.14}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "pi", DataType: Double}}}}},
 			{map[string]interface{}{"name": "john"}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "name", DataType: String}}}}},
 			{map[string]interface{}{"_id": "123"}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "_id", DataType: ObjectID}}}}},
+
+			{map[string]interface{}{"height": 500, "weight": 500}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "height", DataType: Integer}, {Name: "weight", DataType: Integer}}}}},
+			{map[string]interface{}{"height": 500, "pi": 3.14}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "height", DataType: Integer}, {Name: "pi", DataType: Double}}}}},
 		}
 
 		for _, tc := range cases {

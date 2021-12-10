@@ -44,17 +44,6 @@ func ParseSchemaTree(data map[string]interface{}) *SchemaTree {
 	return &SchemaTree{Root: root}
 }
 
-// Complex64
-// Complex128
-// Array
-// Chan
-// Func
-// Interface
-// Map
-// Ptr
-// Slice
-// Struct
-// UnsafePointer
 func parse(parent *Node, key string, value interface{}) *Node {
 
 	if key == "_id" {
@@ -77,8 +66,13 @@ func parse(parent *Node, key string, value interface{}) *Node {
 		return &Node{Name: key, DataType: Double}
 	case reflect.String:
 		return &Node{Name: key, DataType: String}
+	case reflect.Array, reflect.Slice:
+		return nil
+	case reflect.Map:
+		return nil
+	case reflect.Struct:
+		return nil
 	default:
 		return nil
-
 	}
 }
