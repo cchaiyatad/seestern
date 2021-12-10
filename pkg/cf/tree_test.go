@@ -30,7 +30,29 @@ func TestParseSchemaTree(t *testing.T) {
 				t.Parallel()
 
 				got := ParseSchemaTree(tc.givenData)
-				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v got: %v", tc.expected, got))
+				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+			})
+		}
+	})
+
+	t.Run("ParseSchemaTree Array", func(t *testing.T) {
+		cases := []struct {
+			givenData map[string]interface{}
+			expected  *SchemaTree
+		}{
+			{map[string]interface{}{"names": []interface{}{}}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "names", DataType: Array}}}}},
+			{map[string]interface{}{"names": []interface{}{"john"}}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "names", DataType: Array, Payload: []*Node{{Name: "", DataType: String}}}}}}},
+			{map[string]interface{}{"names": []interface{}{"john", "johnson"}}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "names", DataType: Array, Payload: []*Node{{Name: "", DataType: String}}}}}}},
+			{map[string]interface{}{"names": []interface{}{"john", 3.14}}, &SchemaTree{Root: &Node{DataType: Object, Payload: []*Node{{Name: "names", DataType: Array, Payload: []*Node{{Name: "", DataType: String}, {Name: "", DataType: Double}}}}}}},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
+				t.Parallel()
+
+				got := ParseSchemaTree(tc.givenData)
+				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 			})
 		}
 	})

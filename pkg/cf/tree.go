@@ -36,7 +36,7 @@ func ParseSchemaTree(data map[string]interface{}) *SchemaTree {
 	root := &Node{DataType: Object}
 
 	for key, value := range data {
-		if node := parse(root, key, value); node != nil {
+		if node := parse(key, reflect.ValueOf(value)); node != nil {
 			root.Payload = append(root.Payload, node)
 		}
 	}
@@ -44,15 +44,13 @@ func ParseSchemaTree(data map[string]interface{}) *SchemaTree {
 	return &SchemaTree{Root: root}
 }
 
-func parse(parent *Node, key string, value interface{}) *Node {
+func parse(key string, value reflect.Value) *Node {
 
 	if key == "_id" {
 		return &Node{Name: key, DataType: ObjectID}
 	}
 
-	reflectedValue := reflect.ValueOf(value)
-
-	switch reflectedValue.Kind() {
+	switch value.Kind() {
 	case reflect.Invalid:
 		return nil
 	case reflect.Bool:
@@ -67,11 +65,41 @@ func parse(parent *Node, key string, value interface{}) *Node {
 	case reflect.String:
 		return &Node{Name: key, DataType: String}
 	case reflect.Array, reflect.Slice:
-		return nil
+		node := &Node{Name: key, DataType: Array}
+		// countKey := 0
+		for i := 0; i < value.Len(); i++ {
+			gotNode := parse("", value.Index(i))
+
+			if gotNode == nil {
+				continue
+			}
+
+			isDup := false
+			for _, payloadNode := range node.Payload {
+				// Deep Equal?
+				if reflect.DeepEqual(gotNode, payloadNode) {
+					isDup = true
+					break
+				}
+			}
+
+			if !isDup {
+				node.Payload = append(node.Payload, gotNode)
+			}
+
+		}
+		return node
 	case reflect.Map:
-		return nil
+		node := &Node{Name: key, DataType: Object}
+		return node
 	case reflect.Struct:
 		return nil
+	case reflect.Interface:
+		if value.IsNil() {
+			return nil
+		}
+
+		return parse(key, value.Elem())
 	default:
 		return nil
 	}
