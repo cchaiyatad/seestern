@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TODO : Test with deepequal should ignore order of slice
+
 func TestParseSchemaTree(t *testing.T) {
 	t.Run("ParseSchemaTree", func(t *testing.T) {
 		cases := []struct {
@@ -258,6 +260,74 @@ func TestParseSchemaTree(t *testing.T) {
 								{DataType: Object, Payload: []*Node{
 									{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
 									{Name: "age", NodeTypes: []*NodeType{{DataType: Integer}}},
+								}},
+							}},
+						},
+					},
+				},
+				},
+			},
+			},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
+				t.Parallel()
+
+				got := ParseSchemaTree(tc.givenData)
+				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+			})
+		}
+	})
+
+	t.Run("ParseSchemaTree for complex item", func(t *testing.T) {
+		cases := []struct {
+			givenData map[string]interface{}
+			expected  *SchemaTree
+		}{
+
+			{map[string]interface{}{"data": map[string]interface{}{"arrayOfInt": []interface{}{1, 2, 3}, "arrayOfStr": []interface{}{"1", "123"}}}, &SchemaTree{
+				Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+					{DataType: Object,
+						Payload: []*Node{
+							{Name: "data", NodeTypes: []*NodeType{
+								{DataType: Object, Payload: []*Node{
+									{Name: "arrayOfInt", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: Integer}}},
+									}}}},
+									{Name: "arrayOfStr", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+									}}}},
+								}},
+							}},
+						},
+					},
+				},
+				},
+			},
+			},
+			{map[string]interface{}{"data": map[string]interface{}{
+				"arrayOfObj": []interface{}{
+					map[string]interface{}{"name": "some name", "age": 123},
+					map[string]interface{}{"product": "some name", "price": 123.00},
+				}},
+			}, &SchemaTree{
+				Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+					{DataType: Object,
+						Payload: []*Node{
+							{Name: "data", NodeTypes: []*NodeType{
+								{DataType: Object, Payload: []*Node{
+									{Name: "arrayOfObj", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{
+											{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+											{Name: "age", NodeTypes: []*NodeType{{DataType: Integer}}},
+										}}}},
+										{Name: "", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{
+											{Name: "product", NodeTypes: []*NodeType{{DataType: String}}},
+											{Name: "price", NodeTypes: []*NodeType{{DataType: Double}}},
+										}}}},
+									}}}},
 								}},
 							}},
 						},
