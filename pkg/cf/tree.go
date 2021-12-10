@@ -83,7 +83,6 @@ func parse(key string, value reflect.Value) *Node {
 
 	case reflect.Array, reflect.Slice:
 		node := &Node{Name: key, NodeTypes: []*NodeType{{DataType: Array}}}
-		// countKey := 0
 		for i := 0; i < value.Len(); i++ {
 			gotNode := parse("", value.Index(i))
 
@@ -107,9 +106,13 @@ func parse(key string, value reflect.Value) *Node {
 		}
 		return node
 	case reflect.Map:
-		// node := &Node{Name: key, DataType: Object}
-		// return node
-		return nil
+		node := &Node{Name: key, NodeTypes: []*NodeType{{DataType: Object}}}
+		for _, key := range value.MapKeys() {
+			if gotNode := parse(key.String(), value.MapIndex(key)); gotNode != nil {
+				node.NodeTypes[0].Payload = append(node.NodeTypes[0].Payload, gotNode)
+			}
+		}
+		return node
 	case reflect.Struct:
 		return nil
 	case reflect.Interface:

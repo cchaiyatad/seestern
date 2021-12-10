@@ -197,4 +197,86 @@ func TestParseSchemaTree(t *testing.T) {
 			})
 		}
 	})
+
+	t.Run("ParseSchemaTree for Object", func(t *testing.T) {
+		cases := []struct {
+			givenData map[string]interface{}
+			expected  *SchemaTree
+		}{
+			{map[string]interface{}{"data": map[string]interface{}{}}, &SchemaTree{
+				Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+					{DataType: Object,
+						Payload: []*Node{
+							{Name: "data", NodeTypes: []*NodeType{
+								{DataType: Object},
+							}},
+						},
+					},
+				},
+				},
+			},
+			},
+
+			{map[string]interface{}{"data": map[string]interface{}{"name": "john"}}, &SchemaTree{
+				Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+					{DataType: Object,
+						Payload: []*Node{
+							{Name: "data", NodeTypes: []*NodeType{
+								{DataType: Object, Payload: []*Node{
+									{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+								}},
+							}},
+						},
+					},
+				},
+				},
+			},
+			},
+
+			{map[string]interface{}{"data": map[string]interface{}{"name": "john", "surname": "son"}}, &SchemaTree{
+				Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+					{DataType: Object,
+						Payload: []*Node{
+							{Name: "data", NodeTypes: []*NodeType{
+								{DataType: Object, Payload: []*Node{
+									{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+									{Name: "surname", NodeTypes: []*NodeType{{DataType: String}}},
+								}},
+							}},
+						},
+					},
+				},
+				},
+			},
+			},
+
+			{map[string]interface{}{"data": map[string]interface{}{"name": "john", "age": 320}}, &SchemaTree{
+				Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+					{DataType: Object,
+						Payload: []*Node{
+							{Name: "data", NodeTypes: []*NodeType{
+								{DataType: Object, Payload: []*Node{
+									{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+									{Name: "age", NodeTypes: []*NodeType{{DataType: Integer}}},
+								}},
+							}},
+						},
+					},
+				},
+				},
+			},
+			},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
+				t.Parallel()
+
+				got := ParseSchemaTree(tc.givenData)
+				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+			})
+		}
+	})
+
 }
