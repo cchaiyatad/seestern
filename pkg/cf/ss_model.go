@@ -3,8 +3,8 @@ package cf
 import "fmt"
 
 type SSConfig struct {
-	Aliases   []*Alias
-	Databases []*Database
+	Aliases   []*Alias    `json:"aliases" toml:"alias"`
+	Databases []*Database `json:"databases" toml:"database"`
 }
 
 func (s *SSConfig) String() string {
@@ -42,8 +42,8 @@ func (c *Collection) String() string {
 type Field struct {
 	F_name      string        `json:"f_name" toml:"f_name"`
 	Omit_weight float64       `json:"omit_weight" toml:"omit_weight,omitzero"`
-	Constraints []*Constraint `json:"constraints" toml:"constraints"`
-	Sets        []*Set        `json:"sets" toml:"sets"`
+	Constraints []*Constraint `json:"constraints" toml:"constraint"`
+	Sets        []*Set        `json:"sets" toml:"set"`
 }
 
 func (f *Field) String() string {
@@ -51,56 +51,27 @@ func (f *Field) String() string {
 }
 
 type Constraint struct {
-	Weight int `json:"weight" toml:"weight,omitzero"`
-	Item   *Item
+	Weight int         `json:"weight" toml:"weight,omitzero"`
+	Value  string      `json:"value" toml:"value,omitzero"`
+	Enum   string      `json:"enum" toml:"enum,omitzero"`
+	Type   SS_DataType `json:"type" toml:"type,omitzero"`
+	Params Params      `json:"params" toml:"param"`
 }
 
 func (c *Constraint) String() string {
-	return fmt.Sprintf("item: %s", c.Item)
+	return fmt.Sprintf("constraint: value: %s enum: %s type: %s", c.Value, c.Enum, c.Type)
 }
 
 type Set struct {
-	At   []int `json:"at" toml:"at"`
-	Item *Item
+	At     []int       `json:"at" toml:"at"`
+	Value  string      `json:"value" toml:"value,omitzero"`
+	Enum   string      `json:"enum" toml:"enum,omitzero"`
+	Type   SS_DataType `json:"type" toml:"type,omitzero"`
+	Params Params      `json:"params" toml:"param"`
 }
 
 func (s *Set) String() string {
-	return fmt.Sprintf("item: %s", s.Item)
-}
-
-type Item struct {
-	Value *Value `json:"value" toml:"value"`
-	Enum  *Enum  `json:"enum" toml:"enum"`
-	*Type
-}
-
-func (i *Item) String() string {
-	return fmt.Sprintf("value: %s: enum: %s type: %s", i.Value, i.Enum, i.Type)
-}
-
-type Value struct {
-	Value string `json:"value" toml:"value"`
-}
-
-func (v *Value) String() string {
-	return fmt.Sprintf("value: %s", v.Value)
-}
-
-type Enum struct {
-	Enum string `json:"enum" toml:"enum"`
-}
-
-func (e *Enum) String() string {
-	return fmt.Sprintf("enum: %s", e.Enum)
-}
-
-type Type struct {
-	Type   SS_DataType `json:"type" toml:"type"`
-	Params `json:"params" toml:"params"`
-}
-
-func (t *Type) String() string {
-	return fmt.Sprintf("type: %s", t.Type)
+	return fmt.Sprintf("set: value: %s enum: %s type: %s", s.Value, s.Enum, s.Type)
 }
 
 type Params map[string]interface{}
@@ -108,14 +79,14 @@ type Params map[string]interface{}
 type SS_DataType string
 
 const (
-	SS_Null     SS_DataType = "Null"
-	SS_String   SS_DataType = "String"
-	SS_Integer  SS_DataType = "Integer"
-	SS_Double   SS_DataType = "Double"
-	SS_Boolean  SS_DataType = "Boolean"
-	SS_ObjectID SS_DataType = "ObjectID"
-	SS_Array    SS_DataType = "Array"
-	SS_Object   SS_DataType = "Object"
+	SS_Null     SS_DataType = "null"
+	SS_String   SS_DataType = "string"
+	SS_Integer  SS_DataType = "integer"
+	SS_Double   SS_DataType = "double"
+	SS_Boolean  SS_DataType = "boolean"
+	SS_ObjectID SS_DataType = "objectID"
+	SS_Array    SS_DataType = "array"
+	SS_Object   SS_DataType = "object"
 )
 
 func (d DataType) toSS_DataType() SS_DataType {

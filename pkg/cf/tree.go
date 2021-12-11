@@ -237,10 +237,8 @@ func (n *NodeType) toConstraint() *Constraint {
 	}
 
 	return &Constraint{
-		Item: &Item{
-			Type: &Type{Type: n.DataType.toSS_DataType()},
-			// Param for array and obj
-		},
+		Type: n.DataType.toSS_DataType(),
+		// Param for array and obj
 	}
 
 }
