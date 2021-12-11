@@ -63,12 +63,12 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 	for db, colls := range toGenColls {
 		for _, coll := range colls {
 			if _, ok := infos[db][coll]; !ok {
-				fmt.Fprintf(os.Stderr, "skip: database %s collection %s: not exist\n", db, coll)
+				fmt.Fprintf(os.Stderr, "%s\n", &ErrSkipCreateConfigfile{db, coll, "not exist"})
 				continue
 			}
 			cursor, err := w.getCursor(client, db, coll)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "skip: database %s collection %s: error: %s\n", db, coll, err)
+				fmt.Fprintf(os.Stderr, "%s\n", &ErrSkipCreateConfigfile{db, coll, err.Error()})
 				continue
 			}
 
