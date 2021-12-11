@@ -2,13 +2,10 @@ package cf
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-// TODO : Test with deepequal should ignore order of slice
 
 func TestParseSchemaTree(t *testing.T) {
 	t.Run("ParseSchemaTree", func(t *testing.T) {
@@ -115,7 +112,8 @@ func TestParseSchemaTree(t *testing.T) {
 				t.Parallel()
 
 				got := ParseSchemaTree(tc.givenData)
-				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+
 			})
 		}
 	})
@@ -195,7 +193,8 @@ func TestParseSchemaTree(t *testing.T) {
 				t.Parallel()
 
 				got := ParseSchemaTree(tc.givenData)
-				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+
 			})
 		}
 	})
@@ -258,8 +257,8 @@ func TestParseSchemaTree(t *testing.T) {
 						Payload: []*Node{
 							{Name: "data", NodeTypes: []*NodeType{
 								{DataType: Object, Payload: []*Node{
-									{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
 									{Name: "age", NodeTypes: []*NodeType{{DataType: Integer}}},
+									{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
 								}},
 							}},
 						},
@@ -276,7 +275,8 @@ func TestParseSchemaTree(t *testing.T) {
 				t.Parallel()
 
 				got := ParseSchemaTree(tc.givenData)
-				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+
 			})
 		}
 	})
@@ -320,12 +320,12 @@ func TestParseSchemaTree(t *testing.T) {
 								{DataType: Object, Payload: []*Node{
 									{Name: "arrayOfObj", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{
 										{Name: "", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{
-											{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
 											{Name: "age", NodeTypes: []*NodeType{{DataType: Integer}}},
+											{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
 										}}}},
 										{Name: "", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{
-											{Name: "product", NodeTypes: []*NodeType{{DataType: String}}},
 											{Name: "price", NodeTypes: []*NodeType{{DataType: Double}}},
+											{Name: "product", NodeTypes: []*NodeType{{DataType: String}}},
 										}}}},
 									}}}},
 								}},
@@ -344,7 +344,337 @@ func TestParseSchemaTree(t *testing.T) {
 				t.Parallel()
 
 				got := ParseSchemaTree(tc.givenData)
-				assert.Equal(t, true, reflect.DeepEqual(tc.expected, got), fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
+
+			})
+		}
+	})
+
+}
+
+func TestMergeTree(t *testing.T) {
+	t.Run("MergeTree", func(t *testing.T) {
+		cases := []struct {
+			givenTreeOne *SchemaTree
+			givenTreeTwo *SchemaTree
+			expected     *SchemaTree
+		}{
+			{
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Integer},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Integer},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Integer},
+								}},
+							},
+						},
+					},
+					},
+				},
+			},
+			{
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Integer},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Double},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Integer}, {DataType: Double},
+								}},
+							},
+						},
+					},
+					},
+				},
+			},
+			{
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data0", NodeTypes: []*NodeType{
+									{DataType: Integer},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data1", NodeTypes: []*NodeType{
+									{DataType: Double},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data0", NodeTypes: []*NodeType{
+									{DataType: Integer},
+								}},
+								{Name: "data1", NodeTypes: []*NodeType{
+									{DataType: Double},
+								}},
+							},
+						},
+					},
+					},
+				},
+			},
+			{
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "names", NodeTypes: []*NodeType{
+									{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "names", NodeTypes: []*NodeType{
+									{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "names", NodeTypes: []*NodeType{
+									{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+			},
+			{
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "names", NodeTypes: []*NodeType{
+									{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "names", NodeTypes: []*NodeType{
+									{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+										{Name: "", NodeTypes: []*NodeType{{DataType: Integer}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "names", NodeTypes: []*NodeType{
+									{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+									{DataType: Array, Payload: []*Node{
+										{Name: "", NodeTypes: []*NodeType{{DataType: String}}},
+										{Name: "", NodeTypes: []*NodeType{{DataType: Integer}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+			},
+			{
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Object, Payload: []*Node{
+										{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+										{Name: "surname", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Object, Payload: []*Node{
+										{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+										{Name: "surname", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Object, Payload: []*Node{
+										{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+										{Name: "surname", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+			},
+			{
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Object, Payload: []*Node{
+										{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+										{Name: "surname", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Object, Payload: []*Node{
+										{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+				&SchemaTree{
+					Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+						{DataType: Object,
+							Payload: []*Node{
+								{Name: "data", NodeTypes: []*NodeType{
+									{DataType: Object, Payload: []*Node{
+										{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+										{Name: "surname", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+									{DataType: Object, Payload: []*Node{
+										{Name: "name", NodeTypes: []*NodeType{{DataType: String}}},
+									}},
+								}},
+							},
+						},
+					},
+					},
+				},
+			},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("MergeTree expected %v", tc.expected), func(t *testing.T) {
+				t.Parallel()
+
+				got, err := MergeSchemaTree(tc.givenTreeOne, tc.givenTreeTwo)
+				assert.Nil(t, err)
+				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 			})
 		}
 	})

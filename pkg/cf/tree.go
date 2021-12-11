@@ -3,6 +3,9 @@ package cf
 import (
 	"fmt"
 	"reflect"
+	"sort"
+
+	"github.com/jinzhu/copier"
 )
 
 type DataType int
@@ -51,8 +54,10 @@ type SchemaTree struct {
 func ParseSchemaTree(data map[string]interface{}) *SchemaTree {
 	root := &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object}}}
 
-	for key, value := range data {
-		if node := parse(key, reflect.ValueOf(value)); node != nil {
+	keyList := getKeyList(reflect.ValueOf(data).MapKeys())
+
+	for _, key := range keyList {
+		if node := parse(key, reflect.ValueOf(data[key])); node != nil {
 			root.NodeTypes[0].Payload = append(root.NodeTypes[0].Payload, node)
 		}
 	}
@@ -91,7 +96,6 @@ func parse(key string, value reflect.Value) *Node {
 
 			isDup := false
 			for _, payloadNode := range node.NodeTypes[0].Payload {
-				// Deep Equal?
 				if reflect.DeepEqual(gotNode, payloadNode) {
 					isDup = true
 					break
@@ -104,13 +108,17 @@ func parse(key string, value reflect.Value) *Node {
 
 		}
 		return node
+
 	case reflect.Map:
 		node := &Node{Name: key, NodeTypes: []*NodeType{{DataType: Object}}}
-		for _, key := range value.MapKeys() {
-			if gotNode := parse(key.String(), value.MapIndex(key)); gotNode != nil {
+		keyList := getKeyList(value.MapKeys())
+
+		for _, key := range keyList {
+			if gotNode := parse(key, value.MapIndex(reflect.ValueOf(key))); gotNode != nil {
 				node.NodeTypes[0].Payload = append(node.NodeTypes[0].Payload, gotNode)
 			}
 		}
+
 		return node
 	case reflect.Interface:
 		if value.IsNil() {
@@ -120,4 +128,62 @@ func parse(key string, value reflect.Value) *Node {
 	default:
 		return nil
 	}
+}
+
+func (t *SchemaTree) isValid() bool {
+	return t.Root.Name == "_root" && t.Root.NodeTypes[0].DataType == Object
+}
+
+func MergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
+	if !(t1.isValid() && t2.isValid()) {
+		return nil, ErrInvalidSchemaTree
+	}
+
+	mergedTree := &SchemaTree{}
+	copier.Copy(mergedTree, t1)
+
+	mergedPayloads := mergedTree.Root.NodeTypes[0].Payload
+	t2Payloads := t2.Root.NodeTypes[0].Payload
+
+	for _, node := range t2Payloads {
+		keyName := node.Name
+		hasKey := false
+		keyIdx := -1
+
+		for idx, searchedNode := range mergedPayloads {
+			if searchedNode.Name == keyName {
+				hasKey = true
+				keyIdx = idx
+				break
+			}
+		}
+
+		if hasKey {
+			isDup := false
+			for _, searchedNodeType := range mergedPayloads[keyIdx].NodeTypes {
+				if reflect.DeepEqual(searchedNodeType, node.NodeTypes[0]) { //[0] ??
+					isDup = true
+					break
+				}
+			}
+
+			if !isDup {
+				mergedTree.Root.NodeTypes[0].Payload[keyIdx].NodeTypes = append(mergedPayloads[keyIdx].NodeTypes, node.NodeTypes[0]) //[0] ??
+			}
+		} else {
+			mergedTree.Root.NodeTypes[0].Payload = append(mergedPayloads, node)
+		}
+
+	}
+
+	return mergedTree, nil
+}
+
+func getKeyList(keys []reflect.Value) []string {
+	keyList := make([]string, 0, len(keys))
+	for _, key := range keys {
+		keyList = append(keyList, key.Interface().(string))
+	}
+	sort.Strings(keyList)
+	return keyList
 }
