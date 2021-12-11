@@ -51,18 +51,23 @@ type SchemaTree struct {
 	Root *Node
 }
 
-func ParseSchemaTree(data map[string]interface{}) *SchemaTree {
+func NewSchemaTree() *SchemaTree {
 	root := &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object}}}
 
+	return &SchemaTree{Root: root}
+}
+
+func ParseSchemaTree(data map[string]interface{}) *SchemaTree {
+	tree := NewSchemaTree()
 	keyList := getKeyList(reflect.ValueOf(data).MapKeys())
 
 	for _, key := range keyList {
 		if node := parse(key, reflect.ValueOf(data[key])); node != nil {
-			root.NodeTypes[0].Payload = append(root.NodeTypes[0].Payload, node)
+			tree.Root.NodeTypes[0].Payload = append(tree.Root.NodeTypes[0].Payload, node)
 		}
 	}
 
-	return &SchemaTree{Root: root}
+	return tree
 }
 
 func parse(key string, value reflect.Value) *Node {
