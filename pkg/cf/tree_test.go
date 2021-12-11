@@ -111,7 +111,7 @@ func TestParseSchemaTree(t *testing.T) {
 			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree(tc.givenData)
+				got := ParseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
@@ -192,7 +192,7 @@ func TestParseSchemaTree(t *testing.T) {
 			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree(tc.givenData)
+				got := ParseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
@@ -274,7 +274,7 @@ func TestParseSchemaTree(t *testing.T) {
 			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree(tc.givenData)
+				got := ParseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
@@ -343,7 +343,7 @@ func TestParseSchemaTree(t *testing.T) {
 			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree(tc.givenData)
+				got := ParseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
