@@ -3,6 +3,7 @@ module github.com/cchaiyatad/seestern
 go 1.18
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/jinzhu/copier v0.3.4
 	github.com/spf13/cobra v1.2.1
 )

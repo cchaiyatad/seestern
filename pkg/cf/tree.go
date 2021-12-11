@@ -206,8 +206,8 @@ func (t *SchemaTree) ToSSConfig() *SSConfig {
 	}
 
 	db := Database{
-		D_name:      t.Database,
-		Collections: &coll,
+		D_name:     t.Database,
+		Collection: &coll,
 	}
 
 	return &SSConfig{

@@ -21,12 +21,12 @@ func (a *Alias) String() string {
 }
 
 type Database struct {
-	D_name      string      `json:"d_name" toml:"d_name"`
-	Collections *Collection `json:"collections" toml:"collections"`
+	D_name     string      `json:"d_name" toml:"d_name"`
+	Collection *Collection `json:"collection" toml:"collection"`
 }
 
 func (d *Database) String() string {
-	return fmt.Sprintf("d_name: %s collections: %s", d.D_name, d.Collections)
+	return fmt.Sprintf("d_name: %s collection: %s", d.D_name, d.Collection)
 }
 
 type Collection struct {
