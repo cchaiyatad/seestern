@@ -20,10 +20,10 @@ func NewSchemaExtracter() *SchemaExtracter {
 func (se *SchemaExtracter) GetExtractSchemaFunc(dbName, collName string) (extractFunc func(map[string]interface{}), onFinishFunc func()) {
 	se.TreeChanWG.Add(1)
 	docChan := make(chan *SchemaTree)
-	gatheredTree := NewSchemaTree(dbName, collName)
+	gatheredTree := newSchemaTree(dbName, collName)
 
 	extractFunc = func(doc map[string]interface{}) {
-		docChan <- ParseSchemaTree(dbName, collName, doc)
+		docChan <- parseSchemaTree(dbName, collName, doc)
 	}
 	onFinishFunc = func() {
 		close(docChan)
@@ -31,7 +31,7 @@ func (se *SchemaExtracter) GetExtractSchemaFunc(dbName, collName string) (extrac
 
 	go func() {
 		for tree := range docChan {
-			if newTree, err := MergeSchemaTree(gatheredTree, tree); err == nil {
+			if newTree, err := mergeSchemaTree(gatheredTree, tree); err == nil {
 				gatheredTree = newTree
 			}
 		}

@@ -8,7 +8,7 @@ import (
 )
 
 func TestParseSchemaTree(t *testing.T) {
-	t.Run("ParseSchemaTree", func(t *testing.T) {
+	t.Run("parseSchemaTree", func(t *testing.T) {
 		cases := []struct {
 			givenData map[string]interface{}
 			expected  *SchemaTree
@@ -108,17 +108,17 @@ func TestParseSchemaTree(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
+			t.Run(fmt.Sprintf("parseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree("", "", tc.givenData)
+				got := parseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
 		}
 	})
 
-	t.Run("ParseSchemaTree for Array", func(t *testing.T) {
+	t.Run("parseSchemaTree for Array", func(t *testing.T) {
 		cases := []struct {
 			givenData map[string]interface{}
 			expected  *SchemaTree
@@ -189,17 +189,17 @@ func TestParseSchemaTree(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
+			t.Run(fmt.Sprintf("parseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree("", "", tc.givenData)
+				got := parseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
 		}
 	})
 
-	t.Run("ParseSchemaTree for Object", func(t *testing.T) {
+	t.Run("parseSchemaTree for Object", func(t *testing.T) {
 		cases := []struct {
 			givenData map[string]interface{}
 			expected  *SchemaTree
@@ -271,17 +271,17 @@ func TestParseSchemaTree(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
+			t.Run(fmt.Sprintf("parseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree("", "", tc.givenData)
+				got := parseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
 		}
 	})
 
-	t.Run("ParseSchemaTree for complex item", func(t *testing.T) {
+	t.Run("parseSchemaTree for complex item", func(t *testing.T) {
 		cases := []struct {
 			givenData map[string]interface{}
 			expected  *SchemaTree
@@ -340,10 +340,10 @@ func TestParseSchemaTree(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("ParseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
+			t.Run(fmt.Sprintf("parseSchemaTree on with %v", tc.givenData), func(t *testing.T) {
 				t.Parallel()
 
-				got := ParseSchemaTree("", "", tc.givenData)
+				got := parseSchemaTree("", "", tc.givenData)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 
 			})
@@ -352,8 +352,8 @@ func TestParseSchemaTree(t *testing.T) {
 
 }
 
-func TestMergeTree(t *testing.T) {
-	t.Run("MergeTree", func(t *testing.T) {
+func TestMergeSchemaTree(t *testing.T) {
+	t.Run("MergeSchemaTree", func(t *testing.T) {
 		cases := []struct {
 			givenTreeOne *SchemaTree
 			givenTreeTwo *SchemaTree
@@ -672,7 +672,7 @@ func TestMergeTree(t *testing.T) {
 			t.Run(fmt.Sprintf("MergeTree expected %v", tc.expected), func(t *testing.T) {
 				t.Parallel()
 
-				got, err := MergeSchemaTree(tc.givenTreeOne, tc.givenTreeTwo)
+				got, err := mergeSchemaTree(tc.givenTreeOne, tc.givenTreeTwo)
 				assert.Nil(t, err)
 				assert.Equal(t, tc.expected, got, fmt.Sprintf("expected: %v\ngot: %v", tc.expected, got))
 			})

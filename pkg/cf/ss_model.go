@@ -1,5 +1,10 @@
 package cf
 
+type SSConfig struct {
+	Aliases   []*Alias
+	Databases []*Database
+}
+
 type Alias struct {
 	Key   string `json:"key" toml:"key"`
 	Value string `json:"value" toml:"value"`
@@ -11,16 +16,16 @@ type Database struct {
 }
 
 type Collection struct {
-	C_name string  `json:"c_name" toml:"c_name"`
-	Count  int     `json:"count" toml:"count"`
-	Fileds []Field `json:"fileds" toml:"fileds"`
+	C_name string   `json:"c_name" toml:"c_name"`
+	Count  int      `json:"count" toml:"count"`
+	Fileds []*Field `json:"fileds" toml:"fileds"`
 }
 
 type Field struct {
-	F_name      string       `json:"f_name" toml:"f_name"`
-	Omit_weight float64      `json:"omit_weight" toml:"omit_weight"`
-	Constraints []Constraint `json:"constraints" toml:"constraints"`
-	Sets        []Set        `json:"sets" toml:"sets"`
+	F_name      string        `json:"f_name" toml:"f_name"`
+	Omit_weight float64       `json:"omit_weight" toml:"omit_weight"`
+	Constraints []*Constraint `json:"constraints" toml:"constraints"`
+	Sets        []*Set        `json:"sets" toml:"sets"`
 }
 
 type Constraint struct {
@@ -28,8 +33,8 @@ type Constraint struct {
 }
 
 type Set struct {
-	At    []int  `json:"at" toml:"at"`
-	Items []Item `json:"items" toml:"items"`
+	At    []int   `json:"at" toml:"at"`
+	Items []*Item `json:"items" toml:"items"`
 }
 
 type Item struct {

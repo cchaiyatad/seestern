@@ -53,14 +53,14 @@ type SchemaTree struct {
 	Collection string
 }
 
-func NewSchemaTree(dbName, collName string) *SchemaTree {
+func newSchemaTree(dbName, collName string) *SchemaTree {
 	root := &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object}}}
 
 	return &SchemaTree{Root: root, Database: dbName, Collection: collName}
 }
 
-func ParseSchemaTree(dbName, collName string, data map[string]interface{}) *SchemaTree {
-	tree := NewSchemaTree(dbName, collName)
+func parseSchemaTree(dbName, collName string, data map[string]interface{}) *SchemaTree {
+	tree := newSchemaTree(dbName, collName)
 	keyList := getKeyList(reflect.ValueOf(data).MapKeys())
 
 	for _, key := range keyList {
@@ -141,7 +141,7 @@ func (t *SchemaTree) isValid() bool {
 	return t.Root.Name == "_root" && t.Root.NodeTypes[0].DataType == Object
 }
 
-func MergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
+func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 	if !(t1.isValid() && t2.isValid()) {
 		return nil, ErrInvalidSchemaTree
 	}
