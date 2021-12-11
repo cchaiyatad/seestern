@@ -80,7 +80,8 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 
 	go func() {
 		for tree := range schemaExtracter.TreeChan {
-			fmt.Println(tree)
+			// fmt.Println(tree.ToSSConfig())
+			fmt.Printf("%+v\n", tree.ToSSConfig())
 			schemaExtracter.TreeChanWG.Done()
 		}
 	}()

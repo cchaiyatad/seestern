@@ -190,6 +190,61 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 	return mergedTree, nil
 }
 
+func (t *SchemaTree) ToSSConfig() *SSConfig {
+	if t == nil || !t.isValid() {
+		return nil
+	}
+
+	coll := Collection{
+		C_name: t.Collection,
+	}
+
+	for _, node := range t.Root.NodeTypes[0].Payload {
+		if field := node.toField(); field != nil {
+			coll.Fields = append(coll.Fields, field)
+		}
+	}
+
+	db := Database{
+		D_name:      t.Database,
+		Collections: &coll,
+	}
+
+	return &SSConfig{
+		Databases: []*Database{&db},
+	}
+}
+
+func (n *Node) toField() *Field {
+	if n == nil {
+		return nil
+	}
+
+	field := &Field{
+		F_name: n.Name,
+	}
+
+	for _, nodeType := range n.NodeTypes {
+		field.Constraints = append(field.Constraints, nodeType.toConstraint())
+	}
+
+	return field
+}
+
+func (n *NodeType) toConstraint() *Constraint {
+	if n == nil {
+		return nil
+	}
+
+	return &Constraint{
+		Item: &Item{
+			Type: &Type{Type: n.DataType.toSS_DataType()},
+			// Param for array and obj
+		},
+	}
+
+}
+
 func getKeyList(keys []reflect.Value) []string {
 	keyList := make([]string, 0, len(keys))
 	for _, key := range keys {
