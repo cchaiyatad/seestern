@@ -43,7 +43,7 @@ type Field struct {
 	F_name      string        `json:"f_name" toml:"f_name"`
 	Omit_weight float64       `json:"omit_weight" toml:"omit_weight,omitzero"`
 	Constraints []*Constraint `json:"constraints" toml:"constraint"`
-	Sets        []*Set        `json:"sets" toml:"set"`
+	Sets        []*Set        `json:"sets" toml:"set,omitzero"`
 }
 
 func (f *Field) String() string {
@@ -55,7 +55,7 @@ type Constraint struct {
 	Value  string      `json:"value" toml:"value,omitzero"`
 	Enum   string      `json:"enum" toml:"enum,omitzero"`
 	Type   SS_DataType `json:"type" toml:"type,omitzero"`
-	Params Params      `json:"params" toml:"param"`
+	Params Params      `json:"params" toml:"param,omitzero"`
 }
 
 func (c *Constraint) String() string {
@@ -67,7 +67,7 @@ type Set struct {
 	Value  string      `json:"value" toml:"value,omitzero"`
 	Enum   string      `json:"enum" toml:"enum,omitzero"`
 	Type   SS_DataType `json:"type" toml:"type,omitzero"`
-	Params Params      `json:"params" toml:"param"`
+	Params Params      `json:"params" toml:"param,omitzero"`
 }
 
 func (s *Set) String() string {

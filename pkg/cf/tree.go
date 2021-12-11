@@ -240,7 +240,6 @@ func (n *NodeType) toConstraint() *Constraint {
 		Type: n.DataType.toSS_DataType(),
 		// Param for array and obj
 	}
-
 }
 
 func getKeyList(keys []reflect.Value) []string {
