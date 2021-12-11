@@ -31,7 +31,7 @@ func (d *Database) String() string {
 
 type Collection struct {
 	C_name string   `json:"c_name" toml:"c_name"`
-	Count  int      `json:"count" toml:"count"`
+	Count  int      `json:"count" toml:"count,omitzero"`
 	Fields []*Field `json:"fields" toml:"fields"`
 }
 
@@ -41,7 +41,7 @@ func (c *Collection) String() string {
 
 type Field struct {
 	F_name      string        `json:"f_name" toml:"f_name"`
-	Omit_weight float64       `json:"omit_weight" toml:"omit_weight"`
+	Omit_weight float64       `json:"omit_weight" toml:"omit_weight,omitzero"`
 	Constraints []*Constraint `json:"constraints" toml:"constraints"`
 	Sets        []*Set        `json:"sets" toml:"sets"`
 }
@@ -51,8 +51,8 @@ func (f *Field) String() string {
 }
 
 type Constraint struct {
-	Weight int   `json:"weight" toml:"weight"`
-	Item   *Item `json:"item" toml:"item"`
+	Weight int `json:"weight" toml:"weight,omitzero"`
+	Item   *Item
 }
 
 func (c *Constraint) String() string {
@@ -61,7 +61,7 @@ func (c *Constraint) String() string {
 
 type Set struct {
 	At   []int `json:"at" toml:"at"`
-	Item *Item `json:"item" toml:"item"`
+	Item *Item
 }
 
 func (s *Set) String() string {
@@ -71,7 +71,7 @@ func (s *Set) String() string {
 type Item struct {
 	Value *Value `json:"value" toml:"value"`
 	Enum  *Enum  `json:"enum" toml:"enum"`
-	Type  *Type  `json:"type" toml:"type"`
+	*Type
 }
 
 func (i *Item) String() string {

@@ -85,9 +85,11 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 		for tree := range schemaExtracter.TreeChan {
 			// fmt.Println(tree.ToSSConfig())
 			// fmt.Printf("%+v\n", tree.ToSSConfig())
-
 			buf := new(bytes.Buffer)
-			if err := toml.NewEncoder(buf).Encode(tree.ToSSConfig()); err != nil {
+			encoder := toml.NewEncoder(buf)
+			encoder.Indent = ""
+
+			if err := encoder.Encode(tree.ToSSConfig()); err != nil {
 				log.Fatal(err)
 			}
 			fmt.Println(buf.String())
