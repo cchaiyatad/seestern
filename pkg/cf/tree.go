@@ -237,9 +237,12 @@ func (n *NodeType) toConstraint() *Constraint {
 	}
 
 	return &Constraint{
-		Type: n.DataType.toSS_DataType(),
-		// Param for array and obj
+		Item: &Item{
+			Type: &Type{Type: n.DataType.toSS_DataType()},
+			// Param for array and obj
+		},
 	}
+
 }
 
 func getKeyList(keys []reflect.Value) []string {
