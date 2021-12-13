@@ -1,14 +1,11 @@
 package db
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
-	"github.com/BurntSushi/toml"
 	"github.com/cchaiyatad/seestern/pkg/cf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -61,7 +58,7 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 	}
 
 	toGenColls := parseCollectionInputFromArgs(param.TargetColls)
-	schemaExtracter := cf.NewSchemaExtracter()
+	configGen := cf.NewConfigFileGenerator("yaml")
 
 	for db, colls := range toGenColls {
 		for _, coll := range colls {
@@ -76,27 +73,20 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 			}
 
 			fmt.Printf("generate: database %s collection %s\n", db, coll)
-			callBack, onFinish := schemaExtracter.GetExtractSchemaFunc(db, coll)
+			callBack, onFinish := configGen.Begin(db, coll)
 			go w.iterateByCursor(cursor, db, coll, callBack, onFinish)
 		}
 	}
 
 	go func() {
-		for tree := range schemaExtracter.TreeChan {
-			fmt.Printf("%#v\n", tree.ToSSConfig())
-			fmt.Printf("%+v\n", tree.ToSSConfig())
-			buf := new(bytes.Buffer)
-
-			if err := toml.NewEncoder(buf).Encode(tree.ToSSConfig()); err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println(buf.String())
-
-			schemaExtracter.TreeChanWG.Done()
+		for config := range configGen.OutChan {
+			fmt.Println(string(config))
+			configGen.Done()
 		}
+
 	}()
 
-	schemaExtracter.TreeChanWG.Wait()
+	configGen.Wait()
 	// save to file
 
 	// return path, error

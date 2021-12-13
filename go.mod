@@ -6,13 +6,13 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/jinzhu/copier v0.3.4
 	github.com/spf13/cobra v1.2.1
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 require (
@@ -31,7 +31,8 @@ require (
 	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/text v0.3.5 // indirect
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 replace github.com/BurntSushi/toml => ./internal/toml/
+
+replace gopkg.in/yaml.v3 => ./internal/yaml/

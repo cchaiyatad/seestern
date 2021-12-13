@@ -3,15 +3,15 @@ package cf
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type ConfigFileEncoder struct {
 	enc Encoder
+	Buf *bytes.Buffer
 }
 
 func (e *ConfigFileEncoder) Encode(v interface{}) error {
@@ -22,24 +22,17 @@ type Encoder interface {
 	Encode(v interface{}) error
 }
 
-type ErrInvalidEncoderFileType struct {
-	fileType string
-}
-
-func (e *ErrInvalidEncoderFileType) Error() string {
-	return fmt.Sprintf("invalid encoder filetype : got %s", e.fileType)
-}
-
-func NewEncoder(fileType string) (*ConfigFileEncoder, error) {
+func NewEncoder(fileType string) *ConfigFileEncoder {
+	buf := new(bytes.Buffer)
 
 	switch strings.ToLower(fileType) {
 	case "json":
-		return &ConfigFileEncoder{enc: json.NewEncoder(new(bytes.Buffer))}, nil
-	case "yaml":
-		return &ConfigFileEncoder{enc: yaml.NewEncoder(new(bytes.Buffer))}, nil
+		return &ConfigFileEncoder{enc: json.NewEncoder(buf), Buf: buf}
 	case "toml":
-		return &ConfigFileEncoder{enc: toml.NewEncoder(new(bytes.Buffer))}, nil
+		return &ConfigFileEncoder{enc: toml.NewEncoder(buf), Buf: buf}
+	case "yaml":
+		return &ConfigFileEncoder{enc: yaml.NewEncoder(buf), Buf: buf}
 	default:
-		return nil, &ErrInvalidEncoderFileType{fileType: fileType}
+		return &ConfigFileEncoder{enc: yaml.NewEncoder(buf), Buf: buf}
 	}
 }
