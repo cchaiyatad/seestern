@@ -12,4 +12,5 @@ type InitParam struct {
 	TargetColls []string
 	Outpath     string
 	Verbose     bool
+	FileType    string
 }

@@ -12,6 +12,7 @@ const (
 	collectionKey = "collection"
 	outputKey     = "output"
 	verboseKey    = "verbose"
+	fileTypeKey   = "type"
 )
 
 // TODO-2: second usecase
@@ -32,6 +33,7 @@ func init() {
 
 	initCmd.Flags().StringP(connectionStringKey, "s", "", "connection string to database")
 	initCmd.Flags().StringP(outputKey, "o", "", "path to create output file")
+	initCmd.Flags().StringP(fileTypeKey, "t", "yaml", "file type of output file (json, yaml, toml)")
 
 	initCmd.Flags().StringSliceVarP(&collections, collectionKey, "c", []string{}, "specific database and collection to create (in <database>.<collection> format)")
 	initCmd.Flags().BoolVarP(&verbose, verboseKey, "v", false, "verbose output")
@@ -44,6 +46,7 @@ func init() {
 func initFunc(cmd *cobra.Command, args []string) {
 	connectionStr := cmd.Flag(connectionStringKey).Value.String()
 	out := cmd.Flag(outputKey).Value.String()
+	fileType := cmd.Flag(fileTypeKey).Value.String()
 
 	fmt.Printf("init with %s connection string\n", connectionStr)
 	param := &db.InitParam{
@@ -52,6 +55,7 @@ func initFunc(cmd *cobra.Command, args []string) {
 		TargetColls: collections,
 		Outpath:     out,
 		Verbose:     verbose,
+		FileType:    fileType,
 	}
 
 	cobra.CheckErr(isFlagValid(out, verbose))
