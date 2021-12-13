@@ -95,12 +95,13 @@ func (e *Enum) String() string {
 }
 
 type Type struct {
-	Type   SS_DataType `json:"type" toml:"type,omitzero"`
-	Params `json:"params" toml:"params,omitzero"`
+	Type        SS_DataType   `json:"type" toml:"type,omitzero"`
+	ElementType []interface{} `json:"element_type" toml:"element_type,omitzero"`
+	Params      `json:"params" toml:"params,omitzero"`
 }
 
 func (t *Type) String() string {
-	return fmt.Sprintf("type: %s", t.Type)
+	return fmt.Sprintf("type: %s element_type: %s", t.Type, t.ElementType)
 }
 
 type Params map[string]interface{}

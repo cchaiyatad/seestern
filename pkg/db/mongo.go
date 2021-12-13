@@ -1,11 +1,14 @@
 package db
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/cchaiyatad/seestern/pkg/cf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -82,12 +85,12 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 		for tree := range schemaExtracter.TreeChan {
 			fmt.Printf("%#v\n", tree.ToSSConfig())
 			fmt.Printf("%+v\n", tree.ToSSConfig())
-			// buf := new(bytes.Buffer)
+			buf := new(bytes.Buffer)
 
-			// if err := toml.NewEncoder(buf).Encode(tree.ToSSConfig()); err != nil {
-			// 	log.Fatal(err)
-			// }
-			// fmt.Println(buf.String())
+			if err := toml.NewEncoder(buf).Encode(tree.ToSSConfig()); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(buf.String())
 
 			schemaExtracter.TreeChanWG.Done()
 		}

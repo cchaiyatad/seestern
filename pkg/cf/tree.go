@@ -244,13 +244,27 @@ func (n *NodeType) toConstraint() *Constraint {
 		return nil
 	}
 
-	return &Constraint{
-		Item: &Item{
-			Type: &Type{Type: n.DataType.toSS_DataType()},
-			// Param for array and obj
-		},
+	item := &Item{Type: &Type{Type: n.DataType.toSS_DataType()}}
+
+	// Param for array and obj
+	switch n.DataType {
+	case Array:
+		for _, payload := range n.Payload {
+			for _, payloadNodeType := range payload.NodeTypes {
+				if con := payloadNodeType.toConstraint(); con != nil {
+					item.ElementType = append(item.ElementType, con.Item)
+				}
+			}
+		}
+	case Object:
+		for _, payload := range n.Payload {
+			if field := payload.toField(); field != nil {
+				item.ElementType = append(item.ElementType, field)
+			}
+		}
 	}
 
+	return &Constraint{Item: item}
 }
 
 func getKeyList(keys []reflect.Value) []string {
