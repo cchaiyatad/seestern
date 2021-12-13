@@ -3,8 +3,8 @@ package cf
 import "fmt"
 
 type SSConfig struct {
-	Aliases   []*Alias    `json:"aliases" toml:"aliases"`
-	Databases []*Database `json:"databases" toml:"databases"`
+	Aliases   []*Alias    `json:"aliases" toml:"aliases" yaml:"aliases"`
+	Databases []*Database `json:"databases" toml:"databases" yaml:"databases"`
 }
 
 func (s *SSConfig) String() string {
@@ -12,8 +12,8 @@ func (s *SSConfig) String() string {
 }
 
 type Alias struct {
-	Key   string `json:"key" toml:"key"`
-	Value string `json:"value" toml:"value"`
+	Key   string `json:"key" toml:"key" yaml:"key"`
+	Value string `json:"value" toml:"value" yaml:"value"`
 }
 
 func (a *Alias) String() string {
@@ -21,8 +21,8 @@ func (a *Alias) String() string {
 }
 
 type Database struct {
-	D_name     string      `json:"d_name" toml:"d_name"`
-	Collection *Collection `json:"collection" toml:"collection"`
+	D_name     string      `json:"d_name" toml:"d_name" yaml:"d_name"`
+	Collection *Collection `json:"collection" toml:"collection" yaml:"collection"`
 }
 
 func (d *Database) String() string {
@@ -30,9 +30,9 @@ func (d *Database) String() string {
 }
 
 type Collection struct {
-	C_name string   `json:"c_name" toml:"c_name"`
-	Count  int      `json:"count" toml:"count,omitzero"`
-	Fields []*Field `json:"fields" toml:"fields"`
+	C_name string   `json:"c_name" toml:"c_name" yaml:"c_name"`
+	Count  int      `json:"count,omitempty" toml:"count,omitzero" yaml:"count,omitzero"`
+	Fields []*Field `json:"fields" toml:"fields" yaml:"fields"`
 }
 
 func (c *Collection) String() string {
@@ -40,10 +40,10 @@ func (c *Collection) String() string {
 }
 
 type Field struct {
-	F_name      string        `json:"f_name" toml:"f_name"`
-	Omit_weight float64       `json:"omit_weight" toml:"omit_weight,omitzero"`
-	Constraints []*Constraint `json:"constraints" toml:"constraints"`
-	Sets        []*Set        `json:"sets" toml:"sets"`
+	F_name      string        `json:"f_name" toml:"f_name" yaml:"f_name"`
+	Omit_weight float64       `json:"omit_weight,omitempty" toml:"omit_weight,omitzero" yaml:"omit_weight,omitzero"`
+	Constraints []*Constraint `json:"constraints" toml:"constraints" yaml:"constraints"`
+	Sets        []*Set        `json:"sets" toml:"sets" yaml:"sets"`
 }
 
 func (f *Field) String() string {
@@ -51,7 +51,7 @@ func (f *Field) String() string {
 }
 
 type Constraint struct {
-	Weight int `json:"weight" toml:"weight,omitzero"`
+	Weight int `json:"weight,omitempty" toml:"weight,omitzero" yaml:"weight,omitzero"`
 	*Item
 }
 
@@ -60,7 +60,7 @@ func (c *Constraint) String() string {
 }
 
 type Set struct {
-	At []int `json:"at" toml:"at"`
+	At []int `json:"at" toml:"at" yaml:"at"`
 	*Item
 }
 
@@ -79,7 +79,7 @@ func (i *Item) String() string {
 }
 
 type Value struct {
-	Value string `json:"value" toml:"value,omitzero"`
+	Value string `json:"value,omitempty" toml:"value,omitzero" yaml:"value,omitzero"`
 }
 
 func (v *Value) String() string {
@@ -87,7 +87,7 @@ func (v *Value) String() string {
 }
 
 type Enum struct {
-	Enum string `json:"enum" toml:"enum,omitzero"`
+	Enum string `json:"enum,omitempty" toml:"enum,omitzero" yaml:"enum,omitzero"`
 }
 
 func (e *Enum) String() string {
@@ -95,9 +95,9 @@ func (e *Enum) String() string {
 }
 
 type Type struct {
-	Type        SS_DataType   `json:"type" toml:"type,omitzero"`
-	ElementType []interface{} `json:"element_type" toml:"element_type,omitzero"`
-	Params      `json:"params" toml:"params,omitzero"`
+	Type        SS_DataType   `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitzero"`
+	ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitzero"`
+	Params      `json:"params,omitempty" toml:"params,omitzero" yaml:"params,omitzero"`
 }
 
 func (t *Type) String() string {
