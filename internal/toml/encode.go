@@ -105,7 +105,7 @@ type Encoder struct {
 func NewEncoder(w io.Writer) *Encoder {
 	return &Encoder{
 		w:      bufio.NewWriter(w),
-		Indent: "  ",
+		Indent: "",
 	}
 }
 

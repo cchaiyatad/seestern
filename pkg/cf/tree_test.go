@@ -64,7 +64,7 @@ func TestParseSchemaTree(t *testing.T) {
 					{DataType: Object,
 						Payload: []*Node{
 							{Name: "_id", NodeTypes: []*NodeType{
-								{DataType: ObjectID},
+								{DataType: String}, // is string because "123" is not primitive.ObjectId
 							}},
 						},
 					},

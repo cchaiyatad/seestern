@@ -1,14 +1,11 @@
 package db
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
-	"github.com/BurntSushi/toml"
 	"github.com/cchaiyatad/seestern/pkg/cf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -84,15 +81,16 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 	go func() {
 		for tree := range schemaExtracter.TreeChan {
 			// fmt.Println(tree.ToSSConfig())
-			// fmt.Printf("%+v\n", tree.ToSSConfig())
-			buf := new(bytes.Buffer)
-			encoder := toml.NewEncoder(buf)
-			encoder.Indent = ""
+			// fmt.Printf("%#v\n", tree)
+			fmt.Printf("%+v\n", tree)
+			// fmt.Printf("%#v\n", tree.ToSSConfig())
+			fmt.Printf("%+v\n", tree.ToSSConfig())
+			// buf := new(bytes.Buffer)
 
-			if err := encoder.Encode(tree.ToSSConfig()); err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println(buf.String())
+			// if err := toml.NewEncoder(buf).Encode(tree.ToSSConfig()); err != nil {
+			// 	log.Fatal(err)
+			// }
+			// fmt.Println(buf.String())
 
 			schemaExtracter.TreeChanWG.Done()
 		}
@@ -167,6 +165,8 @@ func (*mongoDBWorker) iterateByCursor(cursor *mongo.Cursor, dbName string, collN
 		if err := cursor.Decode(&doc); err != nil {
 			continue
 		}
+		// fmt.Println(doc)
+		// fmt.Printf("%#v\n", doc)
 		callBack(doc)
 	}
 	onFinish()

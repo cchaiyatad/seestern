@@ -6,6 +6,7 @@ import (
 	"sort"
 
 	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type DataType int
@@ -32,6 +33,7 @@ type NodeType struct {
 }
 
 var (
+	nullNode     *NodeType = &NodeType{DataType: Null}
 	stringNode   *NodeType = &NodeType{DataType: String}
 	integerNode  *NodeType = &NodeType{DataType: Integer}
 	doubleNode   *NodeType = &NodeType{DataType: Double}
@@ -73,8 +75,14 @@ func parseSchemaTree(dbName, collName string, data map[string]interface{}) *Sche
 }
 
 func parse(key string, value reflect.Value) *Node {
-	if key == "_id" {
+	// bson Null, primitive.Decimal128 and primitive.ObjectID (refactor to be a option param?)
+	switch value.Interface().(type) {
+	case primitive.Null:
+		return &Node{key, []*NodeType{nullNode}}
+	case primitive.ObjectID:
 		return &Node{key, []*NodeType{objectIDNode}}
+	case primitive.Decimal128:
+		return &Node{key, []*NodeType{doubleNode}}
 	}
 
 	switch value.Kind() {
