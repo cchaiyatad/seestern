@@ -1,42 +1,6 @@
 package cf
 
-var tree = &SchemaTree{
-	Root: &Node{Name: "_root", NodeTypes: []*NodeType{
-		{DataType: Object, Payload: []*Node{
-			{Name: "storeLocation", NodeTypes: []*NodeType{stringNode}},
-			{Name: "saleDate", NodeTypes: []*NodeType{integerNode}},
-			{Name: "purchaseMethod", NodeTypes: []*NodeType{stringNode}},
-			{Name: "items", NodeTypes: []*NodeType{{DataType: Array,
-				Payload: []*Node{
-					{NodeTypes: []*NodeType{{DataType: Object,
-						Payload: []*Node{
-							{Name: "name", NodeTypes: []*NodeType{stringNode}},
-							{Name: "quantity", NodeTypes: []*NodeType{integerNode}}, // TODO: Check
-							{Name: "price", NodeTypes: []*NodeType{doubleNode}},
-							{Name: "tags", NodeTypes: []*NodeType{{DataType: Array,
-								Payload: []*Node{
-									{Name: "", NodeTypes: []*NodeType{stringNode}},
-								},
-							}}},
-						},
-					}}},
-				},
-			}}},
-			{Name: "customer", NodeTypes: []*NodeType{{DataType: Object,
-				Payload: []*Node{
-					{Name: "age", NodeTypes: []*NodeType{integerNode}},
-					{Name: "email", NodeTypes: []*NodeType{stringNode}},
-					{Name: "gender", NodeTypes: []*NodeType{stringNode}},
-					{Name: "satisfaction", NodeTypes: []*NodeType{integerNode}},
-				},
-			}}},
-			{Name: "couponUsed", NodeTypes: []*NodeType{booleanNode}},
-			{Name: "_id", NodeTypes: []*NodeType{objectIDNode}},
-		}},
-	}},
-	Database:   "sample_supplies",
-	Collection: "sales",
-}
+// var tree = &SchemaTree{Root: &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "_id", NodeTypes: []*NodeType{objectIDNode}}, {Name: "couponUsed", NodeTypes: []*NodeType{booleanNode}}, {Name: "customer", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "age", NodeTypes: []*NodeType{integerNode}}, {Name: "email", NodeTypes: []*NodeType{stringNode}}, {Name: "gender", NodeTypes: []*NodeType{stringNode}}, {Name: "satisfaction", NodeTypes: []*NodeType{integerNode}}}}}}, {Name: "items", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{{NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "name", NodeTypes: []*NodeType{stringNode}}, {Name: "price", NodeTypes: []*NodeType{doubleNode}}, {Name: "quantity", NodeTypes: []*NodeType{integerNode}}, {Name: "tags", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{{Name: "", NodeTypes: []*NodeType{stringNode}}}}}}}}}}}}}}, {Name: "purchaseMethod", NodeTypes: []*NodeType{stringNode}}, {Name: "saleDate", NodeTypes: []*NodeType{integerNode}}, {Name: "storeLocation", NodeTypes: []*NodeType{stringNode}}}}}}, Collection: "sales", Database: "sample_supplies"}
 
 // &{Root:name: _root type: [type: 7 payload: [name: storeLocation type: [type: 1 payload: []] name: saleDate type: [type: 2 payload: []] name: purchaseMethod type: [type: 1 payload: []] name: items type: [type: 6 payload: [name:  type: [type: 7 payload: [name: name type: [type: 1 payload: []] name: quantity type: [type: 2 payload: []] name: tags type: [type: 6 payload: [name:  type: [type: 1 payload: []]]]]]]] name: customer type: [type: 7 payload: [name: age type: [type: 2 payload: []] name: email type: [type: 1 payload: []] name: gender type: [type: 1 payload: []] name: satisfaction type: [type: 2 payload: []]]] name: couponUsed type: [type: 4 payload: []] name: _id type: [type: 5 payload: []]]] Database:sample_supplies Collection:sales}
 

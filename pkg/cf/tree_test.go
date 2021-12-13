@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestParseSchemaTree(t *testing.T) {
@@ -350,6 +351,49 @@ func TestParseSchemaTree(t *testing.T) {
 		}
 	})
 
+	t.Run("parseSchemaTree for mongo", func(t *testing.T) {
+		given := map[string]interface{}{"_id": primitive.ObjectID{0x5b, 0xd7, 0x61, 0xde, 0xae, 0x32, 0x3e, 0x45, 0xa9, 0x3c, 0xe3, 0x69}, "couponUsed": false, "customer": map[string]interface{}{"age": 45, "email": "fili@vu.so", "gender": "F", "satisfaction": 5}, "items": primitive.A{map[string]interface{}{"name": "backpack", "price": primitive.Decimal128{}, "quantity": 1, "tags": primitive.A{"school", "travel", "kids"}}, map[string]interface{}{"name": "printer paper", "price": primitive.Decimal128{}, "quantity": 3, "tags": primitive.A{"office", "stationary"}}}, "purchaseMethod": "Online", "saleDate": 1363803439463, "storeLocation": "Denver"}
+		expected := &SchemaTree{
+			Root: &Node{Name: "_root", NodeTypes: []*NodeType{
+				{DataType: Object, Payload: []*Node{
+					{Name: "_id", NodeTypes: []*NodeType{objectIDNode}},
+					{Name: "couponUsed", NodeTypes: []*NodeType{booleanNode}},
+					{Name: "customer", NodeTypes: []*NodeType{{DataType: Object,
+						Payload: []*Node{
+							{Name: "age", NodeTypes: []*NodeType{integerNode}},
+							{Name: "email", NodeTypes: []*NodeType{stringNode}},
+							{Name: "gender", NodeTypes: []*NodeType{stringNode}},
+							{Name: "satisfaction", NodeTypes: []*NodeType{integerNode}},
+						},
+					}}},
+					{Name: "items", NodeTypes: []*NodeType{{DataType: Array,
+						Payload: []*Node{
+							{NodeTypes: []*NodeType{{DataType: Object,
+								Payload: []*Node{
+									{Name: "name", NodeTypes: []*NodeType{stringNode}},
+									{Name: "price", NodeTypes: []*NodeType{doubleNode}},
+									{Name: "quantity", NodeTypes: []*NodeType{integerNode}},
+									{Name: "tags", NodeTypes: []*NodeType{{DataType: Array,
+										Payload: []*Node{
+											{Name: "", NodeTypes: []*NodeType{stringNode}},
+										},
+									}}},
+								},
+							}}},
+						},
+					}}},
+					{Name: "purchaseMethod", NodeTypes: []*NodeType{stringNode}},
+					{Name: "saleDate", NodeTypes: []*NodeType{integerNode}},
+					{Name: "storeLocation", NodeTypes: []*NodeType{stringNode}},
+				}},
+			}},
+			Collection: "sales",
+			Database:   "sample_supplies",
+		}
+
+		got := parseSchemaTree("sample_supplies", "sales", given)
+		assert.Equal(t, expected, got, fmt.Sprintf("expected: %v\ngot: %v", expected, got))
+	})
 }
 
 func TestMergeSchemaTree(t *testing.T) {
