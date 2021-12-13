@@ -58,7 +58,7 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 	}
 
 	toGenColls := parseCollectionInputFromArgs(param.TargetColls)
-	configGen := cf.NewConfigFileGenerator("yaml")
+	configGen := cf.NewConfigFileGenerator(param.FileType)
 
 	for db, colls := range toGenColls {
 		for _, coll := range colls {
