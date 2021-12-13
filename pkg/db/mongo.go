@@ -80,10 +80,7 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 
 	go func() {
 		for tree := range schemaExtracter.TreeChan {
-			// fmt.Println(tree.ToSSConfig())
-			// fmt.Printf("%#v\n", tree)
-			fmt.Printf("%+v\n", tree)
-			// fmt.Printf("%#v\n", tree.ToSSConfig())
+			fmt.Printf("%#v\n", tree.ToSSConfig())
 			fmt.Printf("%+v\n", tree.ToSSConfig())
 			// buf := new(bytes.Buffer)
 
@@ -165,8 +162,6 @@ func (*mongoDBWorker) iterateByCursor(cursor *mongo.Cursor, dbName string, collN
 		if err := cursor.Decode(&doc); err != nil {
 			continue
 		}
-		// fmt.Println(doc)
-		// fmt.Printf("%#v\n", doc)
 		callBack(doc)
 	}
 	onFinish()
