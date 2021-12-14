@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/cchaiyatad/seestern/internal/file"
@@ -86,7 +87,12 @@ func Init(param *InitParam) (string, error) {
 		return "", nil
 	}
 
-	return "path", nil
+	fileName := cf.GetFilename(param.FileType)
+	if err := file.WriteFile(param.Outpath, fileName, configByte); err != nil {
+		return "", nil
+	}
+
+	return filepath.Join(param.Outpath, fileName), nil
 }
 
 func (info databaseCollectionInfo) String() string {
