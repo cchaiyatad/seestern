@@ -8,8 +8,9 @@ import (
 type ConfigFileGenerator struct {
 	FileType string
 
-	OutChan   chan []byte
+	OutChan   chan struct{}
 	outChanWG *sync.WaitGroup
+	SSConfig  *SSConfig
 
 	treeChan   chan *SchemaTree
 	treeChanWG *sync.WaitGroup
@@ -18,7 +19,8 @@ type ConfigFileGenerator struct {
 func NewConfigFileGenerator(fileType string) *ConfigFileGenerator {
 	configGen := &ConfigFileGenerator{
 		treeChan: make(chan *SchemaTree),
-		OutChan:  make(chan []byte),
+		OutChan:  make(chan struct{}),
+		SSConfig: &SSConfig{},
 
 		FileType:   fileType,
 		treeChanWG: &sync.WaitGroup{},
@@ -27,12 +29,9 @@ func NewConfigFileGenerator(fileType string) *ConfigFileGenerator {
 
 	go func() {
 		for tree := range configGen.treeChan {
-
-			enc := NewEncoder(configGen.FileType)
-			if err := enc.Encode(tree.ToSSConfig()); err != nil {
-				log.Fatal(err)
-			}
-			configGen.OutChan <- enc.Buf.Bytes()
+			ssConfig := tree.ToSSConfig()
+			configGen.SSConfig.Databases = append(configGen.SSConfig.Databases, ssConfig.Databases...)
+			configGen.OutChan <- struct{}{}
 		}
 	}()
 
@@ -46,6 +45,18 @@ func (configGen *ConfigFileGenerator) Wait() {
 
 func (configGen *ConfigFileGenerator) Done() {
 	configGen.outChanWG.Done()
+}
+
+func (configGen *ConfigFileGenerator) Close() {
+	close(configGen.OutChan)
+}
+
+func (configGen *ConfigFileGenerator) Bytes() []byte {
+	enc := NewEncoder(configGen.FileType)
+	if err := enc.Encode(configGen.SSConfig); err != nil {
+		log.Fatal(err)
+	}
+	return enc.Buf.Bytes()
 }
 
 func (configGen *ConfigFileGenerator) Begin(dbName, collName string) (extractFunc func(map[string]interface{}), onFinishFunc func()) {

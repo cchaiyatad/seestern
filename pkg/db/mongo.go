@@ -46,19 +46,18 @@ func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) 
 	return specificDBInfo, nil
 }
 
-func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
+func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.ConfigFileGenerator) error {
 	client, err := w.connect()
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	infos, err := w.getDatabaseCollectionInfoWithClient(client)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	toGenColls := parseCollectionInputFromArgs(param.TargetColls)
-	configGen := cf.NewConfigFileGenerator(param.FileType)
 
 	for db, colls := range toGenColls {
 		for _, coll := range colls {
@@ -71,26 +70,13 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam) (string, error) {
 				fmt.Fprintf(os.Stderr, "%s\n", &ErrSkipCreateConfigfile{db, coll, err.Error()})
 				continue
 			}
+			fmt.Fprintf(os.Stderr, "generate: database %s collection %s\n", db, coll)
 
-			fmt.Printf("generate: database %s collection %s\n", db, coll)
-			callBack, onFinish := configGen.Begin(db, coll)
+			callBack, onFinish := configGenerator.Begin(db, coll)
 			go w.iterateByCursor(cursor, db, coll, callBack, onFinish)
 		}
 	}
-
-	go func() {
-		for config := range configGen.OutChan {
-			fmt.Println(string(config))
-			configGen.Done()
-		}
-
-	}()
-
-	configGen.Wait()
-	// save to file
-
-	// return path, error
-	return "", nil
+	return nil
 }
 
 func (w *mongoDBWorker) insert() {
@@ -129,7 +115,7 @@ func (*mongoDBWorker) getDatabaseCollectionInfoWithClient(client *mongo.Client) 
 	for _, db := range dbs {
 		colls, err := client.Database(db).ListCollectionNames(context.TODO(), bson.D{})
 		if err != nil {
-			fmt.Printf("skip database %s :%s", db, err)
+			fmt.Fprintf(os.Stderr, "skip database %s :%s\n", db, err)
 			continue
 		}
 

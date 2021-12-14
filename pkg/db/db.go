@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/cchaiyatad/seestern/internal/file"
+	"github.com/cchaiyatad/seestern/pkg/cf"
 )
 
 type DBController struct {
@@ -14,7 +15,7 @@ type DBController struct {
 type dbWorker interface {
 	ping() error
 	ps(string) (databaseCollectionInfo, error)
-	initConfigFile(*InitParam) (string, error)
+	initConfigFile(*InitParam, *cf.ConfigFileGenerator) error
 	insert()
 	drop()
 }
@@ -57,7 +58,25 @@ func Init(param *InitParam) (string, error) {
 		return "", err
 	}
 
-	return controller.worker.initConfigFile(param)
+	configGen := cf.NewConfigFileGenerator(param.FileType)
+	if err := controller.worker.initConfigFile(param, configGen); err != nil {
+		return "", err
+	}
+
+	go func() {
+		for range configGen.OutChan {
+			configGen.Done()
+		}
+
+	}()
+
+	configGen.Wait()
+	configGen.Close()
+	// save to file
+	fmt.Println(string(configGen.Bytes()))
+
+	// return path, error
+	return "", nil
 }
 
 func (info databaseCollectionInfo) String() string {
