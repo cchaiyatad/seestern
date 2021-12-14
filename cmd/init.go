@@ -15,10 +15,6 @@ const (
 	fileTypeKey   = "type"
 )
 
-// TODO-2: second usecase
-
-// TODO-3: create config file pkg
-
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Create a configuration file (.ss.toml)",
