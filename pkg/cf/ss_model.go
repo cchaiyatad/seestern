@@ -3,11 +3,11 @@ package cf
 import "fmt"
 
 type SSConfig struct {
-	Aliases   []*Alias    `json:"aliases,omitempty" toml:"aliases" yaml:"aliases,omitempty"`
-	Databases []*Database `json:"databases" toml:"databases" yaml:"databases"`
+	Aliases   []Alias    `json:"aliases,omitempty" toml:"aliases" yaml:"aliases,omitempty"`
+	Databases []Database `json:"databases" toml:"databases" yaml:"databases"`
 }
 
-func (s *SSConfig) String() string {
+func (s SSConfig) String() string {
 	return fmt.Sprintf("aliases: %s databases: %s", s.Aliases, s.Databases)
 }
 
@@ -16,65 +16,65 @@ type Alias struct {
 	Value string `json:"value" toml:"value" yaml:"value"`
 }
 
-func (a *Alias) String() string {
+func (a Alias) String() string {
 	return fmt.Sprintf("key: %s value: %s", a.Key, a.Value)
 }
 
 type Database struct {
-	D_name     string      `json:"d_name" toml:"d_name" yaml:"d_name"`
-	Collection *Collection `json:"collection" toml:"collection" yaml:"collection"`
+	D_name     string     `json:"d_name" toml:"d_name" yaml:"d_name"`
+	Collection Collection `json:"collection" toml:"collection" yaml:"collection"`
 }
 
-func (d *Database) String() string {
+func (d Database) String() string {
 	return fmt.Sprintf("d_name: %s collection: %s", d.D_name, d.Collection)
 }
 
 type Collection struct {
-	C_name string   `json:"c_name" toml:"c_name" yaml:"c_name"`
-	Count  int      `json:"count,omitempty" toml:"count,omitzero" yaml:"count,omitempty"`
-	Fields []*Field `json:"fields" toml:"fields" yaml:"fields"`
+	C_name string  `json:"c_name" toml:"c_name" yaml:"c_name"`
+	Count  int     `json:"count,omitempty" toml:"count,omitzero" yaml:"count,omitempty"`
+	Fields []Field `json:"fields" toml:"fields" yaml:"fields"`
 }
 
-func (c *Collection) String() string {
+func (c Collection) String() string {
 	return fmt.Sprintf("c_name: %s count: %d fields: %s", c.C_name, c.Count, c.Fields)
 }
 
 type Field struct {
-	F_name      string        `json:"f_name" toml:"f_name" yaml:"f_name"`
-	Omit_weight float64       `json:"omit_weight,omitempty" toml:"omit_weight,omitzero" yaml:"omit_weight,omitempty"`
-	Constraints []*Constraint `json:"constraints" toml:"constraints" yaml:"constraints"`
-	Sets        []*Set        `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
+	F_name      string       `json:"f_name" toml:"f_name" yaml:"f_name"`
+	Omit_weight float64      `json:"omit_weight,omitempty" toml:"omit_weight,omitzero" yaml:"omit_weight,omitempty"`
+	Constraints []Constraint `json:"constraints" toml:"constraints" yaml:"constraints"`
+	Sets        []Set        `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
 }
 
-func (f *Field) String() string {
+func (f Field) String() string {
 	return fmt.Sprintf("f_name: %s constraints: %s sets: %s", f.F_name, f.Constraints, f.Sets)
 }
 
 type Constraint struct {
 	Weight int `json:"weight,omitempty" toml:"weight,omitzero" yaml:"weight,omitempty"`
-	*Item  `json:",omitempty"  yaml:",omitempty"`
+	Item   `json:",omitempty" yaml:",inline,omitempty"`
 }
 
-func (c *Constraint) String() string {
+func (c Constraint) String() string {
 	return fmt.Sprintf("item: %s", c.Item)
 }
 
 type Set struct {
-	At    []int `json:"at" toml:"at" yaml:"at"`
-	*Item `json:",omitempty" toml:",omitzero"  yaml:",omitempty"`
+	At   []int `json:"at" toml:"at" yaml:"at"`
+	Item `json:",omitempty" toml:",omitzero"  yaml:",inline,omitempty"`
 }
 
-func (s *Set) String() string {
+func (s Set) String() string {
 	return fmt.Sprintf("item: %s", s.Item)
 }
 
 type Item struct {
-	*Value `json:",omitempty" toml:",omitzero" yaml:",omitempty"`
-	*Enum  `json:",omitempty" toml:",omitzero" yaml:",omitempty"`
-	*Type  `json:",omitempty" toml:",omitzero" yaml:",omitempty"`
+	Value `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty"`
+	Enum  `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty"`
+	Type  `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty"`
 }
 
-func (i *Item) String() string {
+func (i Item) String() string {
 	return fmt.Sprintf("value: %s: enum: %s type: %s", i.Value, i.Enum, i.Type)
 }
 
@@ -82,7 +82,7 @@ type Value struct {
 	Value string `json:"value,omitempty" toml:"value,omitzero" yaml:"value,omitempty"`
 }
 
-func (v *Value) String() string {
+func (v Value) String() string {
 	return fmt.Sprintf("value: %s", v.Value)
 }
 
@@ -90,7 +90,7 @@ type Enum struct {
 	Enum string `json:"enum,omitempty" toml:"enum,omitzero" yaml:"enum,omitempty"`
 }
 
-func (e *Enum) String() string {
+func (e Enum) String() string {
 	return fmt.Sprintf("enum: %s", e.Enum)
 }
 
@@ -100,7 +100,7 @@ type Type struct {
 	Params      `json:"params,omitempty" toml:"params,omitzero" yaml:"params,omitempty"`
 }
 
-func (t *Type) String() string {
+func (t Type) String() string {
 	return fmt.Sprintf("type: %s element_type: %s", t.Type, t.ElementType)
 }
 

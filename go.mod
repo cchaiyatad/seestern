@@ -34,5 +34,3 @@ require (
 )
 
 replace github.com/BurntSushi/toml => ./internal/toml/
-
-replace gopkg.in/yaml.v3 => ./internal/yaml/

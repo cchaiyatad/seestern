@@ -208,27 +208,26 @@ func (t *SchemaTree) ToSSConfig() *SSConfig {
 	}
 
 	for _, node := range t.Root.NodeTypes[0].Payload {
-		if field := node.toField(); field != nil {
-			coll.Fields = append(coll.Fields, field)
-		}
+		field := node.toField()
+		coll.Fields = append(coll.Fields, field)
 	}
 
 	db := Database{
 		D_name:     t.Database,
-		Collection: &coll,
+		Collection: coll,
 	}
 
 	return &SSConfig{
-		Databases: []*Database{&db},
+		Databases: []Database{db},
 	}
 }
 
-func (n *Node) toField() *Field {
+func (n *Node) toField() Field {
 	if n == nil {
-		return nil
+		return Field{}
 	}
 
-	field := &Field{
+	field := Field{
 		F_name: n.Name,
 	}
 
@@ -239,32 +238,30 @@ func (n *Node) toField() *Field {
 	return field
 }
 
-func (n *NodeType) toConstraint() *Constraint {
+func (n *NodeType) toConstraint() Constraint {
 	if n == nil {
-		return nil
+		return Constraint{}
 	}
 
-	item := &Item{Type: &Type{Type: n.DataType.toSS_DataType()}}
+	item := Item{Type: Type{Type: n.DataType.toSS_DataType()}}
 
 	// Param for array and obj
 	switch n.DataType {
 	case Array:
 		for _, payload := range n.Payload {
 			for _, payloadNodeType := range payload.NodeTypes {
-				if con := payloadNodeType.toConstraint(); con != nil {
-					item.ElementType = append(item.ElementType, con.Item)
-				}
+				con := payloadNodeType.toConstraint()
+				item.ElementType = append(item.ElementType, con.Item)
 			}
 		}
 	case Object:
 		for _, payload := range n.Payload {
-			if field := payload.toField(); field != nil {
-				item.ElementType = append(item.ElementType, field)
-			}
+			field := payload.toField()
+			item.ElementType = append(item.ElementType, field)
 		}
 	}
 
-	return &Constraint{Item: item}
+	return Constraint{Item: item}
 }
 
 func getKeyList(keys []reflect.Value) []string {
