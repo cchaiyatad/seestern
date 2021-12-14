@@ -54,7 +54,10 @@ func initFunc(cmd *cobra.Command, _ []string) {
 		FileType:    fileType,
 	}
 
-	cobra.CheckErr(isFlagValid(out, verbose))
+	if err := isFlagValid(out, verbose); err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
 
 	path, err := db.Init(param)
 	if err != nil {
