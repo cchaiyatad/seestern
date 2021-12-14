@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -29,3 +30,5 @@ type ErrSkipCreateConfigfile struct {
 func (e *ErrSkipCreateConfigfile) Error() string {
 	return fmt.Sprintf("skip: database %s collection %s: reason: %s", e.database, e.collection, e.reason)
 }
+
+var ErrClientIsNil = errors.New("error: client cannot be nil")

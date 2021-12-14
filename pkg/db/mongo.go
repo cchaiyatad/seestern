@@ -128,11 +128,18 @@ func (*mongoDBWorker) getDatabaseCollectionInfoWithClient(client *mongo.Client) 
 }
 
 func (*mongoDBWorker) getCursor(client *mongo.Client, dbName string, collName string) (*mongo.Cursor, error) {
+	if client == nil {
+		return nil, ErrClientIsNil
+	}
 	coll := client.Database(dbName).Collection(collName)
 	return coll.Find(context.TODO(), bson.M{})
 }
 
 func (*mongoDBWorker) iterateByCursor(cursor *mongo.Cursor, dbName string, collName string, callBack func(map[string]interface{}), onFinish func()) {
+	if cursor == nil {
+		return
+	}
+
 	ctx := context.TODO()
 	defer cursor.Close(ctx)
 

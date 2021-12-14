@@ -117,3 +117,62 @@ func TestPS(t *testing.T) {
 	})
 
 }
+
+func TestGetCursor(t *testing.T) {
+	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
+	givenValidController := mongoDBWorker{valid_mongo_cntStr}
+	givenValidClient, err := givenValidController.connect()
+
+	assert.Nil(t, err)
+	t.Parallel()
+
+	t.Run("with valid client, valid database and valid collection", func(t *testing.T) {
+		givenDB := "sample_mflix"
+		givenColl := "users"
+
+		gotCursor, gotErr := givenValidController.getCursor(givenValidClient, givenDB, givenColl)
+
+		assert.Nil(t, gotErr)
+		assert.NotNil(t, gotCursor)
+	})
+
+	t.Run("with valid client, valid database and invalid collection (cursor with zero document)", func(t *testing.T) {
+		givenDB := "sample_mflix"
+		givenColl := "not-exist"
+
+		gotCursor, gotErr := givenValidController.getCursor(givenValidClient, givenDB, givenColl)
+
+		assert.Nil(t, gotErr)
+		assert.NotNil(t, gotCursor)
+	})
+
+	t.Run("with nil client, valid database and valid collection", func(t *testing.T) {
+		givenDB := "sample_mflix"
+		givenColl := "users"
+
+		expectedErr := ErrClientIsNil
+		gotCursor, gotErr := givenValidController.getCursor(nil, givenDB, givenColl)
+
+		assert.Equal(t, expectedErr, gotErr)
+		assert.Nil(t, gotCursor)
+	})
+
+	t.Run("with invalid client, valid database and valid collection", func(t *testing.T) {
+		givenInValidController := mongoDBWorker{valid_mongo_cntStr + "123"}
+		givenInValidClient, err := givenInValidController.connect()
+		assert.NotNil(t, err)
+		assert.Nil(t, givenInValidClient)
+
+		givenDB := "sample_mflix"
+		givenColl := "users"
+
+		expectedErr := ErrClientIsNil
+		gotCursor, gotErr := givenInValidController.getCursor(givenInValidClient, givenDB, givenColl)
+
+		assert.Equal(t, expectedErr, gotErr)
+		assert.Nil(t, gotCursor)
+	})
+}
+
+func TestInit(t *testing.T) {
+}
