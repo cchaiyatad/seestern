@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 
+	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/db"
 	"github.com/spf13/cobra"
 )
@@ -43,12 +43,12 @@ func init() {
 
 }
 
-func initFunc(cmd *cobra.Command, args []string) {
+func initFunc(cmd *cobra.Command, _ []string) {
 	connectionStr := cmd.Flag(connectionStringKey).Value.String()
 	out := cmd.Flag(outputKey).Value.String()
 	fileType := cmd.Flag(fileTypeKey).Value.String()
 
-	fmt.Printf("init with %s connection string\n", connectionStr)
+	log.Logf(log.Info, "init with %s connection string\n", connectionStr)
 	param := &db.InitParam{
 		CntStr:      connectionStr,
 		Vendor:      "mongo",
@@ -61,9 +61,13 @@ func initFunc(cmd *cobra.Command, args []string) {
 	cobra.CheckErr(isFlagValid(out, verbose))
 
 	path, err := db.Init(param)
-	cobra.CheckErr(err)
+	if err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
+
 	if out != "" {
-		fmt.Println(path)
+		log.Logf(log.Info, "config file is saved to %s\n", path)
 	}
 }
 

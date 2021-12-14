@@ -3,9 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"os"
 	"time"
 
+	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/cf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -62,15 +62,15 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.Con
 	for db, colls := range toGenColls {
 		for _, coll := range colls {
 			if _, ok := infos[db][coll]; !ok {
-				fmt.Fprintf(os.Stderr, "%s\n", &ErrSkipCreateConfigfile{db, coll, "not exist"})
+				log.Logf(log.Warning, "%s\n", &ErrSkipCreateConfigfile{db, coll, "not exist"})
 				continue
 			}
 			cursor, err := w.getCursor(client, db, coll)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "%s\n", &ErrSkipCreateConfigfile{db, coll, err.Error()})
+				log.Logf(log.Warning, "%s\n", &ErrSkipCreateConfigfile{db, coll, err.Error()})
 				continue
 			}
-			fmt.Fprintf(os.Stderr, "generate: database %s collection %s\n", db, coll)
+			log.Logf(log.Info, "generate: database %s collection %s\n", db, coll)
 
 			callBack, onFinish := configGenerator.Begin(db, coll)
 			go w.iterateByCursor(cursor, db, coll, callBack, onFinish)
@@ -115,7 +115,7 @@ func (*mongoDBWorker) getDatabaseCollectionInfoWithClient(client *mongo.Client) 
 	for _, db := range dbs {
 		colls, err := client.Database(db).ListCollectionNames(context.TODO(), bson.D{})
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "skip database %s :%s\n", db, err)
+			log.Logf(log.Warning, "skip database %s :%s\n", db, err)
 			continue
 		}
 

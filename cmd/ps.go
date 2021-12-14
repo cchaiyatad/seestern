@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/db"
 	"github.com/spf13/cobra"
 )
@@ -26,11 +27,11 @@ func init() {
 	psCmd.MarkFlagRequired(connectionStringKey)
 }
 
-func ps(cmd *cobra.Command, args []string) {
+func ps(cmd *cobra.Command, _ []string) {
 	connectionStr := cmd.Flag(connectionStringKey).Value.String()
 	database := cmd.Flag(databaseKey).Value.String()
 
-	fmt.Printf("list collections form %s connection string\n", connectionStr)
+	log.Logf(log.Info, "list collections form %s connection string\n", connectionStr)
 
 	param := &db.PSParam{
 		CntStr: connectionStr,
@@ -39,6 +40,11 @@ func ps(cmd *cobra.Command, args []string) {
 	}
 
 	info, err := db.PS(param)
-	cobra.CheckErr(err)
+
+	if err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
+
 	fmt.Print(info)
 }

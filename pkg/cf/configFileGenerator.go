@@ -1,8 +1,9 @@
 package cf
 
 import (
-	"log"
 	"sync"
+
+	"github.com/cchaiyatad/seestern/internal/log"
 )
 
 type ConfigFileGenerator struct {
@@ -51,12 +52,13 @@ func (configGen *ConfigFileGenerator) Close() {
 	close(configGen.OutChan)
 }
 
-func (configGen *ConfigFileGenerator) Bytes() []byte {
+func (configGen *ConfigFileGenerator) Bytes() ([]byte, error) {
 	enc := NewEncoder(configGen.FileType)
 	if err := enc.Encode(configGen.SSConfig); err != nil {
-		log.Fatal(err)
+		log.Log(log.Warning, err)
+		return nil, err
 	}
-	return enc.Buf.Bytes()
+	return enc.Buf.Bytes(), nil
 }
 
 func (configGen *ConfigFileGenerator) Begin(dbName, collName string) (extractFunc func(map[string]interface{}), onFinishFunc func()) {

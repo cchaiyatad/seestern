@@ -72,11 +72,21 @@ func Init(param *InitParam) (string, error) {
 
 	configGen.Wait()
 	configGen.Close()
-	// save to file
-	fmt.Println(string(configGen.Bytes()))
 
-	// return path, error
-	return "", nil
+	configByte, err := configGen.Bytes()
+	if err != nil {
+		return "", err
+	}
+
+	if param.Verbose {
+		fmt.Print(string(configByte))
+	}
+
+	if param.Outpath == "" {
+		return "", nil
+	}
+
+	return "path", nil
 }
 
 func (info databaseCollectionInfo) String() string {
