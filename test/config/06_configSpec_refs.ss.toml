@@ -1,0 +1,73 @@
+# sample One-to-Many Relationships with Document References
+
+# collection: publisher
+[[collection]]
+c_name = "publisher"
+
+# collection: publisher field:_id
+[[collection.fields]]
+constraint = [{type = "objectId"}]
+f_name = "_id"
+
+# collection: publisher field:name
+[[collection.fields]]
+constraint = [{type = "string"}]
+f_name = "name"
+
+# collection: publisher field:founded
+[[collection.fields]]
+constraint = [{type = "int"}]
+f_name = "founded"
+
+# collection: publisher field:location
+[[collection.fields]]
+constraint = [{type = "string"}]
+f_name = "location"
+
+# collection: book
+[[collection]]
+c_name = "book"
+
+# collection: book field:_id
+[[collection.fields]]
+constraint = [{type = "objectId"}]
+f_name = "_id"
+
+# collection: book field:author
+[[collection.fields]]
+constraint = [{type = "array", element_type = [{type = "string"}]}]
+f_name = "author"
+
+# collection: book field:published_date
+[[collection.fields]]
+constraint = [{type = "string"}]
+f_name = "published_date"
+
+# collection: book field:pages
+[[collection.fields]]
+constraint = [{type = "int"}]
+f_name = "pages"
+
+# collection: book field:language
+[[collection.fields]]
+constraint = [{type = "string"}]
+f_name = "language"
+
+# collection: book field:publisher_id
+[[collection.fields]]
+constraint = [{type = "objectId", ref = "publisher._id"}]
+f_name = "publisher_id"
+
+# collection: publisher
+# collection: publisher field:_id
+# collection: publisher field:name
+# collection: publisher field:founded
+# collection: publisher field:location
+
+# collection: book
+# collection: book field:_id
+# collection: book field:author
+# collection: book field:published_date
+# collection: book field:pages
+# collection: book field:language
+# collection: book field:publisher_id

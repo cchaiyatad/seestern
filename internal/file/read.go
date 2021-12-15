@@ -5,8 +5,7 @@ import (
 	"os"
 )
 
-// read toml
-func getBytesFromFile(path string) ([]byte, error) {
+func GetBytesFromFile(path string) ([]byte, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return []byte{}, &ErrIOFile{"read", err}
