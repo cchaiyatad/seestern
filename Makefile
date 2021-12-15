@@ -12,3 +12,4 @@ run:
 clean:
 	rm -rf bin
 	rm -rf out
+	rm -rf test/cover

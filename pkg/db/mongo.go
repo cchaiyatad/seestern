@@ -84,7 +84,7 @@ func (w *mongoDBWorker) insert() {
 	panic("Not implemented")
 }
 
-func (w *mongoDBWorker) drop() {
+func (w *mongoDBWorker) drop(dbName, collName string) {
 	fmt.Println("drop")
 	panic("Not implemented")
 }

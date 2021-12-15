@@ -18,7 +18,7 @@ type dbWorker interface {
 	ps(string) (databaseCollectionInfo, error)
 	initConfigFile(*InitParam, *cf.ConfigFileGenerator) error
 	insert()
-	drop()
+	drop(string, string)
 }
 
 type databaseCollectionInfo map[string]map[string]struct{}

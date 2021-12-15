@@ -1,4 +1,5 @@
 #!/bin/bash
 mkdir test
-go test -coverprofile=./test/coverage.out ./...
-go tool cover -html=./test/coverage.out
+mkdir test/cover
+go test -coverprofile=./test/cover/coverage.out ./...
+go tool cover -html=./test/cover/coverage.out
