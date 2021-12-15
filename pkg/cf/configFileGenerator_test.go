@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfigFileGeneratorBegin(t *testing.T) {
+func TestConfigFileGeneratorBeginSimple(t *testing.T) {
 
 	doc1 := &map[string]interface{}{"name": "john"}
 	doc2 := &map[string]interface{}{"name": "jane"}
@@ -39,7 +39,7 @@ func TestConfigFileGeneratorBegin(t *testing.T) {
 
 	for _, tc := range cases {
 		tc := tc
-		t.Run(fmt.Sprintf("ConfigFileGenerator with %d items", len(tc.givenDocs)), func(t *testing.T) {
+		t.Run(fmt.Sprintf("ConfigFileGenerator with %v items", tc.givenDocs), func(t *testing.T) {
 			t.Parallel()
 			givenDBName := "DB"
 			givenCollName := "Coll"
@@ -62,27 +62,8 @@ func TestConfigFileGeneratorBegin(t *testing.T) {
 			givenGenerator.Wait()
 			givenGenerator.Close()
 
-			// Assert tree
 			assert.Equal(t, tc.expected, givenGenerator.SSConfig)
 
 		})
 	}
-
 }
-
-// {"yaml", []*map[string]interface{}{}, 0},
-// {"yaml", []*map[string]interface{}{doc1}, 1},
-// {"yaml", []*map[string]interface{}{doc2}, 1},
-// {"yaml", []*map[string]interface{}{doc3}, 1},
-// {"yaml", []*map[string]interface{}{doc4}, 1},
-// {"yaml", []*map[string]interface{}{doc1, doc2}, 2},
-// {"yaml", []*map[string]interface{}{doc1, doc3}, 2},
-// {"yaml", []*map[string]interface{}{doc1, doc4}, 2},
-// {"yaml", []*map[string]interface{}{doc2, doc3}, 2},
-// {"yaml", []*map[string]interface{}{doc2, doc4}, 2},
-// {"yaml", []*map[string]interface{}{doc3, doc4}, 2},
-// {"yaml", []*map[string]interface{}{doc1, doc2, doc3}, 3},
-// {"yaml", []*map[string]interface{}{doc1, doc2, doc4}, 3},
-// {"yaml", []*map[string]interface{}{doc1, doc3, doc4}, 3},
-// {"yaml", []*map[string]interface{}{doc2, doc3, doc4}, 3},
-// {"yaml", []*map[string]interface{}{doc1, doc2, doc3, doc4}, 4},

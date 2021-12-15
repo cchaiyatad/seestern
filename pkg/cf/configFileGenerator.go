@@ -80,8 +80,8 @@ func (configGen *ConfigFileGenerator) Begin(dbName, collName string) (extractFun
 			}
 		}
 
-		configGen.treeChan <- gatheredTree
 		configGen.outChanWG.Add(1)
+		configGen.treeChan <- gatheredTree
 		configGen.treeChanWG.Done()
 	}()
 

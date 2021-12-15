@@ -55,6 +55,20 @@ type SchemaTree struct {
 	Collection string
 }
 
+func (t *SchemaTree) getRootPayload() []*Node {
+	if t == nil || !t.isValid() {
+		return nil
+	}
+	return t.Root.NodeTypes[0].Payload
+}
+
+func (t *SchemaTree) setRootPayload(payload []*Node) {
+	if t == nil || !t.isValid() {
+		return
+	}
+	t.Root.NodeTypes[0].Payload = payload
+}
+
 func newSchemaTree(dbName, collName string) *SchemaTree {
 	root := &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object}}}
 
@@ -67,7 +81,7 @@ func parseSchemaTree(dbName, collName string, data map[string]interface{}) *Sche
 
 	for _, key := range keyList {
 		if node := parse(key, reflect.ValueOf(data[key])); node != nil {
-			tree.Root.NodeTypes[0].Payload = append(tree.Root.NodeTypes[0].Payload, node)
+			tree.setRootPayload(append(tree.getRootPayload(), node))
 		}
 	}
 
@@ -161,11 +175,11 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 	mergedTree := &SchemaTree{}
 	copier.Copy(mergedTree, t1)
 
-	mergedPayload := mergedTree.Root.NodeTypes[0].Payload
-	t2Payloads := t2.Root.NodeTypes[0].Payload
+	mergedPayload := mergedTree.getRootPayload()
+	t2Payloads := t2.getRootPayload()
 
-	for _, node := range t2Payloads {
-		keyName := node.Name
+	for _, t2Node := range t2Payloads {
+		keyName := t2Node.Name
 		hasKey := false
 		keyIdx := -1
 
@@ -180,20 +194,20 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 		if hasKey {
 			isDup := false
 			for _, searchedNodeType := range mergedPayload[keyIdx].NodeTypes {
-				if reflect.DeepEqual(searchedNodeType, node.NodeTypes[0]) { //[0] ??
+				if reflect.DeepEqual(searchedNodeType, t2Node.NodeTypes[0]) {
 					isDup = true
 					break
 				}
 			}
 
 			if !isDup {
-				mergedPayload[keyIdx].NodeTypes = append(mergedPayload[keyIdx].NodeTypes, node.NodeTypes[0]) //[0] ??
+				mergedPayload[keyIdx].NodeTypes = append(mergedPayload[keyIdx].NodeTypes, t2Node.NodeTypes[0])
 			}
 		} else {
-			mergedPayload = append(mergedPayload, node)
+			mergedPayload = append(mergedPayload, t2Node)
 		}
 
-		mergedTree.Root.NodeTypes[0].Payload = mergedPayload
+		mergedTree.setRootPayload(mergedPayload)
 	}
 
 	return mergedTree, nil
@@ -208,7 +222,7 @@ func (t *SchemaTree) ToSSConfig() *SSConfig {
 		C_name: t.Collection,
 	}
 
-	for _, node := range t.Root.NodeTypes[0].Payload {
+	for _, node := range t.getRootPayload() {
 		field := node.toField()
 		coll.Fields = append(coll.Fields, field)
 	}
