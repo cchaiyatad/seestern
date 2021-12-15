@@ -1,57 +1,60 @@
 # simple
 
+[[databases]]
+d_name = "school"
+
 # collection: student
-[[collection]]
+[databases.collection]
 c_name = "student"
 count = 30
 
 # collection: student field:s_id
-[[collection.fields]]
-constraint = [{type = "objectId"}]
+[[databases.collection.fields]]
+constraints = [{type = "objectId"}]
 f_name = "s_id"
 
-fields = [{f_name = "name", constraint = [{type = "string"}]}]
-
 # collection: student field:name
-[[collection.fields]]
+[[databases.collection.fields]]
 f_name = "name"
 
-[collection.fields.constraint]
+[[databases.collection.fields.constraints]]
 length = 5
 prefix = "a"
 suffix = "m"
 type = "string"
 
 # collection: student field:s_id
-[[collection.fields]]
-constraint = [{value = "M", weight = 2}, {value = "M", weight = 3}]
+[[databases.collection.fields]]
+constraints = [{value = "M", weight = 2}, {value = "F", weight = 3}]
 f_name = "sex"
 omit_weight = 5
 
 # collection: student field:year
-[[collection.fields]]
-constraint = [{enum = ["freshman", "sophomore", "junior", "senior"]}]
+[[databases.collection.fields]]
+constraints = [{enum = ["freshman", "sophomore", "junior", "senior"]}]
 f_name = "year"
-set = [{value = "super senior", at = [1, 2, 3]}, {type = "int", min = 5, max = 8, at = [5]}]
+sets = [{value = "super senior", at = [1, 2, 3]}, {type = "int", min = 5, max = 8, at = [5]}]
 
+[[databases]]
+d_name = "school"
 # collection: teacher
-[[collection]]
+[databases.collection]
 c_name = "teacher"
 count = 15
 
 # collection: teacher field:t_id
-[[collection.fields]]
-constraint = [{type = "objectId"}]
+[[databases.collection.fields]]
+constraints = [{type = "objectId"}]
 f_name = "t_id"
 
 # collection: teacher field:name
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "name"
 
 # collection: teacher field:age
-[[collection.fields]]
-constraint = [{type = "int", min = 30}]
+[[databases.collection.fields]]
+constraints = [{type = "int", min = 30}]
 f_name = "age"
 
 # collection: student

@@ -39,4 +39,21 @@ func TestGetBytesFromFile(t *testing.T) {
 		assert.Equal(t, expectedErr, gotErr.Error())
 		assert.Equal(t, expected, gotByte)
 	})
+
+	// t.Run("test GetBytesFromFile with configuration file", func(t *testing.T) {
+	// 	givenPath := "./../../test/config/01_configSpec_simple.ss.toml"
+
+	// 	gotByte, _ := GetBytesFromFile(givenPath)
+	// 	var ssConfig cf.SSConfig
+
+	// 	// f, _ := os.Open(givenPath)
+	// 	// dec := toml.NewDecoder(f)
+
+	// 	// _, _ = dec.Decode(&ssConfig)
+	// 	_, err := toml.Decode(string(gotByte), &ssConfig)
+
+	// 	fmt.Printf("%s\n", err)
+	// 	fmt.Printf("%#v\n", ssConfig)
+
+	// })
 }

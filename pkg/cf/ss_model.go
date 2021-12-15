@@ -87,7 +87,7 @@ func (v Value) String() string {
 }
 
 type Enum struct {
-	Enum string `json:"enum,omitempty" toml:"enum,omitzero" yaml:"enum,omitempty"`
+	Enum []interface{} `json:"enum,omitempty" toml:"enum,omitzero" yaml:"enum,omitempty"`
 }
 
 func (e Enum) String() string {
