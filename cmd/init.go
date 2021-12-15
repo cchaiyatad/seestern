@@ -36,7 +36,6 @@ func init() {
 
 	initCmd.MarkFlagRequired(connectionStringKey)
 	initCmd.MarkFlagRequired(collectionKey)
-
 }
 
 func initFunc(cmd *cobra.Command, _ []string) {
