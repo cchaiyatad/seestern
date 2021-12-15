@@ -14,3 +14,14 @@ type InitParam struct {
 	Verbose     bool
 	FileType    string
 }
+
+type GenParam struct {
+	CntStr  string
+	Vendor  string
+	File    string
+	Outpath string
+
+	Verbose  bool
+	IsDrop   bool
+	IsInsert bool
+}

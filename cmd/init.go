@@ -1,18 +1,9 @@
 package cmd
 
 import (
-	"errors"
-
 	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/db"
 	"github.com/spf13/cobra"
-)
-
-const (
-	collectionKey = "collection"
-	outputKey     = "output"
-	verboseKey    = "verbose"
-	fileTypeKey   = "type"
 )
 
 var initCmd = &cobra.Command{
@@ -20,9 +11,6 @@ var initCmd = &cobra.Command{
 	Short: "Create a configuration file (.ss.toml)",
 	Run:   initFunc,
 }
-
-var verbose bool
-var collections []string
 
 func init() {
 	rootCmd.AddCommand(initCmd)
@@ -67,11 +55,4 @@ func initFunc(cmd *cobra.Command, _ []string) {
 	if out != "" {
 		log.Logf(log.Info, "config file is saved to %s\n", path)
 	}
-}
-
-func isFlagValid(out string, verbose bool) error {
-	if out == "" && !verbose {
-		return errors.New("if verbose is not set, output has to be set")
-	}
-	return nil
 }

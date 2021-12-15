@@ -8,11 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	connectionStringKey = "connectionString"
-	databaseKey         = "database"
-)
-
 var psCmd = &cobra.Command{
 	Use:   "ps",
 	Short: "List collections of given connection string",

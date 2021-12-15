@@ -3,29 +3,59 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/cchaiyatad/seestern/internal/log"
+	"github.com/cchaiyatad/seestern/pkg/db"
 	"github.com/spf13/cobra"
 )
 
-// TODO-4: fourth usecase
-
 var generateCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "Generate a test data from configuration file (.ss.toml)",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("generate called")
-	},
+	Short: "Generate a test data from configuration file",
+	Run:   genFunc,
 }
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
+	generateCmd.Flags().StringP(connectionStringKey, "s", "", "connection string to database")
+	generateCmd.Flags().StringP(fileKey, "f", "", "path to configuration file")
+	generateCmd.Flags().StringP(outputKey, "o", "", "path to save generate data")
 
-	// Here you will define your flags and configuration settings.
+	generateCmd.Flags().BoolVarP(&verbose, verboseKey, "v", false, "verbose output")
+	generateCmd.Flags().BoolVarP(&isDrop, dropKey, "d", false, "drop all document in collection in configuration file")
+	generateCmd.Flags().BoolVarP(&isInsert, insertKey, "i", false, "insert document in collection in configuration file")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// generateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	generateCmd.MarkFlagRequired(fileKey)
+}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// generateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func genFunc(cmd *cobra.Command, _ []string) {
+	connectionStr := cmd.Flag(connectionStringKey).Value.String()
+	file := cmd.Flag(fileKey).Value.String()
+	out := cmd.Flag(outputKey).Value.String()
+
+	log.Logf(log.Info, "generate with configuration file %s", file)
+	param := &db.GenParam{
+		CntStr:   connectionStr,
+		Vendor:   "mongo",
+		File:     file,
+		Outpath:  out,
+		Verbose:  verbose,
+		IsDrop:   isDrop,
+		IsInsert: isInsert,
+	}
+
+	if err := isFlagValid(out, verbose); err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
+	fmt.Println(param)
+
+	// path, err := db.Init(param)
+	// if err != nil {
+	// 	log.Log(log.Error, err)
+	// 	cobra.CheckErr(err)
+	// }
+
+	// if out != "" {
+	// 	log.Logf(log.Info, "config file is saved to %s\n", path)
+	// }
 }
