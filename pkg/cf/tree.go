@@ -161,6 +161,7 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 	mergedTree := &SchemaTree{}
 	copier.Copy(mergedTree, t1)
 
+	mergedPayload := mergedTree.Root.NodeTypes[0].Payload
 	t2Payloads := t2.Root.NodeTypes[0].Payload
 
 	for _, node := range t2Payloads {
@@ -168,7 +169,7 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 		hasKey := false
 		keyIdx := -1
 
-		for idx, searchedNode := range mergedTree.Root.NodeTypes[0].Payload {
+		for idx, searchedNode := range mergedPayload {
 			if searchedNode.Name == keyName {
 				hasKey = true
 				keyIdx = idx
@@ -178,7 +179,7 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 
 		if hasKey {
 			isDup := false
-			for _, searchedNodeType := range mergedTree.Root.NodeTypes[0].Payload[keyIdx].NodeTypes {
+			for _, searchedNodeType := range mergedPayload[keyIdx].NodeTypes {
 				if reflect.DeepEqual(searchedNodeType, node.NodeTypes[0]) { //[0] ??
 					isDup = true
 					break
@@ -186,12 +187,13 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 			}
 
 			if !isDup {
-				mergedTree.Root.NodeTypes[0].Payload[keyIdx].NodeTypes = append(mergedTree.Root.NodeTypes[0].Payload[keyIdx].NodeTypes, node.NodeTypes[0]) //[0] ??
+				mergedPayload[keyIdx].NodeTypes = append(mergedPayload[keyIdx].NodeTypes, node.NodeTypes[0]) //[0] ??
 			}
 		} else {
-			mergedTree.Root.NodeTypes[0].Payload = append(mergedTree.Root.NodeTypes[0].Payload, node)
+			mergedPayload = append(mergedPayload, node)
 		}
 
+		mergedTree.Root.NodeTypes[0].Payload = mergedPayload
 	}
 
 	return mergedTree, nil
