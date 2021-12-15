@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/db"
 	"github.com/spf13/cobra"
@@ -43,19 +41,23 @@ func genFunc(cmd *cobra.Command, _ []string) {
 		IsInsert: isInsert,
 	}
 
-	if err := isFlagValid(out, verbose); err != nil {
+	if err := isEitherVerboseOrOutSet(out, verbose); err != nil {
 		log.Log(log.Error, err)
 		cobra.CheckErr(err)
 	}
-	fmt.Println(param)
 
-	// path, err := db.Init(param)
-	// if err != nil {
-	// 	log.Log(log.Error, err)
-	// 	cobra.CheckErr(err)
-	// }
+	if err := isCntStrSetWhenEitherDropOrInsertSet(connectionStr, isDrop, isInsert); err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
 
-	// if out != "" {
-	// 	log.Logf(log.Info, "config file is saved to %s\n", path)
-	// }
+	path, err := db.Gen(param)
+	if err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
+
+	if out != "" {
+		log.Logf(log.Info, "config file is saved to %s\n", path)
+	}
 }

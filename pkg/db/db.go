@@ -94,6 +94,61 @@ func Init(param *InitParam) (string, error) {
 
 	return filepath.Join(param.Outpath, fileName), nil
 }
+func Gen(param *GenParam) (string, error) {
+	if param.Outpath != "" {
+		if err := file.PrepareDir(param.Outpath); err != nil {
+			return "", err
+		}
+	}
+
+	var controller *DBController
+	var err error
+
+	if param.IsDrop || param.IsInsert {
+		controller, err = createDBController(param.CntStr, param.Vendor)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	fmt.Println(controller)
+
+	// configGen := cf.NewConfigFileGenerator(param.FileType)
+	// if err := controller.worker.initConfigFile(param, configGen); err != nil {
+	// 	return "", err
+	// }
+
+	// go func() {
+	// 	for range configGen.OutChan {
+	// 		configGen.Done()
+	// 	}
+
+	// }()
+
+	// configGen.Wait()
+	// configGen.Close()
+
+	// configByte, err := configGen.Bytes()
+	// if err != nil {
+	// 	return "", err
+	// }
+
+	// if param.Verbose {
+	// 	fmt.Print(string(configByte))
+	// }
+
+	// if param.Outpath == "" {
+	// 	return "", nil
+	// }
+
+	// fileName := cf.GetFilename(param.FileType)
+	// if err := file.WriteFile(param.Outpath, fileName, configByte); err != nil {
+	// 	return "", nil
+	// }
+
+	// return filepath.Join(param.Outpath, fileName), nil
+	return "file", nil
+}
 
 func (info databaseCollectionInfo) String() string {
 	if len(info) == 0 {

@@ -41,7 +41,7 @@ func initFunc(cmd *cobra.Command, _ []string) {
 		FileType:    fileType,
 	}
 
-	if err := isFlagValid(out, verbose); err != nil {
+	if err := isEitherVerboseOrOutSet(out, verbose); err != nil {
 		log.Log(log.Error, err)
 		cobra.CheckErr(err)
 	}
