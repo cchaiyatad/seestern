@@ -1,4 +1,14 @@
 {
-    "Name": "Platypus",
-    "Order": "Monotremata"
+    "Age": 25,
+    "Cats": [
+        "Cauchy",
+        "Plato"
+    ],
+    "Perfection": [
+        6,
+        28,
+        496,
+        8128
+    ],
+    "Pi": 3.14
 }

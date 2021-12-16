@@ -1,4 +1,10 @@
-a: Easy!
-b:
-  c: 2
-  d: [3, 4]
+age: 25
+cats:
+  - Cauchy
+  - Plato
+pi: 3.14
+perfection:
+  - 6
+  - 28
+  - 496
+  - 8128

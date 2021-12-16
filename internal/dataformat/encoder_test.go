@@ -34,7 +34,6 @@ func TestNewEncoder(t *testing.T) {
 }
 
 func TestEncoderEncode(t *testing.T) {
-	t.Parallel()
 	givenData := struct {
 		Name       string   `json:"name" toml:"name" yaml:"name"`
 		Age        int      `json:"age" toml:"age" yaml:"age"`
