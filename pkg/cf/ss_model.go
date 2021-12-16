@@ -2,15 +2,6 @@ package cf
 
 import "fmt"
 
-type SSConfig struct {
-	Aliases   []Alias    `json:"aliases,omitempty" toml:"aliases" yaml:"aliases,omitempty"`
-	Databases []Database `json:"databases" toml:"databases" yaml:"databases"`
-}
-
-func (s SSConfig) String() string {
-	return fmt.Sprintf("aliases: %s databases: %s", s.Aliases, s.Databases)
-}
-
 type Alias struct {
 	Key   string `json:"key" toml:"key" yaml:"key"`
 	Value string `json:"value" toml:"value" yaml:"value"`
@@ -18,6 +9,16 @@ type Alias struct {
 
 func (a Alias) String() string {
 	return fmt.Sprintf("key: %s value: %s", a.Key, a.Value)
+}
+
+// Aliases   []Alias    `json:"aliases,omitempty" toml:"aliases" yaml:"aliases,omitempty"`
+
+type SSConfig struct {
+	Databases []Database `json:"databases" toml:"databases" yaml:"databases"`
+}
+
+func (s SSConfig) String() string {
+	return fmt.Sprintf("databases: %s", s.Databases)
 }
 
 type Database struct {
@@ -60,7 +61,7 @@ func (c Constraint) String() string {
 }
 
 type Set struct {
-	At   []int `json:"at" toml:"at" yaml:"at"`
+	At   []int `json:"at,omitempty" toml:"at,omitzero" yaml:"at,omitempty"`
 	Item `json:",omitempty" toml:",omitzero"  yaml:",inline,omitempty"`
 }
 
@@ -97,14 +98,24 @@ func (e Enum) String() string {
 type Type struct {
 	Type        SS_DataType   `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty"`
 	ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty"`
-	Params      `json:"params,omitempty" toml:"params,omitzero" yaml:"params,omitempty"`
+	Ref         string        `json:"ref,omitempty" toml:"ref,omitzero" yaml:"ref,omitempty"`
+
+	// string
+	Prefix string `json:"prefix,omitempty" toml:"prefix,omitzero" yaml:"prefix,omitempty"`
+	Suffix string `json:"suffix,omitempty" toml:"suffix,omitzero" yaml:"suffix,omitempty"`
+	Length int    `json:"length,omitempty" toml:"length,omitzero" yaml:"length,omitempty"`
+
+	// int, double
+	Min interface{} `json:"min,omitempty" toml:"min,omitzero" yaml:"min,omitempty"`
+	Max interface{} `json:"max,omitempty" toml:"max,omitzero" yaml:"max,omitempty"`
+
+	// array
+	Sets []Set `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
 }
 
 func (t Type) String() string {
 	return fmt.Sprintf("type: %s element_type: %s", t.Type, t.ElementType)
 }
-
-type Params map[string]interface{}
 
 type SS_DataType string
 
