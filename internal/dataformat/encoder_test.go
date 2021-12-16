@@ -32,3 +32,36 @@ func TestNewEncoder(t *testing.T) {
 		})
 	}
 }
+
+func TestEncoderEncode(t *testing.T) {
+	t.Parallel()
+	givenData := struct {
+		Name       string   `json:"name" toml:"name" yaml:"name"`
+		Age        int      `json:"age" toml:"age" yaml:"age"`
+		FriendList []string `json:"friend_list" toml:"friend_list" yaml:"friend_list"`
+	}{
+		"Bobby",
+		35,
+		[]string{"Tom", "Alice", "Ted"},
+	}
+
+	cases := []struct {
+		fileType string
+		expected string
+	}{
+		{"json", "{\"name\":\"Bobby\",\"age\":35,\"friend_list\":[\"Tom\",\"Alice\",\"Ted\"]}\n"},
+		{"yaml", "name: Bobby\nage: 35\nfriend_list:\n    - Tom\n    - Alice\n    - Ted\n"},
+		{"toml", "name = \"Bobby\"\nage = 35\nfriend_list = [\"Tom\", \"Alice\", \"Ted\"]\n"},
+	}
+
+	for _, tc := range cases {
+		tc := tc
+		t.Run(fmt.Sprintf("Encode with file type %s", tc.fileType), func(t *testing.T) {
+			t.Parallel()
+			gotEncoder := NewEncoder(tc.fileType)
+
+			gotEncoder.Encode(givenData)
+			assert.Equal(t, tc.expected, gotEncoder.Buf.String())
+		})
+	}
+}
