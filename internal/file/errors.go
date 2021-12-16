@@ -2,12 +2,13 @@ package file
 
 import "fmt"
 
-type ErrIsNotDir struct {
+type ErrIOTypeNotCorrectType struct {
 	path string
+	want string
 }
 
-func (e *ErrIsNotDir) Error() string {
-	return fmt.Sprintf("a given path is not a directory: %s", e.path)
+func (e *ErrIOTypeNotCorrectType) Error() string {
+	return fmt.Sprintf("a given path is not a %s: %s", e.want, e.path)
 }
 
 type ErrIOFile struct {

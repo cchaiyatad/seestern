@@ -14,13 +14,21 @@ func createDir(path string) error {
 }
 
 func isDirectory(path string) error {
+	return checkFileType(path, true, "directory")
+}
+
+func isFile(path string) error {
+	return checkFileType(path, false, "file")
+}
+
+func checkFileType(path string, isDir bool, want string) error {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return err
 	}
 
-	if !fileInfo.IsDir() {
-		return &ErrIsNotDir{path: path}
+	if fileInfo.IsDir() != isDir {
+		return &ErrIOTypeNotCorrectType{want: want, path: path}
 	}
 	return nil
 }

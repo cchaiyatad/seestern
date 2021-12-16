@@ -21,7 +21,7 @@ func TestGetBytesFromFile(t *testing.T) {
 	t.Run("test GetBytesFromFile with non-exist file", func(t *testing.T) {
 		givenPath := "./test/no-exist"
 		expected := []byte{}
-		expectedErr := "cannot read a file: open ./test/no-exist: no such file or directory"
+		expectedErr := "stat ./test/no-exist: no such file or directory"
 
 		gotByte, gotErr := GetBytesFromFile(givenPath)
 
@@ -32,7 +32,7 @@ func TestGetBytesFromFile(t *testing.T) {
 	t.Run("test GetBytesFromFile with directory", func(t *testing.T) {
 		givenPath := "./test/"
 		expected := []byte{}
-		expectedErr := "read ./test/: is a directory"
+		expectedErr := "a given path is not a file: ./test/"
 
 		gotByte, gotErr := GetBytesFromFile(givenPath)
 
