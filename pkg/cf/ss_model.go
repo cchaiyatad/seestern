@@ -95,28 +95,6 @@ func (e Enum) String() string {
 	return fmt.Sprintf("enum: %s", e.Enum)
 }
 
-type Type struct {
-	Type        SS_DataType   `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty"`
-	ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty"`
-	Ref         string        `json:"ref,omitempty" toml:"ref,omitzero" yaml:"ref,omitempty"`
-
-	// string
-	Prefix string `json:"prefix,omitempty" toml:"prefix,omitzero" yaml:"prefix,omitempty"`
-	Suffix string `json:"suffix,omitempty" toml:"suffix,omitzero" yaml:"suffix,omitempty"`
-	Length int    `json:"length,omitempty" toml:"length,omitzero" yaml:"length,omitempty"`
-
-	// int, double
-	Min interface{} `json:"min,omitempty" toml:"min,omitzero" yaml:"min,omitempty"`
-	Max interface{} `json:"max,omitempty" toml:"max,omitzero" yaml:"max,omitempty"`
-
-	// array
-	Sets []Set `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
-}
-
-func (t Type) String() string {
-	return fmt.Sprintf("type: %s element_type: %s", t.Type, t.ElementType)
-}
-
 type SS_DataType string
 
 const (
