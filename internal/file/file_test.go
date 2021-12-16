@@ -55,7 +55,7 @@ func TestPrepareDir(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("PrepareDir on path %s expected to get nill", tc.path), func(t *testing.T) {
+			t.Run(fmt.Sprintf("PrepareDir on path %s expected to get nil", tc.path), func(t *testing.T) {
 				t.Parallel()
 
 				assert.Nil(t, PrepareDir(tc.path))
@@ -72,7 +72,7 @@ func TestPrepareDir(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("PrepareDir on path %s expected to get nill", tc.path), func(t *testing.T) {
+			t.Run(fmt.Sprintf("PrepareDir on path %s expected to get nil", tc.path), func(t *testing.T) {
 				t.Parallel()
 
 				assert.Nil(t, PrepareDir(tc.path))
@@ -112,7 +112,7 @@ func TestCreateDir(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("createDir on path %s expected to get nill", tc.path), func(t *testing.T) {
+			t.Run(fmt.Sprintf("createDir on path %s expected to get nil", tc.path), func(t *testing.T) {
 				t.Parallel()
 
 				assert.Nil(t, createDir(tc.path))
@@ -129,7 +129,7 @@ func TestCreateDir(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("createDir on path %s expected to get nill", tc.path), func(t *testing.T) {
+			t.Run(fmt.Sprintf("createDir on path %s expected to get nil", tc.path), func(t *testing.T) {
 				t.Parallel()
 
 				assert.Nil(t, createDir(tc.path))
@@ -171,10 +171,51 @@ func TestIsDirectory(t *testing.T) {
 
 		for _, tc := range cases {
 			tc := tc
-			t.Run(fmt.Sprintf("isDirectory on path %s expected to get nill", tc.path), func(t *testing.T) {
+			t.Run(fmt.Sprintf("isDirectory on path %s expected to get nil", tc.path), func(t *testing.T) {
 				t.Parallel()
 
 				assert.Nil(t, isDirectory(tc.path))
+			})
+		}
+	})
+}
+func TestIsFile(t *testing.T) {
+	t.Run("isFile when is not file", func(t *testing.T) {
+		cases := []struct {
+			path     string
+			expected string
+		}{
+			{"./test/is-not-exist", "stat ./test/is-not-exist: no such file or directory"},
+			{"./test/isDir", "a given path is not a file: ./test/isDir"},
+			{"./test/isDir/dir1", "a given path is not a file: ./test/isDir/dir1"},
+			{"./test/isDir/dir1/dir2", "a given path is not a file: ./test/isDir/dir1/dir2"},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("isFile on path %s expected an error", tc.path), func(t *testing.T) {
+				t.Parallel()
+
+				assert.Equal(t, tc.expected, isFile(tc.path).Error())
+			})
+		}
+	})
+
+	t.Run("isFile when is file", func(t *testing.T) {
+		cases := []struct {
+			path string
+		}{
+			{"./test/isDir/file1"},
+			{"./test/isDir/dir1/file1.1"},
+			{"./test/isDir/dir1/dir2/file2.1"},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("isFile on path %s expected to get nil", tc.path), func(t *testing.T) {
+				t.Parallel()
+
+				assert.Nil(t, isFile(tc.path))
 			})
 		}
 	})
