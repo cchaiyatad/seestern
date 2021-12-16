@@ -47,9 +47,9 @@ func NewDecoder(filePath string) (*Decoder, error) {
 	case "json":
 		decoder.dec = &jsonUnmarshaler{}
 	case "toml":
-		decoder.dec = &yamlUnmarshaler{}
-	case "yaml":
 		decoder.dec = &tomlUnmarshaler{}
+	case "yaml":
+		decoder.dec = &yamlUnmarshaler{}
 	default:
 		return nil, ErrFileTypeNotSupport
 	}
@@ -80,20 +80,3 @@ func (d *tomlUnmarshaler) unmarshal(data []byte, v interface{}) error {
 	_, err := toml.Decode(string(data), v)
 	return err
 }
-
-// t.Run("test GetBytesFromFile with configuration file", func(t *testing.T) {
-// 	givenPath := "./../../test/config/04_configSpec_alias.ss.toml"
-
-// 	gotByte, _ := GetBytesFromFile(givenPath)
-// 	var ssConfig cf.SSConfig
-
-// 	// f, _ := os.Open(givenPath)
-// 	// dec := toml.NewDecoder(f)
-
-// 	// _, _ = dec.Decode(&ssConfig)
-// 	_, err := toml.Decode(string(gotByte), &ssConfig)
-
-// 	fmt.Printf("%s\n", err)
-// 	fmt.Printf("%#v\n", ssConfig)
-
-// })
