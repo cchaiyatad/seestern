@@ -731,7 +731,7 @@ func TestSchemaTreeToSSConfig(t *testing.T) {
 		givenTree := &SchemaTree{Root: &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "storeLocation", NodeTypes: []*NodeType{stringNode}}}}}}, Collection: "sales", Database: "sample_supplies"}
 		expected := &SSConfig{Databases: []Database{
 			{D_name: "sample_supplies", Collection: Collection{C_name: "sales", Fields: []Field{
-				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}}},
+				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}}},
 			}}},
 		}}
 		got := givenTree.ToSSConfig()
@@ -743,7 +743,7 @@ func TestSchemaTreeToSSConfig(t *testing.T) {
 		givenTree := &SchemaTree{Root: &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "storeLocation", NodeTypes: []*NodeType{stringNode, integerNode}}}}}}, Collection: "sales", Database: "sample_supplies"}
 		expected := &SSConfig{Databases: []Database{
 			{D_name: "sample_supplies", Collection: Collection{C_name: "sales", Fields: []Field{
-				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}, {Item: Item{Type: Type{Type: SS_Integer}}}}},
+				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}, {Item: Item{Type: Type{Type: Integer}}}}},
 			}}},
 		}}
 		got := givenTree.ToSSConfig()
@@ -754,7 +754,7 @@ func TestSchemaTreeToSSConfig(t *testing.T) {
 		givenTree := &SchemaTree{Root: &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "storeLocation", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{{Name: "", NodeTypes: []*NodeType{stringNode}}}}}}}}}}, Collection: "sales", Database: "sample_supplies"}
 		expected := &SSConfig{Databases: []Database{
 			{D_name: "sample_supplies", Collection: Collection{C_name: "sales", Fields: []Field{
-				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Array, P_ElementType: []interface{}{Item{Type: Type{Type: SS_String}}}}}}}},
+				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: Array, P_ElementType: []interface{}{Item{Type: Type{Type: String}}}}}}}},
 			}}},
 		}}
 		got := givenTree.ToSSConfig()
@@ -765,8 +765,8 @@ func TestSchemaTreeToSSConfig(t *testing.T) {
 		givenTree := &SchemaTree{Root: &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "storeLocation", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "location", NodeTypes: []*NodeType{stringNode}}}}}}}}}}, Collection: "sales", Database: "sample_supplies"}
 		expected := &SSConfig{Databases: []Database{
 			{D_name: "sample_supplies", Collection: Collection{C_name: "sales", Fields: []Field{
-				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Object, P_ElementType: []interface{}{
-					Field{F_name: "location", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}}},
+				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: Object, P_ElementType: []interface{}{
+					Field{F_name: "location", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}}},
 				}}}}}},
 			}}},
 		}}
@@ -778,25 +778,25 @@ func TestSchemaTreeToSSConfig(t *testing.T) {
 		givenTree := &SchemaTree{Root: &Node{Name: "_root", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "_id", NodeTypes: []*NodeType{objectIDNode}}, {Name: "couponUsed", NodeTypes: []*NodeType{booleanNode}}, {Name: "customer", NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "age", NodeTypes: []*NodeType{integerNode}}, {Name: "email", NodeTypes: []*NodeType{stringNode}}, {Name: "gender", NodeTypes: []*NodeType{stringNode}}, {Name: "satisfaction", NodeTypes: []*NodeType{integerNode}}}}}}, {Name: "items", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{{NodeTypes: []*NodeType{{DataType: Object, Payload: []*Node{{Name: "name", NodeTypes: []*NodeType{stringNode}}, {Name: "price", NodeTypes: []*NodeType{doubleNode}}, {Name: "quantity", NodeTypes: []*NodeType{integerNode}}, {Name: "tags", NodeTypes: []*NodeType{{DataType: Array, Payload: []*Node{{Name: "", NodeTypes: []*NodeType{stringNode}}}}}}}}}}}}}}, {Name: "purchaseMethod", NodeTypes: []*NodeType{stringNode}}, {Name: "saleDate", NodeTypes: []*NodeType{integerNode}}, {Name: "storeLocation", NodeTypes: []*NodeType{stringNode}}}}}}, Collection: "sales", Database: "sample_supplies"}
 		expected := &SSConfig{Databases: []Database{
 			{D_name: "sample_supplies", Collection: Collection{C_name: "sales", Fields: []Field{
-				{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_ObjectID}}}}},
-				{F_name: "couponUsed", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Boolean}}}}},
-				{F_name: "customer", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Object, P_ElementType: []interface{}{
-					Field{F_name: "age", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Integer}}}}},
-					Field{F_name: "email", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}}},
-					Field{F_name: "gender", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}}},
-					Field{F_name: "satisfaction", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Integer}}}}},
+				{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: ObjectID}}}}},
+				{F_name: "couponUsed", Constraints: []Constraint{{Item: Item{Type: Type{Type: Boolean}}}}},
+				{F_name: "customer", Constraints: []Constraint{{Item: Item{Type: Type{Type: Object, P_ElementType: []interface{}{
+					Field{F_name: "age", Constraints: []Constraint{{Item: Item{Type: Type{Type: Integer}}}}},
+					Field{F_name: "email", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}}},
+					Field{F_name: "gender", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}}},
+					Field{F_name: "satisfaction", Constraints: []Constraint{{Item: Item{Type: Type{Type: Integer}}}}},
 				}}}}}},
-				{F_name: "items", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Array, P_ElementType: []interface{}{
-					Item{Type: Type{Type: SS_Object, P_ElementType: []interface{}{
-						Field{F_name: "name", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}}},
-						Field{F_name: "price", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Double}}}}},
-						Field{F_name: "quantity", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Integer}}}}},
-						Field{F_name: "tags", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Array, P_ElementType: []interface{}{Item{Type: Type{Type: SS_String}}}}}}}},
+				{F_name: "items", Constraints: []Constraint{{Item: Item{Type: Type{Type: Array, P_ElementType: []interface{}{
+					Item{Type: Type{Type: Object, P_ElementType: []interface{}{
+						Field{F_name: "name", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}}},
+						Field{F_name: "price", Constraints: []Constraint{{Item: Item{Type: Type{Type: Double}}}}},
+						Field{F_name: "quantity", Constraints: []Constraint{{Item: Item{Type: Type{Type: Integer}}}}},
+						Field{F_name: "tags", Constraints: []Constraint{{Item: Item{Type: Type{Type: Array, P_ElementType: []interface{}{Item{Type: Type{Type: String}}}}}}}},
 					}}},
 				}}}}}},
-				{F_name: "purchaseMethod", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}}},
-				{F_name: "saleDate", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_Integer}}}}},
-				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: SS_String}}}}},
+				{F_name: "purchaseMethod", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}}},
+				{F_name: "saleDate", Constraints: []Constraint{{Item: Item{Type: Type{Type: Integer}}}}},
+				{F_name: "storeLocation", Constraints: []Constraint{{Item: Item{Type: Type{Type: String}}}}},
 			}}},
 		}}
 		got := givenTree.ToSSConfig()

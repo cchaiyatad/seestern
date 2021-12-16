@@ -94,39 +94,3 @@ type Enum struct {
 func (e Enum) String() string {
 	return fmt.Sprintf("enum: %s", e.Enum)
 }
-
-type SS_DataType string
-
-const (
-	SS_Null     SS_DataType = "null"
-	SS_String   SS_DataType = "string"
-	SS_Integer  SS_DataType = "integer"
-	SS_Double   SS_DataType = "double"
-	SS_Boolean  SS_DataType = "boolean"
-	SS_ObjectID SS_DataType = "objectID"
-	SS_Array    SS_DataType = "array"
-	SS_Object   SS_DataType = "object"
-)
-
-func (d DataType) toSS_DataType() SS_DataType {
-	switch d {
-	case Null:
-		return SS_Null
-	case String:
-		return SS_String
-	case Integer:
-		return SS_Integer
-	case Double:
-		return SS_Double
-	case Boolean:
-		return SS_Boolean
-	case ObjectID:
-		return SS_ObjectID
-	case Array:
-		return SS_Array
-	case Object:
-		return SS_Object
-	default:
-		return SS_Null
-	}
-}

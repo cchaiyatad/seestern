@@ -9,17 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type DataType int
+type DataType string
 
 const (
-	Null DataType = iota
-	String
-	Integer
-	Double
-	Boolean
-	ObjectID
-	Array
-	Object
+	Null     DataType = "null"
+	String   DataType = "string"
+	Integer  DataType = "integer"
+	Double   DataType = "double"
+	Boolean  DataType = "boolean"
+	ObjectID DataType = "objectID"
+	Array    DataType = "array"
+	Object   DataType = "object"
 )
 
 type Node struct {
@@ -258,7 +258,7 @@ func (n *NodeType) toConstraint() Constraint {
 		return Constraint{}
 	}
 
-	item := Item{Type: Type{Type: n.DataType.toSS_DataType()}}
+	item := Item{Type: Type{Type: n.DataType}}
 
 	// Param for array and obj
 	switch n.DataType {

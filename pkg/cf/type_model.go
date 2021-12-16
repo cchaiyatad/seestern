@@ -3,7 +3,7 @@ package cf
 import "fmt"
 
 type Type struct {
-	Type SS_DataType `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty"`
+	Type DataType `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty"`
 
 	// array and object
 	P_ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty"`
@@ -34,28 +34,28 @@ func (t Type) Ref() string {
 }
 
 func (t Type) Prefix() string {
-	if t.Type != SS_String {
+	if t.Type != String {
 		return ""
 	}
 	return t.P_Prefix
 }
 
 func (t Type) Suffix() string {
-	if t.Type != SS_String {
+	if t.Type != String {
 		return ""
 	}
 	return t.P_Suffix
 }
 
 func (t Type) Length() int {
-	if t.Type != SS_String {
+	if t.Type != String {
 		return 0
 	}
 	return t.P_Length
 }
 
 func (t Type) MinInt() int {
-	if t.Type != SS_Integer {
+	if t.Type != Integer {
 		return 0
 	}
 
@@ -66,7 +66,7 @@ func (t Type) MinInt() int {
 }
 
 func (t Type) MaxInt() int {
-	if t.Type != SS_Integer {
+	if t.Type != Integer {
 		return 0
 	}
 
@@ -77,7 +77,7 @@ func (t Type) MaxInt() int {
 }
 
 func (t Type) MinDouble() float64 {
-	if t.Type != SS_Double {
+	if t.Type != Double {
 		return 0
 	}
 
@@ -88,7 +88,7 @@ func (t Type) MinDouble() float64 {
 }
 
 func (t Type) MaxDouble() float64 {
-	if t.Type != SS_Double {
+	if t.Type != Double {
 		return 0
 	}
 
@@ -99,7 +99,7 @@ func (t Type) MaxDouble() float64 {
 }
 
 func (t Type) Sets() []Set {
-	if t.Type != SS_Array {
+	if t.Type != Array {
 		return []Set{}
 	}
 
@@ -108,7 +108,7 @@ func (t Type) Sets() []Set {
 
 func (t Type) ElementTypeArray() []Constraint {
 	constraints := []Constraint{}
-	if t.Type != SS_Array {
+	if t.Type != Array {
 		return constraints
 	}
 
@@ -123,7 +123,7 @@ func (t Type) ElementTypeArray() []Constraint {
 
 func (t Type) ElementTypeObject() []Field {
 	fields := []Field{}
-	if t.Type != SS_Object {
+	if t.Type != Object {
 		return fields
 	}
 
