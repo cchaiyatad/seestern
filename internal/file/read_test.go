@@ -1,6 +1,7 @@
 package file
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -56,4 +57,50 @@ func TestGetBytesFromFile(t *testing.T) {
 	// 	fmt.Printf("%#v\n", ssConfig)
 
 	// })
+}
+func TestGetFileType(t *testing.T) {
+	t.Run("GetFileType when is not file", func(t *testing.T) {
+		cases := []struct {
+			path     string
+			expected string
+		}{
+			{"./test/fileType/not-exist-file", "stat ./test/fileType/not-exist-file: no such file or directory"},
+			{"./test/fileType/dir", "a given path is not a file: ./test/fileType/dir"},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("GetFileType on path %s expected to get error %s", tc.path, tc.expected), func(t *testing.T) {
+				t.Parallel()
+
+				gotFileType, gotErr := GetFileType(tc.path)
+
+				assert.Equal(t, "", gotFileType)
+				assert.Equal(t, tc.expected, gotErr.Error())
+			})
+		}
+	})
+
+	t.Run("GetFileType when is file", func(t *testing.T) {
+		cases := []struct {
+			path     string
+			expected string
+		}{
+			{"./test/fileType/file", ""},
+			{"./test/fileType/file.filetype", "filetype"},
+			{"./test/fileType/file.subfiletype.filetype", "filetype"},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("GetFileType on path %s expected to get %s", tc.path, tc.expected), func(t *testing.T) {
+				t.Parallel()
+
+				gotFileType, gotErr := GetFileType(tc.path)
+
+				assert.Nil(t, gotErr)
+				assert.Equal(t, tc.expected, gotFileType)
+			})
+		}
+	})
 }

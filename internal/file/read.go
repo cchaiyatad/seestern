@@ -34,15 +34,21 @@ func OpenFile(path string) (*os.File, error) {
 	return file, nil
 }
 
-func CheckIsFileExistAndGetFileType(path string) (string, error) {
+func GetFileType(path string) (string, error) {
 	if err := isFile(path); err != nil {
 		return "", err
 	}
 
 	var fileType string
+	var fileNames []string
 	if fileInfo, err := os.Stat(path); err == nil {
-		fileNames := strings.Split(fileInfo.Name(), ".")
-		fileType = fileNames[len(fileNames)-1]
+		fileNames = strings.Split(fileInfo.Name(), ".")
 	}
+
+	if len(fileNames) <= 1 {
+		return "", nil
+	}
+
+	fileType = fileNames[len(fileNames)-1]
 	return fileType, nil
 }
