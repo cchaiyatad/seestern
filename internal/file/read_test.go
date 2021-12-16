@@ -41,7 +41,7 @@ func TestGetBytesFromFile(t *testing.T) {
 	})
 
 	// t.Run("test GetBytesFromFile with configuration file", func(t *testing.T) {
-	// 	givenPath := "./../../test/config/01_configSpec_simple.ss.toml"
+	// 	givenPath := "./../../test/config/04_configSpec_alias.ss.toml"
 
 	// 	gotByte, _ := GetBytesFromFile(givenPath)
 	// 	var ssConfig cf.SSConfig
