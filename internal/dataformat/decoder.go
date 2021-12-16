@@ -1,4 +1,4 @@
-package cf
+package dataformat
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 
 var ErrFileTypeNotSupport = errors.New("error: not support file type (support only .json .toml .yaml)")
 
-type ConfigFileDecoder struct {
+type Decoder struct {
 	dec  unmarshaler
 	data []byte
 }
@@ -21,7 +21,7 @@ type unmarshaler interface {
 	unmarshal([]byte, interface{}) error
 }
 
-func (e *ConfigFileDecoder) Decode(v interface{}, opts ...func([]byte) []byte) error {
+func (e *Decoder) Decode(v interface{}, opts ...func([]byte) []byte) error {
 	newData := e.data
 	if len(opts) > 0 {
 		newData = make([]byte, len(e.data))
@@ -35,13 +35,13 @@ func (e *ConfigFileDecoder) Decode(v interface{}, opts ...func([]byte) []byte) e
 	return e.dec.unmarshal(newData, v)
 }
 
-func NewDecoder(filePath string) (*ConfigFileDecoder, error) {
+func NewDecoder(filePath string) (*Decoder, error) {
 	fileType, err := file.GetFileType(filePath)
 	if err != nil {
 		return nil, err
 	}
 
-	decoder := &ConfigFileDecoder{}
+	decoder := &Decoder{}
 
 	switch strings.ToLower(fileType) {
 	case "json":

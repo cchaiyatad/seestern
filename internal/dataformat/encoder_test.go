@@ -1,4 +1,4 @@
-package cf
+package dataformat
 
 import (
 	"fmt"

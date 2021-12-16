@@ -15,10 +15,10 @@ const file_sub_type = ".ss."
 // validate config file
 
 func GetFilename(fileType string) string {
-	return fmt.Sprintf("%d%s%s", time.Now().Unix(), file_sub_type, fileTypeValid(fileType))
+	return fmt.Sprintf("%d%s%s", time.Now().Unix(), file_sub_type, fileTypeValidator(fileType))
 }
 
-func fileTypeValid(fileType string) string {
+func fileTypeValidator(fileType string) string {
 	fileType = strings.ToLower(fileType)
 	if fileType == "json" || fileType == "yaml" || fileType == "toml" {
 		return fileType

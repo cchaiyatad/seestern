@@ -3,6 +3,7 @@ package cf
 import (
 	"sync"
 
+	"github.com/cchaiyatad/seestern/internal/dataformat"
 	"github.com/cchaiyatad/seestern/internal/log"
 )
 
@@ -53,7 +54,7 @@ func (configGen *ConfigFileGenerator) Close() {
 }
 
 func (configGen *ConfigFileGenerator) Bytes() ([]byte, error) {
-	enc := NewEncoder(configGen.FileType)
+	enc := dataformat.NewEncoder(configGen.FileType)
 	if err := enc.Encode(configGen.SSConfig); err != nil {
 		log.Log(log.Warning, err)
 		return nil, err
