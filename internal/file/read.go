@@ -7,7 +7,7 @@ import (
 )
 
 func GetBytesFromFile(path string) ([]byte, error) {
-	file, err := OpenFile(path)
+	file, err := openFile(path)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -22,7 +22,7 @@ func GetBytesFromFile(path string) ([]byte, error) {
 	return b, nil
 }
 
-func OpenFile(path string) (*os.File, error) {
+func openFile(path string) (*os.File, error) {
 	if err := isFile(path); err != nil {
 		return nil, err
 	}

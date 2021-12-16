@@ -97,7 +97,10 @@ func TestDatabaseCollectionInfoString(t *testing.T) {
 		givenInfo[givenDB][givenColl1] = struct{}{}
 		givenInfo[givenDB][givenColl2] = struct{}{}
 
-		expect := "database: dbName\n 1 : coll1\n 2 : coll2\n"
-		assert.Equal(t, expect, givenInfo.String())
+		expectOne := "database: dbName\n 1 : coll1\n 2 : coll2\n"
+		expectTwo := "database: dbName\n 1 : coll2\n 2 : coll1\n"
+		expect := []string{expectOne, expectTwo}
+
+		assert.Subset(t, expect, []string{givenInfo.String()})
 	})
 }
