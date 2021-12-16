@@ -6,7 +6,7 @@ type Type struct {
 	Type SS_DataType `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty"`
 
 	// array and object
-	ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty"`
+	P_ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty"`
 
 	// only constraint
 	P_Ref string `json:"ref,omitempty" toml:"ref,omitzero" yaml:"ref,omitempty"`
@@ -25,7 +25,7 @@ type Type struct {
 }
 
 func (t Type) String() string {
-	return fmt.Sprintf("type: %s element_type: %s", t.Type, t.ElementType)
+	return fmt.Sprintf("type: %s element_type: %s", t.Type, t.P_ElementType)
 }
 
 // TODO: refactor with generic
@@ -104,4 +104,34 @@ func (t Type) Sets() []Set {
 	}
 
 	return t.P_Sets
+}
+
+func (t Type) ElementTypeArray() []Constraint {
+	constraints := []Constraint{}
+	if t.Type != SS_Array {
+		return constraints
+	}
+
+	for _, value := range t.P_ElementType {
+		if constraint, ok := value.(Constraint); ok {
+			constraints = append(constraints, constraint)
+		}
+	}
+
+	return constraints
+}
+
+func (t Type) ElementTypeObject() []Field {
+	fields := []Field{}
+	if t.Type != SS_Object {
+		return fields
+	}
+
+	for _, value := range t.P_ElementType {
+		if field, ok := value.(Field); ok {
+			fields = append(fields, field)
+		}
+	}
+
+	return fields
 }
