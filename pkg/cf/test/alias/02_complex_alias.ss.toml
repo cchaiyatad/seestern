@@ -1,0 +1,33 @@
+[[databases]]
+d_name = "school"
+
+[databases.collection]
+c_name = "student"
+count = 35
+
+[[databases.collection.fields]]
+constraint = [{type = "objectId"}]
+f_name = "s_id"
+
+[[databases.collection.fields]]
+constraint = [{type = "string"}]
+f_name = "name"
+
+[[databases.collection.fields]]
+constraint = "#{{class_constraint}}"
+f_name = "class"
+
+[[databases.collection.fields]]
+constraint = "#{{class_constraint}}"
+f_name = "elective_class"
+
+[[alias]]
+key = "class_constraint"
+value = [
+    {type = "array", element_type = [
+    {type = "object", fields = [
+      {f_name = "class_name", constraint = [{type = "string"}]},
+      {f_name = "instructor", constraint = [{type = "string"}]},
+    ]},
+  ]},
+]

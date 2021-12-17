@@ -36,7 +36,9 @@ func (c *ConfigFileReader) getDecodeOpts() []dataformat.DecodeOption {
 	}
 
 	if fileType == "toml" {
-		// TODO: get Alias function
+		if fun, err := getParseAliasFunc(c.filepath); err != nil && fun != nil {
+			opts = append(opts, fun)
+		}
 	}
 
 	return opts

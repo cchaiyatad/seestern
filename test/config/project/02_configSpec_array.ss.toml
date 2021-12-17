@@ -29,25 +29,7 @@ element_type = [
 maxItem = 3
 type = "array"
 
-element_type = [
-  {value = 5, weight = 2},
-  {type = "string"},
-]
-
 # collection: item
 # collection: item field:i_id
 # collection: item field:name
 # collection: item field:sampleArray
-
-[[collection.fields]]
-f_name = "sampleArray"
-set = [{value = [3.14, "test", "array"], at = [1, 3]}]
-
-[[collection.field.constraint]]
-element_type = [
-  {value = 5, weight = 2},
-  {type = "string"},
-  {type = "array", element_type = [{type = "boolean"}]},
-]
-maxItem = 3
-type = "array"
