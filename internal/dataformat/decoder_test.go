@@ -1,6 +1,7 @@
 package dataformat
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 	"testing"
@@ -74,8 +75,8 @@ func TestDecoderDecode(t *testing.T) {
 		Perfection []int
 	}
 
+	expectedData := data{Age: 25, Cats: []string{"Cauchy", "Plato"}, Pi: 3.14, Perfection: []int{6, 28, 496, 8128}}
 	t.Run("Decode without option", func(t *testing.T) {
-		expectedData := data{Age: 25, Cats: []string{"Cauchy", "Plato"}, Pi: 3.14, Perfection: []int{6, 28, 496, 8128}}
 		cases := []struct {
 			filePath string
 		}{
@@ -99,5 +100,54 @@ func TestDecoderDecode(t *testing.T) {
 		}
 	})
 
-	t.Run("Decode with option", func(t *testing.T) {})
+	t.Run("Decode with one option", func(t *testing.T) {
+		givenFilePath := "./test/decoder/file.json"
+		expectedDataWithOpts := data{Age: 25, Cats: []string{"Plato"}, Pi: 3.14, Perfection: []int{6, 28, 496, 8128}}
+
+		givenOpt := func(data []byte) []byte {
+			return bytes.ReplaceAll(data, []byte("\"Cauchy\","), []byte(""))
+		}
+
+		gotDecoder, gotErr := NewDecoder(givenFilePath)
+		assert.Nil(t, gotErr)
+
+		var dataWithOpt data
+
+		gotErr = gotDecoder.Decode(&dataWithOpt, givenOpt)
+		assert.Nil(t, gotErr)
+		assert.Equal(t, expectedDataWithOpts, dataWithOpt)
+
+		// Without option to see that old contain is not mutate
+		var dataWithoutOpt data
+		gotErr = gotDecoder.Decode(&dataWithoutOpt)
+		assert.Nil(t, gotErr)
+		assert.Equal(t, expectedData, dataWithoutOpt)
+	})
+
+	t.Run("Decode with two option", func(t *testing.T) {
+		givenFilePath := "./test/decoder/file.json"
+		expectedDataWithOpts := data{Cats: []string{"Plato"}, Pi: 3.14, Perfection: []int{6, 28, 496, 8128}}
+
+		givenOpt1 := func(data []byte) []byte {
+			return bytes.ReplaceAll(data, []byte("\"Cauchy\","), []byte(""))
+		}
+		givenOpt2 := func(data []byte) []byte {
+			return bytes.ReplaceAll(data, []byte("\"Age\": 25,"), []byte(""))
+		}
+
+		gotDecoder, gotErr := NewDecoder(givenFilePath)
+		assert.Nil(t, gotErr)
+
+		var dataWithOpt data
+
+		gotErr = gotDecoder.Decode(&dataWithOpt, givenOpt1, givenOpt2)
+		assert.Nil(t, gotErr)
+		assert.Equal(t, expectedDataWithOpts, dataWithOpt)
+
+		// Without option to see that old contain is not mutate
+		var dataWithoutOpt data
+		gotErr = gotDecoder.Decode(&dataWithoutOpt)
+		assert.Nil(t, gotErr)
+		assert.Equal(t, expectedData, dataWithoutOpt)
+	})
 }
