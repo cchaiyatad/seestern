@@ -127,10 +127,59 @@ func TestGetSSConfig(t *testing.T) {
 			})
 		}
 	})
-}
 
-// "./../../test/config/json/01_simple.ss.json"
-// "./../../test/config/json/02_two_coll.ss.json"
+	t.Run("parse a config file from 02_two_coll", func(t *testing.T) {
+		cases := []struct {
+			filePath string
+		}{
+			{"./../../test/config/json/02_two_coll.ss.json"},
+			{"./../../test/config/yaml/02_two_coll.ss.yaml"},
+			{"./../../test/config/toml/02_two_coll.ss.toml"},
+		}
+		expectedData := &SSConfig{
+			Databases: []Database{
+				{
+					D_name: "school",
+					Collection: Collection{
+						C_name: "student",
+						Count:  30,
+						Fields: []Field{
+							{F_name: "s_id", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "objectId"}}}}},
+							{F_name: "name", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "string"}}}}},
+						},
+					},
+				},
+				{
+					D_name: "school",
+					Collection: Collection{
+						C_name: "teacher",
+						Count:  15,
+						Fields: []Field{
+							{F_name: "t_id", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "objectId"}}}}},
+							{F_name: "name", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "string"}}}}},
+							{F_name: "age", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "integer", P_Min: 30}}}}},
+						},
+					},
+				},
+			},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("GetSSConfig from %s (from 01_simple)", tc.filePath), func(t *testing.T) {
+				t.Parallel()
+				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath).GetSSConfig()
+				assert.Nil(t, gotErr)
+				assert.Equal(t, expectedData.String(), gotSSConfig.String())
+			})
+		}
+	})
+}
 
 // "./../../test/config/project/01_configSpec_simple.ss.toml"
 // "./../../test/config/project/02_configSpec_array.ss.toml"
@@ -139,9 +188,4 @@ func TestGetSSConfig(t *testing.T) {
 // "./../../test/config/project/05_configSpec_embedded.ss.toml"
 // "./../../test/config/project/06_configSpec_refs.ss.toml"
 
-// "./../../test/config/toml/01_simple.ss.toml"
-// "./../../test/config/toml/02_two_coll.ss.toml"
 // "./../../test/config/toml/03_simple_alias.ss.toml"
-
-// "./../../test/config/yaml/01_simple.ss.yaml"
-// "./../../test/config/yaml/02_two_coll.ss.yaml"

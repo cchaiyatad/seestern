@@ -21,28 +21,6 @@
                 "type": "string"
               }
             ]
-          },
-          {
-            "f_name": "sex",
-            "constraints": [
-              {
-                "value": "M",
-                "weight": 2
-              }
-            ]
-          },
-          {
-            "f_name": "year",
-            "constraints": [
-              {
-                "enum": [
-                  "freshman",
-                  "sophomore",
-                  "junior",
-                  "senior"
-                ]
-              }
-            ]
           }
         ]
       }
@@ -74,7 +52,7 @@
             "constraints": [
               {
                 "min": 30,
-                "type": "int"
+                "type": "integer"
               }
             ]
           }

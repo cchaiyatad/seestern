@@ -15,14 +15,6 @@ f_name = "name"
 [[databases.collection.fields.constraints]]
 type = "string"
 
-[[databases.collection.fields]]
-constraints = [{value = "M", weight = 2}]
-f_name = "sex"
-
-[[databases.collection.fields]]
-constraints = [{enum = ["freshman", "sophomore", "junior", "senior"]}]
-f_name = "year"
-
 [[databases]]
 d_name = "school"
 [databases.collection]
@@ -38,6 +30,6 @@ constraints = [{type = "string"}]
 f_name = "name"
 
 [[databases.collection.fields]]
-constraints = [{type = "int", min = 30}]
+constraints = [{type = "integer", min = 30}]
 f_name = "age"
 

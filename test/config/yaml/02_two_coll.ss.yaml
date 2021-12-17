@@ -10,17 +10,6 @@ databases:
         - f_name: name
           constraints:
             - type: string
-        - constraints:
-            - value: M
-              weight: 2
-          f_name: sex
-        - constraints:
-            - enum:
-                - freshman
-                - sophomore
-                - junior
-                - senior
-          f_name: year
   - d_name: school
     collection:
       c_name: teacher
@@ -33,6 +22,6 @@ databases:
             - type: string
           f_name: name
         - constraints:
-            - type: int
+            - type: integer
               min: 30
           f_name: age
