@@ -85,6 +85,48 @@ func TestGetSSConfig(t *testing.T) {
 			})
 		}
 	})
+
+	t.Run("parse a config file from 01_simple", func(t *testing.T) {
+		cases := []struct {
+			filePath string
+		}{
+			{"./../../test/config/json/01_simple.ss.json"},
+			{"./../../test/config/yaml/01_simple.ss.yaml"},
+			{"./../../test/config/toml/01_simple.ss.toml"},
+		}
+		expectedData := &SSConfig{
+			Databases: []Database{
+				{
+					D_name: "school",
+					Collection: Collection{
+						C_name: "student",
+						Count:  30,
+						Fields: []Field{
+							{F_name: "s_id", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "objectId"}}}}},
+							{F_name: "name", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "string", P_Prefix: "a", P_Suffix: "m", P_Length: 5}}}}},
+							{F_name: "sex", Omit_weight: 5, Constraints: []Constraint{
+								{Weight: 2, Item: Item{Value: Value{Value: "M"}}},
+								{Weight: 3, Item: Item{Value: Value{Value: "F"}}}}},
+							{F_name: "year",
+								Constraints: []Constraint{
+									{Item: Item{Enum: Enum{Enum: []interface{}{"freshman", "sophomore", "junior", "senior"}}}}},
+								Sets: []Set{
+									{At: []int{1, 2, 3}, Item: Item{Value: Value{Value: "super senior"}}},
+									{At: []int{5}, Item: Item{Type: Type{Type: "integer", P_Min: 5, P_Max: 8}}}}}}}}},
+		}
+
+		for _, tc := range cases {
+			tc := tc
+			t.Run(fmt.Sprintf("GetSSConfig from %s (from 01_simple)", tc.filePath), func(t *testing.T) {
+				t.Parallel()
+				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath).GetSSConfig()
+				assert.Nil(t, gotErr)
+				assert.Equal(t, expectedData.String(), gotSSConfig.String())
+			})
+		}
+	})
 }
 
 // "./../../test/config/json/01_simple.ss.json"

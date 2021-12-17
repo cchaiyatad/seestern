@@ -26,4 +26,4 @@ omit_weight = 5
 [[databases.collection.fields]]
 constraints = [{enum = ["freshman", "sophomore", "junior", "senior"]}]
 f_name = "year"
-sets = [{value = "super senior", at = [1, 2, 3]}, {type = "int", min = 5, max = 8, at = [5]}]
+sets = [{value = "super senior", at = [1, 2, 3]}, {type = "integer", min = 5, max = 8, at = [5]}]

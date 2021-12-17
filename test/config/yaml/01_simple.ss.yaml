@@ -33,7 +33,7 @@ databases:
                 - 1
                 - 2
                 - 3
-            - type: int
+            - type: integer
               min: 5
               max: 8
               at:
