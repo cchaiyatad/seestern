@@ -181,11 +181,40 @@ func TestGetSSConfig(t *testing.T) {
 	})
 }
 
+func TestGetSSConfigWithAlias(t *testing.T) {
+
+	filePath := "./../../test/config/toml/03_simple_alias.ss.toml"
+
+	expectedData := &SSConfig{
+		Databases: []Database{
+			{
+				D_name: "school",
+				Collection: Collection{
+					C_name: "student",
+					Count:  30,
+					Fields: []Field{
+						{F_name: "s_id", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "objectId"}}}}},
+						{F_name: "name", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "class", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "string", P_Length: 10}}}}},
+						{F_name: "elective_class", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "string", P_Length: 10}}}}},
+					},
+				},
+			},
+		},
+	}
+
+	gotSSConfig, gotErr := NewConfigFileReader(filePath).GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}
+
 // "./../../test/config/project/01_configSpec_simple.ss.toml"
 // "./../../test/config/project/02_configSpec_array.ss.toml"
 // "./../../test/config/project/03_configSpec_object.ss.toml"
 // "./../../test/config/project/04_configSpec_alias.ss.toml"
 // "./../../test/config/project/05_configSpec_embedded.ss.toml"
 // "./../../test/config/project/06_configSpec_refs.ss.toml"
-
-// "./../../test/config/toml/03_simple_alias.ss.toml"
