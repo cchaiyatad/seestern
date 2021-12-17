@@ -21,7 +21,9 @@ type unmarshaler interface {
 	unmarshal([]byte, interface{}) error
 }
 
-func (e *Decoder) Decode(v interface{}, opts ...func([]byte) []byte) error {
+type DecodeOption func([]byte) []byte
+
+func (e *Decoder) Decode(v interface{}, opts ...DecodeOption) error {
 	newData := e.data
 	if len(opts) > 0 {
 		newData = make([]byte, len(e.data))
