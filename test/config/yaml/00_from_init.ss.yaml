@@ -1,48 +1,6 @@
 databases:
     - d_name: sample_training
       collection:
-        c_name: posts
-        fields:
-            - f_name: _id
-              constraints:
-                - type: objectID
-            - f_name: author
-              constraints:
-                - type: string
-            - f_name: body
-              constraints:
-                - type: string
-            - f_name: comments
-              constraints:
-                - type: array
-                  element_type:
-                    - type: object
-                      element_type:
-                        - f_name: author
-                          constraints:
-                            - type: string
-                        - f_name: body
-                          constraints:
-                            - type: string
-                        - f_name: email
-                          constraints:
-                            - type: string
-            - f_name: date
-              constraints:
-                - type: integer
-            - f_name: permalink
-              constraints:
-                - type: string
-            - f_name: tags
-              constraints:
-                - type: array
-                  element_type:
-                    - type: string
-            - f_name: title
-              constraints:
-                - type: string
-    - d_name: sample_training
-      collection:
         c_name: trips
         fields:
             - f_name: _id
@@ -101,5 +59,47 @@ databases:
               constraints:
                 - type: integer
             - f_name: usertype
+              constraints:
+                - type: string
+    - d_name: sample_training
+      collection:
+        c_name: posts
+        fields:
+            - f_name: _id
+              constraints:
+                - type: objectID
+            - f_name: author
+              constraints:
+                - type: string
+            - f_name: body
+              constraints:
+                - type: string
+            - f_name: comments
+              constraints:
+                - type: array
+                  element_type:
+                    - type: object
+                      element_type:
+                        - f_name: author
+                          constraints:
+                            - type: string
+                        - f_name: body
+                          constraints:
+                            - type: string
+                        - f_name: email
+                          constraints:
+                            - type: string
+            - f_name: date
+              constraints:
+                - type: integer
+            - f_name: permalink
+              constraints:
+                - type: string
+            - f_name: tags
+              constraints:
+                - type: array
+                  element_type:
+                    - type: string
+            - f_name: title
               constraints:
                 - type: string
