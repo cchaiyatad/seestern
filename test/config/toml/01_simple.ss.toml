@@ -1,0 +1,29 @@
+[[databases]]
+d_name = "school"
+
+[databases.collection]
+c_name = "student"
+count = 30
+
+[[databases.collection.fields]]
+constraints = [{type = "objectId"}]
+f_name = "s_id"
+
+[[databases.collection.fields]]
+f_name = "name"
+
+[[databases.collection.fields.constraints]]
+length = 5
+prefix = "a"
+suffix = "m"
+type = "string"
+
+[[databases.collection.fields]]
+constraints = [{value = "M", weight = 2}, {value = "F", weight = 3}]
+f_name = "sex"
+omit_weight = 5
+
+[[databases.collection.fields]]
+constraints = [{enum = ["freshman", "sophomore", "junior", "senior"]}]
+f_name = "year"
+sets = [{value = "super senior", at = [1, 2, 3]}, {type = "int", min = 5, max = 8, at = [5]}]

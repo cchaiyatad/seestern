@@ -1,0 +1,38 @@
+databases:
+  - d_name: school
+    collection:
+      c_name: student
+      count: 30
+      fields:
+        - constraints:
+            - type: objectId
+          f_name: s_id
+        - f_name: name
+          constraints:
+            - type: string
+        - constraints:
+            - value: M
+              weight: 2
+          f_name: sex
+        - constraints:
+            - enum:
+                - freshman
+                - sophomore
+                - junior
+                - senior
+          f_name: year
+  - d_name: school
+    collection:
+      c_name: teacher
+      count: 15
+      fields:
+        - constraints:
+            - type: objectId
+          f_name: t_id
+        - constraints:
+            - type: string
+          f_name: name
+        - constraints:
+            - type: int
+              min: 30
+          f_name: age

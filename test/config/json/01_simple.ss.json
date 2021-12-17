@@ -1,0 +1,77 @@
+{
+  "databases": [
+    {
+      "d_name": "school",
+      "collection": {
+        "c_name": "student",
+        "count": 30,
+        "fields": [
+          {
+            "f_name": "s_id",
+            "constraints": [
+              {
+                "type": "objectId"
+              }
+            ]
+          },
+          {
+            "f_name": "name",
+            "constraints": [
+              {
+                "length": 5,
+                "prefix": "a",
+                "suffix": "m",
+                "type": "string"
+              }
+            ]
+          },
+          {
+            "f_name": "sex",
+            "omit_weight": 5,
+            "constraints": [
+              {
+                "value": "M",
+                "weight": 2
+              },
+              {
+                "value": "F",
+                "weight": 3
+              }
+            ]
+          },
+          {
+            "f_name": "year",
+            "constraints": [
+              {
+                "enum": [
+                  "freshman",
+                  "sophomore",
+                  "junior",
+                  "senior"
+                ]
+              }
+            ],
+            "sets": [
+              {
+                "at": [
+                  1,
+                  2,
+                  3
+                ],
+                "value": "super senior"
+              },
+              {
+                "at": [
+                  5
+                ],
+                "max": 8,
+                "min": 5,
+                "type": "int"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+databases:
+  - d_name: school
+    collection:
+      c_name: student
+      count: 30
+      fields:
+        - constraints:
+            - type: objectId
+          f_name: s_id
+        - f_name: name
+          constraints:
+            - length: 5
+              prefix: a
+              suffix: m
+              type: string
+        - constraints:
+            - value: M
+              weight: 2
+            - value: F
+              weight: 3
+          f_name: sex
+          omit_weight: 5
+        - constraints:
+            - enum:
+                - freshman
+                - sophomore
+                - junior
+                - senior
+          f_name: year
+          sets:
+            - value: super senior
+              at:
+                - 1
+                - 2
+                - 3
+            - type: int
+              min: 5
+              max: 8
+              at:
+                - 5
