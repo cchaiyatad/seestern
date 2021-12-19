@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/cchaiyatad/seestern/internal/log"
@@ -15,10 +16,32 @@ import (
 
 type mongoDBWorker struct {
 	cntStr string
+
+	client     *mongo.Client
+	initClient sync.Once
 }
 
 func createMongoDBWorker(connectionString string) *mongoDBWorker {
 	return &mongoDBWorker{cntStr: connectionString}
+}
+
+func (w *mongoDBWorker) connect() (*mongo.Client, error) {
+	var err error
+	w.initClient.Do(func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		w.client, err = mongo.Connect(ctx, options.Client().ApplyURI(w.cntStr))
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if w.client == nil {
+		return nil, ErrClientIsNil
+	}
+
+	return w.client, nil
 }
 
 func (w *mongoDBWorker) ping() error {
@@ -47,12 +70,7 @@ func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) 
 }
 
 func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.ConfigFileGenerator) error {
-	client, err := w.connect()
-	if err != nil {
-		return err
-	}
-
-	infos, err := w.getDatabaseCollectionInfoWithClient(client)
+	infos, err := w.getDatabaseCollectionInfo()
 	if err != nil {
 		return err
 	}
@@ -65,7 +83,7 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.Con
 				log.Logf(log.Warning, "%s\n", &ErrSkipCreateConfigfile{db, coll, "not exist"})
 				continue
 			}
-			cursor, err := w.getCursor(client, db, coll)
+			cursor, err := w.getCursor(db, coll)
 			if err != nil {
 				log.Logf(log.Warning, "%s\n", &ErrSkipCreateConfigfile{db, coll, err.Error()})
 				continue
@@ -89,22 +107,12 @@ func (w *mongoDBWorker) drop(dbName, collName string) {
 	panic("Not implemented")
 }
 
-func (w *mongoDBWorker) connect() (*mongo.Client, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	return mongo.Connect(ctx, options.Client().ApplyURI(w.cntStr))
-}
-
 func (w *mongoDBWorker) getDatabaseCollectionInfo() (databaseCollectionInfo, error) {
 	client, err := w.connect()
 	if err != nil {
 		return nil, err
 	}
 
-	return w.getDatabaseCollectionInfoWithClient(client)
-}
-
-func (*mongoDBWorker) getDatabaseCollectionInfoWithClient(client *mongo.Client) (databaseCollectionInfo, error) {
 	info := make(databaseCollectionInfo)
 
 	dbs, err := client.ListDatabaseNames(context.TODO(), bson.D{})
@@ -127,9 +135,10 @@ func (*mongoDBWorker) getDatabaseCollectionInfoWithClient(client *mongo.Client) 
 	return info, nil
 }
 
-func (*mongoDBWorker) getCursor(client *mongo.Client, dbName string, collName string) (*mongo.Cursor, error) {
-	if client == nil {
-		return nil, ErrClientIsNil
+func (w *mongoDBWorker) getCursor(dbName string, collName string) (*mongo.Cursor, error) {
+	client, err := w.connect()
+	if err != nil {
+		return nil, err
 	}
 	coll := client.Database(dbName).Collection(collName)
 	return coll.Find(context.TODO(), bson.M{})
