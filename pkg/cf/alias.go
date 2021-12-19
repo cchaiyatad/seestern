@@ -8,9 +8,13 @@ import (
 	"github.com/cchaiyatad/seestern/internal/file"
 )
 
+type Aliases struct {
+	Aliases []Alias `toml:"alias"`
+}
+
 type Alias struct {
-	Key   string      `json:"key" toml:"key" yaml:"key"`
-	Value interface{} `json:"value" toml:"value" yaml:"value"`
+	Key   string      `toml:"key"`
+	Value interface{} `toml:"value"`
 }
 
 func (a Alias) String() string {
@@ -20,8 +24,8 @@ func (a Alias) String() string {
 var ErrAliasNotSupport = errors.New("error: alias only support in toml")
 var ErrDoesnotHaveAlias = errors.New("error: this file does not have alias")
 
-func getAlias(filepath string) ([]Alias, error) {
-	var aliases []Alias
+func getAlias(filepath string) (Aliases, error) {
+	var aliases Aliases
 
 	fileType, err := file.GetFileType(filepath)
 	if err != nil {
@@ -50,7 +54,7 @@ func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
 		return nil, err
 	}
 
-	if len(aliases) == 0 {
+	if len(aliases.Aliases) == 0 {
 		return nil, ErrDoesnotHaveAlias
 	}
 
