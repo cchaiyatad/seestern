@@ -7,6 +7,44 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestConnect(t *testing.T) {
+	t.Parallel()
+	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
+
+	t.Run("connect with valid connection string", func(t *testing.T) {
+		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+
+		gotClinet, gotErr := givenController.connect()
+
+		assert.Nil(t, gotErr)
+		assert.NotNil(t, gotClinet)
+
+		gotSecondClient, gotErr := givenController.connect()
+		assert.Nil(t, gotErr)
+		assert.Equal(t, gotClinet, gotSecondClient)
+	})
+
+	t.Run("connect with invalid connection string (random)", func(t *testing.T) {
+		givenController := mongoDBWorker{cntStr: "random"}
+
+		expectErr := `error parsing uri: scheme must be "mongodb" or "mongodb+srv"`
+		gotClinet, gotErr := givenController.connect()
+
+		assert.Equal(t, expectErr, gotErr.Error())
+		assert.Nil(t, gotClinet)
+	})
+
+	t.Run("connect with invalid connection string (in format)", func(t *testing.T) {
+		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr + "123"}
+
+		expectPrefixRegexErr := `error parsing uri: lookup _mongodb._tcp.ps-command-cluster.h0n2k.mongodb.net123`
+		gotClinet, gotErr := givenController.connect()
+
+		assert.Regexp(t, regexp.MustCompile(expectPrefixRegexErr), gotErr.Error())
+		assert.Nil(t, gotClinet)
+	})
+
+}
 func TestPing(t *testing.T) {
 	t.Parallel()
 	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
@@ -28,7 +66,7 @@ func TestPing(t *testing.T) {
 		assert.Equal(t, expectErr, gotErr.Error())
 	})
 
-	t.Run("ping with invalid connection string (informat)", func(t *testing.T) {
+	t.Run("ping with invalid connection string (in format)", func(t *testing.T) {
 		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr + "123"}
 
 		expectPrefixRegexErr := `error parsing uri: lookup _mongodb._tcp.ps-command-cluster.h0n2k.mongodb.net123`
