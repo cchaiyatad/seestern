@@ -17,8 +17,8 @@ type dbWorker interface {
 	ping() error
 	ps(string) (databaseCollectionInfo, error)
 	initConfigFile(*InitParam, *cf.ConfigFileGenerator) error
-	insert()
-	drop(string, string)
+	insert(string, string, []interface{}) error
+	drop(string, string) error
 }
 
 type databaseCollectionInfo map[string]map[string]struct{}
