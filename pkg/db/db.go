@@ -94,6 +94,7 @@ func Init(param *InitParam) (string, error) {
 
 	return filepath.Join(param.Outpath, fileName), nil
 }
+
 func Gen(param *GenParam) (string, error) {
 	if param.Outpath != "" {
 		if err := file.PrepareDir(param.Outpath); err != nil {
@@ -111,7 +112,12 @@ func Gen(param *GenParam) (string, error) {
 		}
 	}
 
+	ssConfig, err := cf.NewConfigFileReader(param.File).GetSSConfig()
+	if err != nil {
+		return "", err
+	}
 	fmt.Println(controller)
+	fmt.Println(ssConfig)
 
 	// configGen := cf.NewConfigFileGenerator(param.FileType)
 	// if err := controller.worker.initConfigFile(param, configGen); err != nil {
