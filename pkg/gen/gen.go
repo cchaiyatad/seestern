@@ -36,7 +36,12 @@ func GenString(length int, prefix, suffix string) string {
 }
 
 func randomString(length int) string {
-	b := make([]rune, length)
+	if length <= 0 {
+		length = 1
+	}
+	randLength := rand.Intn(length)
+
+	b := make([]rune, randLength)
 	for i := range b {
 		b[i] = letters[rand.Intn(len(letters))]
 	}
