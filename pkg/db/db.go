@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cchaiyatad/seestern/internal/file"
+	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/cf"
 )
 
@@ -116,8 +117,29 @@ func Gen(param *GenParam) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(controller)
-	fmt.Println(ssConfig)
+
+	ssConfig.Gen()
+	// fmt.Println(controller)
+
+	if param.IsDrop {
+		info := ssConfig.GetDatabaseCollectionInfo()
+
+		for db, colls := range info {
+			for coll := range colls {
+
+				if false { // prevent accidently drop collection
+					controller.worker.drop(db, coll)
+				}
+
+				log.Logf(log.Info, "drop database %s collection %s\n", db, coll)
+			}
+		}
+	}
+
+	if param.IsInsert {
+		// iterate thought ssconfig
+		controller.worker.insert("", "", []interface{}{})
+	}
 
 	// configGen := cf.NewConfigFileGenerator(param.FileType)
 	// if err := controller.worker.initConfigFile(param, configGen); err != nil {

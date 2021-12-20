@@ -8,12 +8,6 @@ import (
 
 const file_sub_type = ".ss."
 
-// gen function
-// take path to config file
-// read file
-
-// validate config file
-
 func GetFilename(fileType string) string {
 	return fmt.Sprintf("%d%s%s", time.Now().Unix(), file_sub_type, fileTypeValidator(fileType))
 }
