@@ -119,7 +119,6 @@ func Gen(param *GenParam) (string, error) {
 	}
 
 	ssConfig.Gen()
-	// fmt.Println(controller)
 
 	if param.IsDrop {
 		info := ssConfig.GetDatabaseCollectionInfo()

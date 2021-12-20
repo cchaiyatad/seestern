@@ -69,7 +69,7 @@ func (i Item) String() string {
 }
 
 type Value struct {
-	Value string `json:"value,omitempty" toml:"value,omitzero" yaml:"value,omitempty"`
+	Value interface{} `json:"value,omitempty" toml:"value,omitzero" yaml:"value,omitempty"`
 }
 
 func (v Value) String() string {
