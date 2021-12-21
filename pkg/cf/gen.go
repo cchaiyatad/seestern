@@ -28,12 +28,21 @@ func setSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func (ssconfig *SSConfig) Gen() {
+func (ssconfig *SSConfig) Gen() databaseCollectionInfo {
+	info := ssconfig.GetDatabaseCollectionInfo()
+	// dbcollInfo := ssconfig.GetdbcollInfo()
+
 	for _, db := range ssconfig.Databases {
 		// find order
-		documents, _ := ssconfig.genDB(&db)
-		fmt.Println(documents)
+
+		documents, err := ssconfig.genDB(&db)
+		if err != nil {
+			info[db.D_name][db.Collection.C_name] = err
+		} else {
+			info[db.D_name][db.Collection.C_name] = documents
+		}
 	}
+	return info
 }
 
 func (*SSConfig) genDB(db *Database) ([]document, error) {

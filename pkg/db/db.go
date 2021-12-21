@@ -118,15 +118,13 @@ func Gen(param *GenParam) (string, error) {
 		return "", err
 	}
 
-	ssConfig.Gen()
+	info := ssConfig.Gen()
 
 	if param.IsDrop {
-		info := ssConfig.GetDatabaseCollectionInfo()
-
 		for db, colls := range info {
 			for coll := range colls {
 
-				if false { // prevent accidently drop collection
+				if false { // TODO: Tobe remove; prevent accidently drop collection
 					controller.worker.drop(db, coll)
 				}
 
