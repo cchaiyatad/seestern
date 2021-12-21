@@ -8,6 +8,8 @@ import (
 	"github.com/cchaiyatad/seestern/pkg/gen"
 )
 
+type document map[string]interface{}
+
 type ErrCollectionCountIsInvalid struct {
 	dbName   string
 	collName string
@@ -29,37 +31,43 @@ func setSeed() {
 func (ssconfig *SSConfig) Gen() {
 	for _, db := range ssconfig.Databases {
 		// find order
-		ssconfig.genDB(&db)
+		documents, _ := ssconfig.genDB(&db)
+		fmt.Println(documents)
 	}
 }
 
-func (*SSConfig) genDB(db *Database) error {
+func (*SSConfig) genDB(db *Database) ([]document, error) {
 	dbName := db.D_name
 	collName := db.Collection.C_name
 
 	count := db.Collection.Count
 	if count <= 0 {
-		return &ErrCollectionCountIsInvalid{dbName: dbName, collName: collName, count: count}
+		return nil, &ErrCollectionCountIsInvalid{dbName: dbName, collName: collName, count: count}
 	}
 
+	documents := make([]document, 0, count)
 	for i := 0; i < count; i++ {
-		// create document
-		document := map[string]interface{}{}
-
-		for _, field := range db.Collection.Fields {
-			// has set?
-
-			// should omit?
-
-			// random from constraint
-			constraint := getRandomConstraint(field.Constraints)
-			value := getValueFromConstraint(constraint)
-			document[field.F_name] = value
-		}
-		fmt.Println(document)
+		doc := genDocument(i, db.Collection.Fields)
+		documents = append(documents, doc)
 	}
 
-	return nil
+	return documents, nil
+}
+
+func genDocument(idx int, fields []Field) document {
+	document := make(document)
+
+	for _, field := range fields {
+		// has set?
+
+		// should omit?
+
+		// random from constraint
+		constraint := getRandomConstraint(field.Constraints)
+		value := getValueFromConstraint(constraint)
+		document[field.F_name] = value
+	}
+	return document
 }
 
 func getRandomConstraint(constraints []Constraint) Constraint {
