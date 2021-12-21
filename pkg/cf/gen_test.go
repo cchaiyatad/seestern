@@ -7,6 +7,21 @@ import (
 )
 
 func TestGen(t *testing.T) {
+	t.Run("SSConfig that doesn't has databases", func(t *testing.T) {
+		givenDB := "school"
+		givenColl := "student"
+		givenConfig := &SSConfig{Databases: []Database{}}
+		gotResult := givenConfig.Gen()
+
+		expectedResult := make(result)
+		assert.Equal(t, expectedResult, gotResult)
+
+		expected := "database or collection name doesn't exist in result"
+		gotDocuments, gotErr := gotResult.GetDocuments(givenDB, givenColl)
+		assert.Nil(t, gotDocuments)
+		assert.Equal(t, expected, gotErr.Error())
+	})
+
 	t.Run("SSConfig that doesn't has count", func(t *testing.T) {
 		givenDB := "school"
 		givenColl := "student"
@@ -23,10 +38,10 @@ func TestGen(t *testing.T) {
 								{Item: Item{Type: Type{Type: "integer"}}}}},
 						}}}},
 		}
-		gotInfo := givenConfig.Gen()
+		gotResult := givenConfig.Gen()
 
 		expected := "count have to be more than zero got: 0 (db: school, coll: student)"
-		gotDocuments, gotErr := gotInfo.GetDocuments(givenDB, givenColl)
+		gotDocuments, gotErr := gotResult.GetDocuments(givenDB, givenColl)
 		assert.Nil(t, gotDocuments)
 
 		assert.Equal(t, expected, gotErr.Error())

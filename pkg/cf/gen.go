@@ -31,9 +31,10 @@ func setSeed() {
 func (ssconfig *SSConfig) Gen() result {
 	info := ssconfig.NewResult()
 	// dbcollInfo := ssconfig.GetdbcollInfo()
+	// TODO: find order
 
+	// TODO: iterate though order
 	for _, db := range ssconfig.Databases {
-		// find order
 
 		documents, err := ssconfig.genDB(&db)
 		if err != nil {
@@ -69,7 +70,9 @@ func genDocument(idx int, fields []Field) document {
 	for _, field := range fields {
 		// has set?
 
-		// should omit?
+		if field.Omit_weight != 0 && shouldOmit(field.Omit_weight) {
+			continue
+		}
 
 		// random from constraint
 		constraint := getRandomConstraint(field.Constraints)
@@ -80,6 +83,7 @@ func genDocument(idx int, fields []Field) document {
 }
 
 func getRandomConstraint(constraints []Constraint) Constraint {
+	// TODO: Use weight?
 	return constraints[rand.Intn(len(constraints))]
 }
 
@@ -91,6 +95,10 @@ func getValueFromConstraint(constraint Constraint) interface{} {
 		return constraint.Enum.Enum[rand.Intn(len(constraint.Enum.Enum))]
 	}
 	return genType(constraint.Type, true)
+}
+
+func shouldOmit(omitWeight float64) bool {
+	return rand.Float64() < omitWeight
 }
 
 func genType(t Type, isConstraint bool) interface{} {
