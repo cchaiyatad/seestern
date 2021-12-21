@@ -181,7 +181,7 @@ func TestGetSSConfig(t *testing.T) {
 	})
 }
 
-// TODO: Fix Alias
+// TODO 5: Fix Alias
 // func TestGetSSConfigWithAlias(t *testing.T) {
 
 // 	filePath := "./../../test/config/toml/03_simple_alias.ss.toml"

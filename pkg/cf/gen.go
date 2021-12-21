@@ -32,9 +32,9 @@ func setSeed() {
 func (ssconfig *SSConfig) Gen() result {
 	info := ssconfig.NewResult()
 	// dbcollInfo := ssconfig.GetdbcollInfo()
-	// TODO: find order
+	// TODO 6: find order
 
-	// TODO: iterate though order
+	// TODO 6: iterate though order
 	for _, db := range ssconfig.Databases {
 
 		documents, err := ssconfig.genDB(&db)
@@ -70,6 +70,7 @@ func (ssconfig *SSConfig) genDocument(idx int, fields []Field) document {
 
 	for _, field := range fields {
 		// has set?
+		// TODO 2: Set?
 
 		if field.Omit_weight != 0 && shouldOmit(field.Omit_weight) {
 			continue
@@ -84,7 +85,7 @@ func (ssconfig *SSConfig) genDocument(idx int, fields []Field) document {
 }
 
 func getRandomConstraint(constraints []Constraint) Constraint {
-	// TODO: Use weight?
+	// TODO 1: Use weight?
 	return constraints[rand.Intn(len(constraints))]
 }
 
@@ -166,9 +167,11 @@ func genObjectID(t Type, vendor string) interface{} {
 }
 
 func genArray(t Type) interface{} {
+	// TODO 3: Array?
 	return false
 }
 
 func genObject(t Type) interface{} {
+	// TODO 4: Object?
 	return false
 }
