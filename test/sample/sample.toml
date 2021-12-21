@@ -9,9 +9,9 @@ c_name = "student"
 count = 30
 
 # collection: student field:s_id
-# [[databases.collection.fields]]
-# constraints = [{type = "objectID"}]
-# f_name = "_id"
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "s_id"
 
 # collection: student field:name
 [[databases.collection.fields]]

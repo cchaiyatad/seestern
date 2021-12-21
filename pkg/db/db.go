@@ -113,7 +113,7 @@ func Gen(param *GenParam) error {
 		}
 	}
 
-	ssConfig, err := cf.NewConfigFileReader(param.File).GetSSConfig()
+	ssConfig, err := cf.NewConfigFileReader(param.File, param.Vendor).GetSSConfig()
 	if err != nil {
 		return err
 	}

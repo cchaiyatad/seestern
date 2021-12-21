@@ -7,10 +7,11 @@ import (
 
 type ConfigFileReader struct {
 	filepath string
+	vendor   string
 }
 
-func NewConfigFileReader(filepath string) *ConfigFileReader {
-	return &ConfigFileReader{filepath: filepath}
+func NewConfigFileReader(filepath string, vendor string) *ConfigFileReader {
+	return &ConfigFileReader{filepath: filepath, vendor: vendor}
 }
 
 func (c *ConfigFileReader) GetSSConfig() (*SSConfig, error) {
@@ -24,6 +25,7 @@ func (c *ConfigFileReader) GetSSConfig() (*SSConfig, error) {
 		return nil, err
 	}
 
+	ssConfig.vendor = c.vendor
 	return &ssConfig, nil
 }
 

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cchaiyatad/seestern/pkg/gen"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type document map[string]interface{}
@@ -46,7 +47,7 @@ func (ssconfig *SSConfig) Gen() result {
 	return info
 }
 
-func (*SSConfig) genDB(db *Database) (documents, error) {
+func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {
 	dbName := db.D_name
 	collName := db.Collection.C_name
 
@@ -57,14 +58,14 @@ func (*SSConfig) genDB(db *Database) (documents, error) {
 
 	documents := make(documents, 0, count)
 	for i := 0; i < count; i++ {
-		doc := genDocument(i, db.Collection.Fields)
+		doc := ssconfig.genDocument(i, db.Collection.Fields)
 		documents = append(documents, doc)
 	}
 
 	return documents, nil
 }
 
-func genDocument(idx int, fields []Field) document {
+func (ssconfig *SSConfig) genDocument(idx int, fields []Field) document {
 	document := make(document)
 
 	for _, field := range fields {
@@ -76,7 +77,7 @@ func genDocument(idx int, fields []Field) document {
 
 		// random from constraint
 		constraint := getRandomConstraint(field.Constraints)
-		value := getValueFromConstraint(constraint)
+		value := getValueFromConstraint(constraint, ssconfig.vendor)
 		document[field.F_name] = value
 	}
 	return document
@@ -87,21 +88,21 @@ func getRandomConstraint(constraints []Constraint) Constraint {
 	return constraints[rand.Intn(len(constraints))]
 }
 
-func getValueFromConstraint(constraint Constraint) interface{} {
+func getValueFromConstraint(constraint Constraint, vendor string) interface{} {
 	if constraint.Value.Value != nil {
 		return constraint.Value.Value
 	}
 	if constraint.Enum.Enum != nil && len(constraint.Enum.Enum) > 0 {
 		return constraint.Enum.Enum[rand.Intn(len(constraint.Enum.Enum))]
 	}
-	return genType(constraint.Type, true)
+	return genType(constraint.Type, vendor, true)
 }
 
 func shouldOmit(omitWeight float64) bool {
 	return rand.Float64() < omitWeight
 }
 
-func genType(t Type, isConstraint bool) interface{} {
+func genType(t Type, vendor string, isConstraint bool) interface{} {
 	switch t.Type {
 	case Null:
 		return genNull()
@@ -114,7 +115,7 @@ func genType(t Type, isConstraint bool) interface{} {
 	case Boolean:
 		return genBoolean(t)
 	case ObjectID:
-		return genString(t)
+		return genObjectID(t, vendor)
 	case Array:
 		return genArray(t)
 	case Object:
@@ -124,7 +125,7 @@ func genType(t Type, isConstraint bool) interface{} {
 }
 
 func genNull() interface{} {
-	return nil // is it work?
+	return nil
 }
 
 func genString(t Type) interface{} {
@@ -155,6 +156,13 @@ func genDouble(t Type) interface{} {
 
 func genBoolean(t Type) interface{} {
 	return gen.GenBoolean()
+}
+
+func genObjectID(t Type, vendor string) interface{} {
+	if vendor == "mongo" {
+		return primitive.NewObjectID()
+	}
+	return gen.GenString(20, "", "")
 }
 
 func genArray(t Type) interface{} {

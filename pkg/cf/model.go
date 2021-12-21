@@ -4,6 +4,8 @@ import "fmt"
 
 type SSConfig struct {
 	Databases []Database `json:"databases" toml:"databases" yaml:"databases"`
+
+	vendor string
 }
 
 func (s SSConfig) String() string {

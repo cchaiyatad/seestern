@@ -23,7 +23,7 @@ func TestGetSSConfig(t *testing.T) {
 			tc := tc
 			t.Run(fmt.Sprintf("GetSSConfig from %s expected error", tc.filePath), func(t *testing.T) {
 				t.Parallel()
-				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath).GetSSConfig()
+				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath, "").GetSSConfig()
 				assert.Nil(t, gotSSConfig)
 
 				assert.Equal(t, tc.errorMsg, gotErr.Error())
@@ -79,7 +79,7 @@ func TestGetSSConfig(t *testing.T) {
 			tc := tc
 			t.Run(fmt.Sprintf("GetSSConfig from %s (from init command)", tc.filePath), func(t *testing.T) {
 				t.Parallel()
-				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath).GetSSConfig()
+				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath, "").GetSSConfig()
 				assert.Nil(t, gotErr)
 				assert.Equal(t, expectedData.String(), gotSSConfig.String())
 			})
@@ -121,7 +121,7 @@ func TestGetSSConfig(t *testing.T) {
 			tc := tc
 			t.Run(fmt.Sprintf("GetSSConfig from %s (from 01_simple)", tc.filePath), func(t *testing.T) {
 				t.Parallel()
-				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath).GetSSConfig()
+				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath, "").GetSSConfig()
 				assert.Nil(t, gotErr)
 				assert.Equal(t, expectedData.String(), gotSSConfig.String())
 			})
@@ -173,7 +173,7 @@ func TestGetSSConfig(t *testing.T) {
 			tc := tc
 			t.Run(fmt.Sprintf("GetSSConfig from %s (from 01_simple)", tc.filePath), func(t *testing.T) {
 				t.Parallel()
-				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath).GetSSConfig()
+				gotSSConfig, gotErr := NewConfigFileReader(tc.filePath, "").GetSSConfig()
 				assert.Nil(t, gotErr)
 				assert.Equal(t, expectedData.String(), gotSSConfig.String())
 			})
