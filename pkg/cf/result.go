@@ -1,12 +1,14 @@
 package cf
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 )
 
 // db[coll]
 type result map[string]map[string]interface{}
+type documents []document
 
 func (ssconfig *SSConfig) NewResult() result {
 	info := make(result)
@@ -26,7 +28,7 @@ func (ssconfig *SSConfig) NewResult() result {
 var ErrDBCollNotExist = errors.New("database or collection name doesn't exist in result")
 var ErrUnknownError = errors.New("got an unknown error")
 
-func (info result) GetDocuments(dbName, collName string) ([]document, error) {
+func (info result) GetDocuments(dbName, collName string) (documents, error) {
 	var value interface{}
 	var ok bool
 	if value, ok = info[dbName][collName]; !ok {
@@ -34,13 +36,23 @@ func (info result) GetDocuments(dbName, collName string) ([]document, error) {
 	}
 
 	switch castedValue := value.(type) {
-	case []document:
+	case documents:
 		return castedValue, nil
 	case *ErrCollectionCountIsInvalid:
 		return nil, castedValue
 	default:
 		return nil, ErrUnknownError
 	}
+}
+func (documents documents) ToInterfaceSlice() []interface{} {
+	result := make([]interface{}, len(documents))
+	for i := range documents {
+		result[i] = documents[i]
+	}
+	return result
+}
+func (documents documents) ToJson() ([]byte, error) {
+	return json.MarshalIndent(documents, "", "    ")
 }
 
 // db.coll

@@ -46,7 +46,7 @@ func (ssconfig *SSConfig) Gen() result {
 	return info
 }
 
-func (*SSConfig) genDB(db *Database) ([]document, error) {
+func (*SSConfig) genDB(db *Database) (documents, error) {
 	dbName := db.D_name
 	collName := db.Collection.C_name
 
@@ -55,7 +55,7 @@ func (*SSConfig) genDB(db *Database) ([]document, error) {
 		return nil, &ErrCollectionCountIsInvalid{dbName: dbName, collName: collName, count: count}
 	}
 
-	documents := make([]document, 0, count)
+	documents := make(documents, 0, count)
 	for i := 0; i < count; i++ {
 		doc := genDocument(i, db.Collection.Fields)
 		documents = append(documents, doc)

@@ -96,14 +96,13 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.Con
 	return nil
 }
 
-func (w *mongoDBWorker) insert(dbName, collName string, documents []interface{}) error {
+func (w *mongoDBWorker) insert(dbName, collName string, documents ...interface{}) error {
 	client, err := w.connect()
 	if err != nil {
 		return err
 	}
 
 	coll := client.Database(dbName).Collection(collName)
-	// TODO: what type oof documents?
 	_, err = coll.InsertMany(context.TODO(), documents)
 	return err
 }

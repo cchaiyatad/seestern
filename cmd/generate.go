@@ -51,13 +51,13 @@ func genFunc(cmd *cobra.Command, _ []string) {
 		cobra.CheckErr(err)
 	}
 
-	path, err := db.Gen(param)
+	err := db.Gen(param)
 	if err != nil {
 		log.Log(log.Error, err)
 		cobra.CheckErr(err)
 	}
 
 	if out != "" {
-		log.Logf(log.Info, "config file is saved to %s\n", path)
+		log.Logf(log.Info, "generated data is saved to %s\n", out)
 	}
 }

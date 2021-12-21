@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGen(t *testing.T) {
+func TestGenWithError(t *testing.T) {
 	t.Run("SSConfig that doesn't has databases", func(t *testing.T) {
 		givenDB := "school"
 		givenColl := "student"
@@ -46,27 +46,35 @@ func TestGen(t *testing.T) {
 
 		assert.Equal(t, expected, gotErr.Error())
 	})
+}
 
-	// ssconfig := &SSConfig{
-	// 	Databases: []Database{
-	// 		{
-	// 			D_name: "school",
-	// 			Collection: Collection{
-	// 				C_name: "student",
-	// 				Count:  10,
-	// 				Fields: []Field{
-	// 					{F_name: "name", Constraints: []Constraint{
-	// 						{Item: Item{Type: Type{Type: "string"}}}}},
-	// 					{F_name: "age", Constraints: []Constraint{
-	// 						{Item: Item{Type: Type{Type: "integer"}}}}},
-	// 					{F_name: "isHonor", Constraints: []Constraint{
-	// 						{Item: Item{Type: Type{Type: "boolean"}}}}},
-	// 					{F_name: "invalid", Constraints: []Constraint{
-	// 						{Item: Item{Type: Type{Type: "null"}}}}},
-	// 					{F_name: "gpa", Constraints: []Constraint{
-	// 						{Item: Item{Type: Type{Type: "double"}}}}},
-	// 				}}}},
-	// }
-	// ssconfig.Gen()
+func TestGen(t *testing.T) {
+	t.Run("SSConfig with simple constraint", func(t *testing.T) {
+		givenDB := "school"
+		givenColl := "student"
+		givenConfig := &SSConfig{
+			Databases: []Database{
+				{
+					D_name: "school",
+					Collection: Collection{
+						C_name: "student",
+						Count:  10,
+						Fields: []Field{
+							{F_name: "name", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "string"}}}}},
+							{F_name: "age", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "integer"}}}}},
+							{F_name: "isHonor", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "boolean"}}}}},
+							{F_name: "invalid", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "null"}}}}},
+							{F_name: "gpa", Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "double"}}}}},
+						}}}},
+		}
+		gotResult := givenConfig.Gen()
 
+		_, gotErr := gotResult.GetDocuments(givenDB, givenColl)
+		assert.Nil(t, gotErr)
+	})
 }

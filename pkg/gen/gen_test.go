@@ -100,7 +100,7 @@ func TestGenString(t *testing.T) {
 
 			got := GenString(tc.length, tc.prefix, tc.suffix)
 
-			expectPrefixRegexErr := fmt.Sprintf(`^%s[a-zA-Z]{0,%d}%s$`, tc.prefix, tc.exptectedMaxLength, tc.suffix)
+			expectPrefixRegexErr := fmt.Sprintf(`^%s[a-zA-Z0-9]{0,%d}%s$`, tc.prefix, tc.exptectedMaxLength, tc.suffix)
 			assert.Regexp(t, regexp.MustCompile(expectPrefixRegexErr), got, fmt.Sprintf("expect prefix %s suffix: %s length %d: got %s", tc.prefix, tc.suffix, tc.length, got))
 		})
 	}

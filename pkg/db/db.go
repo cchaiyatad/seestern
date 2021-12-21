@@ -18,7 +18,7 @@ type dbWorker interface {
 	ping() error
 	ps(string) (nameRecord, error)
 	initConfigFile(*InitParam, *cf.ConfigFileGenerator) error
-	insert(string, string, []interface{}) error
+	insert(string, string, ...interface{}) error
 	drop(string, string) error
 }
 
@@ -96,10 +96,10 @@ func Init(param *InitParam) (string, error) {
 	return filepath.Join(param.Outpath, fileName), nil
 }
 
-func Gen(param *GenParam) (string, error) {
+func Gen(param *GenParam) error {
 	if param.Outpath != "" {
 		if err := file.PrepareDir(param.Outpath); err != nil {
-			return "", err
+			return err
 		}
 	}
 
@@ -109,78 +109,52 @@ func Gen(param *GenParam) (string, error) {
 	if param.IsDrop || param.IsInsert {
 		controller, err = createDBController(param.CntStr, param.Vendor)
 		if err != nil {
-			return "", err
+			return err
 		}
 	}
 
 	ssConfig, err := cf.NewConfigFileReader(param.File).GetSSConfig()
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	result := ssConfig.Gen()
 
-	if param.IsDrop {
-		for db, colls := range result {
-			for coll := range colls {
-
-				if false { // TODO: Tobe remove; prevent accidently drop collection
-					controller.worker.drop(db, coll)
-				}
-
+	for db, colls := range result {
+		for coll := range colls {
+			if param.IsDrop {
+				controller.worker.drop(db, coll)
 				log.Logf(log.Info, "drop database %s collection %s\n", db, coll)
 			}
-		}
-	}
 
-	if param.IsInsert {
-		for db, colls := range result {
-			for coll := range colls {
+			documents, err := result.GetDocuments(db, coll)
+			if err != nil {
+				log.Logf(log.Warning, "can not generate database %s collection %s with reason %s \n", db, coll, err.Error())
+			}
 
-				if false { // TODO: Tobe remove; prevent accidently insert collection
-					controller.worker.insert("", "", []interface{}{})
-				}
-
+			if param.IsInsert {
+				controller.worker.insert(db, coll, documents.ToInterfaceSlice()...)
 				log.Logf(log.Info, "insert database %s collection %s\n", db, coll)
+			}
+
+			if param.Verbose {
+				json, err := documents.ToJson()
+				if err != nil {
+					log.Logf(log.Warning, "fail to display generate data of database %s collection %s\n", db, coll)
+				} else {
+					fmt.Printf("database %s collection %s\n", db, coll)
+					fmt.Println(string(json))
+				}
+			}
+
+			if param.Outpath != "" {
+				// TODO: save documents to json
+				log.Logf(log.Info, "save database %s collection %s to %s \n", db, coll, param.Outpath)
 			}
 		}
 	}
 
-	// configGen := cf.NewConfigFileGenerator(param.FileType)
-	// if err := controller.worker.initConfigFile(param, configGen); err != nil {
-	// 	return "", err
-	// }
-
-	// go func() {
-	// 	for range configGen.OutChan {
-	// 		configGen.Done()
-	// 	}
-
-	// }()
-
-	// configGen.Wait()
-	// configGen.Close()
-
-	// configByte, err := configGen.Bytes()
-	// if err != nil {
-	// 	return "", err
-	// }
-
-	// if param.Verbose {
-	// 	fmt.Print(string(configByte))
-	// }
-
-	// if param.Outpath == "" {
-	// 	return "", nil
-	// }
-
-	// fileName := cf.GetFilename(param.FileType)
-	// if err := file.WriteFile(param.Outpath, fileName, configByte); err != nil {
-	// 	return "", nil
-	// }
-
-	// return filepath.Join(param.Outpath, fileName), nil
-	return "file", nil
+	return nil
 }
 
 func (record nameRecord) String() string {
