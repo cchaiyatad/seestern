@@ -33,7 +33,7 @@ omit_weight = 5
 [[databases.collection.fields]]
 constraints = [{enum = ["freshman", "sophomore", "junior", "senior"]}]
 f_name = "year"
-sets = [{value = "super senior", at = [1, 2, 3]}, {type = "int", min = 5, max = 8, at = [5]}]
+sets = [{value = "super senior", at = [1, 2, 3]}, {type = "integer", min = 5, max = 8, at = [5]}]
 
 [[databases]]
 d_name = "school"
@@ -54,7 +54,7 @@ f_name = "name"
 
 # collection: teacher field:age
 [[databases.collection.fields]]
-constraints = [{type = "int", min = 30}]
+constraints = [{type = "integer", min = 30}]
 f_name = "age"
 
 # collection: student

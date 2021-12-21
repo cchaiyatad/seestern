@@ -1,0 +1,26 @@
+# simple
+
+[[databases]]
+d_name = "school"
+
+# collection: student
+[databases.collection]
+c_name = "student"
+count = 30
+
+# collection: student field:s_id
+# [[databases.collection.fields]]
+# constraints = [{type = "objectID"}]
+# f_name = "s_id"
+
+# collection: student field:name
+[[databases.collection.fields]]
+f_name = "name"
+constraints = [{type = "string"}]
+
+# collection: student field:s_id
+[[databases.collection.fields]]
+constraints = [{type = "integer", min = 5, max = 8}]
+f_name = "age"
+
+

@@ -16,7 +16,7 @@ f_name = "name"
 
 # collection: publisher field:founded
 [[collection.fields]]
-constraint = [{type = "int"}]
+constraint = [{type = "integer"}]
 f_name = "founded"
 
 # collection: publisher field:location
@@ -45,7 +45,7 @@ f_name = "published_date"
 
 # collection: book field:pages
 [[collection.fields]]
-constraint = [{type = "int"}]
+constraint = [{type = "integer"}]
 f_name = "pages"
 
 # collection: book field:language

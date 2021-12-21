@@ -69,19 +69,34 @@ func (ssconfig *SSConfig) genDocument(idx int, fields []Field) document {
 	document := make(document)
 
 	for _, field := range fields {
-		// has set?
-		// TODO 2: Set?
+		if value, ok := genFromSet(field.Sets, idx, ssconfig.vendor); ok {
+			document[field.F_name] = value
+			continue
+		}
 
 		if field.Omit_weight != 0 && shouldOmit(field.Omit_weight) {
 			continue
 		}
 
-		// random from constraint
-		constraint := getRandomConstraint(field.Constraints)
-		value := getValueFromConstraint(constraint, ssconfig.vendor)
-		document[field.F_name] = value
+		document[field.F_name] = genFromConstraint(field.Constraints, ssconfig.vendor)
 	}
 	return document
+}
+
+func genFromSet(sets []Set, idx int, vendor string) (interface{}, bool) {
+	for _, set := range sets {
+		for _, at := range set.At {
+			if at == idx {
+				return getValueFromItem(set.Value.Value, set.Enum.Enum, set.Type, vendor), true
+			}
+		}
+	}
+	return nil, false
+}
+
+func genFromConstraint(constraints []Constraint, vendor string) interface{} {
+	constraint := getRandomConstraint(constraints)
+	return getValueFromItem(constraint.Value.Value, constraint.Enum.Enum, constraint.Type, vendor)
 }
 
 func getRandomConstraint(constraints []Constraint) Constraint {
@@ -89,14 +104,14 @@ func getRandomConstraint(constraints []Constraint) Constraint {
 	return constraints[rand.Intn(len(constraints))]
 }
 
-func getValueFromConstraint(constraint Constraint, vendor string) interface{} {
-	if constraint.Value.Value != nil {
-		return constraint.Value.Value
+func getValueFromItem(value interface{}, enum []interface{}, t Type, vendor string) interface{} {
+	if value != nil {
+		return value
 	}
-	if constraint.Enum.Enum != nil && len(constraint.Enum.Enum) > 0 {
-		return constraint.Enum.Enum[rand.Intn(len(constraint.Enum.Enum))]
+	if len(enum) > 0 {
+		return enum[rand.Intn(len(enum))]
 	}
-	return genType(constraint.Type, vendor, true)
+	return genType(t, vendor, true)
 }
 
 func shouldOmit(omitWeight float64) bool {

@@ -16,7 +16,7 @@ f_name = "title"
 
 # collection: movie field:runtime
 [[collection.fields]]
-constraint = [{type = "int"}]
+constraint = [{type = "integer"}]
 f_name = "runtime"
 
 # collection: movie field:released
@@ -92,8 +92,8 @@ f_name = "tomatoes"
 key = "imdb_constraint"
 value = {type = "object", fields = [
   {f_name = "rating", constraint = [{type = "double"}]},
-  {f_name = "votes", constraint = [{type = "int"}]},
-  {f_name = "id", constraint = [{type = "int"}]},
+  {f_name = "votes", constraint = [{type = "integer"}]},
+  {f_name = "id", constraint = [{type = "integer"}]},
 ]}
 
 [[alias]]
@@ -107,7 +107,7 @@ value = {type = "object", fields = [
 key = "tomatoes_viewer_constraint"
 value = {type = "object", fields = [
   {f_name = "rating", constraint = [{type = "double"}]},
-  {f_name = "numReviews", constraint = [{type = "int"}]},
+  {f_name = "numReviews", constraint = [{type = "integer"}]},
 ]}
 
 # collection: movie

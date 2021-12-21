@@ -59,8 +59,8 @@ func (t Type) MinInt() int {
 		return 0
 	}
 
-	if min, ok := t.P_Min.(int); ok {
-		return min
+	if min, ok := t.P_Min.(int64); ok {
+		return int(min)
 	}
 	return 0
 }
@@ -70,8 +70,8 @@ func (t Type) MaxInt() int {
 		return 0
 	}
 
-	if max, ok := t.P_Max.(int); ok {
-		return max
+	if max, ok := t.P_Max.(int64); ok {
+		return int(max)
 	}
 	return 0
 }
