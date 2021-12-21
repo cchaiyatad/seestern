@@ -49,7 +49,7 @@ func PS(param *PSParam) (nameRecord, error) {
 }
 
 func Init(param *InitParam) (string, error) {
-	if param.Outpath != "" {
+	if param.isWriteFile() {
 		if err := file.PrepareDir(param.Outpath); err != nil {
 			return "", err
 		}
@@ -84,7 +84,7 @@ func Init(param *InitParam) (string, error) {
 		fmt.Print(string(configByte))
 	}
 
-	if param.Outpath == "" {
+	if !param.isWriteFile() {
 		return "", nil
 	}
 
@@ -97,7 +97,7 @@ func Init(param *InitParam) (string, error) {
 }
 
 func Gen(param *GenParam) error {
-	if param.Outpath != "" {
+	if param.isWriteFile() {
 		if err := file.PrepareDir(param.Outpath); err != nil {
 			return err
 		}
@@ -106,7 +106,7 @@ func Gen(param *GenParam) error {
 	var controller *DBController
 	var err error
 
-	if param.IsDrop || param.IsInsert {
+	if param.shouldConnectDB() {
 		controller, err = createDBController(param.CntStr, param.Vendor)
 		if err != nil {
 			return err
@@ -137,17 +137,22 @@ func Gen(param *GenParam) error {
 				log.Logf(log.Info, "insert database %s collection %s\n", db, coll)
 			}
 
-			if param.Verbose {
-				json, err := documents.ToJson()
-				if err != nil {
-					log.Logf(log.Warning, "fail to display generate data of database %s collection %s\n", db, coll)
-				} else {
-					fmt.Printf("database %s collection %s\n", db, coll)
-					fmt.Println(string(json))
-				}
+			if !param.shouldGenJson() {
+				continue
 			}
 
-			if param.Outpath != "" {
+			json, err := documents.ToJson()
+			if err != nil {
+				log.Logf(log.Warning, "fail to display generate data of database %s collection %s\n", db, coll)
+				continue
+			}
+
+			if param.Verbose {
+				fmt.Printf("database %s collection %s\n", db, coll)
+				fmt.Println(string(json))
+			}
+
+			if param.isWriteFile() {
 				// TODO: save documents to json
 				log.Logf(log.Info, "save database %s collection %s to %s \n", db, coll, param.Outpath)
 			}
@@ -157,8 +162,12 @@ func Gen(param *GenParam) error {
 	return nil
 }
 
+func (record nameRecord) empty() bool {
+	return len(record) == 0
+}
+
 func (record nameRecord) String() string {
-	if len(record) == 0 {
+	if record.empty() {
 		return "database does not exists\n"
 	}
 

@@ -15,6 +15,10 @@ type InitParam struct {
 	FileType    string
 }
 
+func (param InitParam) isWriteFile() bool {
+	return param.Outpath != ""
+}
+
 type GenParam struct {
 	CntStr  string
 	Vendor  string
@@ -24,4 +28,16 @@ type GenParam struct {
 	Verbose  bool
 	IsDrop   bool
 	IsInsert bool
+}
+
+func (param GenParam) shouldConnectDB() bool {
+	return param.IsDrop || param.IsInsert
+}
+
+func (param GenParam) shouldGenJson() bool {
+	return param.Verbose || param.Outpath != ""
+}
+
+func (param GenParam) isWriteFile() bool {
+	return param.Outpath != ""
 }
