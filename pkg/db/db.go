@@ -88,7 +88,7 @@ func Init(param *InitParam) (string, error) {
 		return "", nil
 	}
 
-	fileName := cf.GetFilename(param.FileType)
+	fileName := cf.GetInitFilename(param.FileType)
 	if err := file.WriteFile(param.Outpath, fileName, configByte); err != nil {
 		return "", nil
 	}
@@ -141,7 +141,7 @@ func Gen(param *GenParam) error {
 				continue
 			}
 
-			json, err := documents.ToJson()
+			outByte, err := documents.ToJson()
 			if err != nil {
 				log.Logf(log.Warning, "fail to display generate data of database %s collection %s\n", db, coll)
 				continue
@@ -149,12 +149,16 @@ func Gen(param *GenParam) error {
 
 			if param.Verbose {
 				fmt.Printf("database %s collection %s\n", db, coll)
-				fmt.Println(string(json))
+				fmt.Println(string(outByte))
 			}
 
 			if param.isWriteFile() {
-				// TODO: save documents to json
-				log.Logf(log.Info, "save database %s collection %s to %s \n", db, coll, param.Outpath)
+				fileName := cf.GetGenFilename(db, coll)
+				if err := file.WriteFile(param.Outpath, fileName, outByte); err != nil {
+					log.Logf(log.Warning, "can not save database %s collection %s to %s \n", db, coll, param.Outpath)
+				} else {
+					log.Logf(log.Info, "save database %s collection %s to %s \n", db, coll, param.Outpath)
+				}
 			}
 		}
 	}
