@@ -54,14 +54,14 @@ func (w *mongoDBWorker) ping() error {
 	return client.Ping(ctx, readpref.Primary())
 }
 
-func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) {
-	info, err := w.getDatabaseCollectionInfo()
+func (w *mongoDBWorker) ps(dbNameFilter string) (nameRecord, error) {
+	record, err := w.getNameRecord()
 	if err != nil || dbNameFilter == "" {
-		return info, err
+		return record, err
 	}
 
-	specificDBInfo := make(databaseCollectionInfo)
-	if colls, ok := info[dbNameFilter]; ok {
+	specificDBInfo := make(nameRecord)
+	if colls, ok := record[dbNameFilter]; ok {
 		specificDBInfo[dbNameFilter] = colls
 	}
 
@@ -69,7 +69,7 @@ func (w *mongoDBWorker) ps(dbNameFilter string) (databaseCollectionInfo, error) 
 }
 
 func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.ConfigFileGenerator) error {
-	infos, err := w.getDatabaseCollectionInfo()
+	records, err := w.getNameRecord()
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.Con
 
 	for db, colls := range toGenColls {
 		for _, coll := range colls {
-			if _, ok := infos[db][coll]; !ok {
+			if _, ok := records[db][coll]; !ok {
 				log.Logf(log.Warning, "%s\n", &ErrSkipCreateConfigfile{db, coll, "not exist"})
 				continue
 			}
@@ -117,13 +117,13 @@ func (w *mongoDBWorker) drop(dbName, collName string) error {
 	return client.Database(dbName).Collection(collName).Drop(context.TODO())
 }
 
-func (w *mongoDBWorker) getDatabaseCollectionInfo() (databaseCollectionInfo, error) {
+func (w *mongoDBWorker) getNameRecord() (nameRecord, error) {
 	client, err := w.connect()
 	if err != nil {
 		return nil, err
 	}
 
-	info := make(databaseCollectionInfo)
+	record := make(nameRecord)
 
 	dbs, err := client.ListDatabaseNames(context.TODO(), bson.D{})
 	if err != nil {
@@ -137,12 +137,12 @@ func (w *mongoDBWorker) getDatabaseCollectionInfo() (databaseCollectionInfo, err
 			continue
 		}
 
-		info[db] = make(map[string]struct{})
+		record[db] = make(map[string]struct{})
 		for _, coll := range colls {
-			info[db][coll] = struct{}{}
+			record[db][coll] = struct{}{}
 		}
 	}
-	return info, nil
+	return record, nil
 }
 
 func (w *mongoDBWorker) getCursor(dbName string, collName string) (*mongo.Cursor, error) {

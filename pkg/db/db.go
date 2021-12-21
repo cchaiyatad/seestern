@@ -16,13 +16,13 @@ type DBController struct {
 
 type dbWorker interface {
 	ping() error
-	ps(string) (databaseCollectionInfo, error)
+	ps(string) (nameRecord, error)
 	initConfigFile(*InitParam, *cf.ConfigFileGenerator) error
 	insert(string, string, []interface{}) error
 	drop(string, string) error
 }
 
-type databaseCollectionInfo map[string]map[string]struct{}
+type nameRecord map[string]map[string]struct{}
 
 func createDBController(cntStr string, vendor string) (*DBController, error) {
 	controller := DBController{}
@@ -40,7 +40,7 @@ func createDBController(cntStr string, vendor string) (*DBController, error) {
 	return &controller, nil
 }
 
-func PS(param *PSParam) (databaseCollectionInfo, error) {
+func PS(param *PSParam) (nameRecord, error) {
 	controller, err := createDBController(param.CntStr, param.Vendor)
 	if err != nil {
 		return nil, err
@@ -118,10 +118,10 @@ func Gen(param *GenParam) (string, error) {
 		return "", err
 	}
 
-	info := ssConfig.Gen()
+	result := ssConfig.Gen()
 
 	if param.IsDrop {
-		for db, colls := range info {
+		for db, colls := range result {
 			for coll := range colls {
 
 				if false { // TODO: Tobe remove; prevent accidently drop collection
@@ -134,8 +134,16 @@ func Gen(param *GenParam) (string, error) {
 	}
 
 	if param.IsInsert {
-		// iterate thought ssconfig
-		controller.worker.insert("", "", []interface{}{})
+		for db, colls := range result {
+			for coll := range colls {
+
+				if false { // TODO: Tobe remove; prevent accidently insert collection
+					controller.worker.insert("", "", []interface{}{})
+				}
+
+				log.Logf(log.Info, "insert database %s collection %s\n", db, coll)
+			}
+		}
 	}
 
 	// configGen := cf.NewConfigFileGenerator(param.FileType)
@@ -175,14 +183,14 @@ func Gen(param *GenParam) (string, error) {
 	return "file", nil
 }
 
-func (info databaseCollectionInfo) String() string {
-	if len(info) == 0 {
+func (record nameRecord) String() string {
+	if len(record) == 0 {
 		return "database does not exists\n"
 	}
 
 	var strBuilder strings.Builder
 
-	for dbName, collNames := range info {
+	for dbName, collNames := range record {
 		fmt.Fprintf(&strBuilder, "database: %s\n", dbName)
 
 		if len(collNames) == 0 {

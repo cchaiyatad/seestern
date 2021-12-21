@@ -28,8 +28,8 @@ func setSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func (ssconfig *SSConfig) Gen() databaseCollectionInfo {
-	info := ssconfig.GetDatabaseCollectionInfo()
+func (ssconfig *SSConfig) Gen() result {
+	info := ssconfig.NewResult()
 	// dbcollInfo := ssconfig.GetdbcollInfo()
 
 	for _, db := range ssconfig.Databases {
