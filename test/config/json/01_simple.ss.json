@@ -10,7 +10,7 @@
             "f_name": "s_id",
             "constraints": [
               {
-                "type": "objectId"
+                "type": "objectID"
               }
             ]
           },

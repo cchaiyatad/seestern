@@ -6,7 +6,7 @@ c_name = "student"
 count = 35
 
 [[databases.collection.fields]]
-constraint = [{type = "objectId"}]
+constraint = [{type = "objectID"}]
 f_name = "s_id"
 
 [[databases.collection.fields]]

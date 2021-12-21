@@ -6,7 +6,7 @@ c_name = "publisher"
 
 # collection: publisher field:_id
 [[collection.fields]]
-constraint = [{type = "objectId"}]
+constraint = [{type = "objectID"}]
 f_name = "_id"
 
 # collection: publisher field:name
@@ -30,7 +30,7 @@ c_name = "book"
 
 # collection: book field:_id
 [[collection.fields]]
-constraint = [{type = "objectId"}]
+constraint = [{type = "objectID"}]
 f_name = "_id"
 
 # collection: book field:author
@@ -55,7 +55,7 @@ f_name = "language"
 
 # collection: book field:publisher_id
 [[collection.fields]]
-constraint = [{type = "objectId", ref = "publisher._id"}]
+constraint = [{type = "objectID", ref = "publisher._id"}]
 f_name = "publisher_id"
 
 # collection: publisher

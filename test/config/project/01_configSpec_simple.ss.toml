@@ -10,7 +10,7 @@ count = 30
 
 # collection: student field:s_id
 [[databases.collection.fields]]
-constraints = [{type = "objectId"}]
+constraints = [{type = "objectID"}]
 f_name = "s_id"
 
 # collection: student field:name
@@ -44,7 +44,7 @@ count = 15
 
 # collection: teacher field:t_id
 [[databases.collection.fields]]
-constraints = [{type = "objectId"}]
+constraints = [{type = "objectID"}]
 f_name = "t_id"
 
 # collection: teacher field:name

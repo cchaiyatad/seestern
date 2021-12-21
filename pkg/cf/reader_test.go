@@ -103,7 +103,7 @@ func TestGetSSConfig(t *testing.T) {
 						Count:  30,
 						Fields: []Field{
 							{F_name: "s_id", Constraints: []Constraint{
-								{Item: Item{Type: Type{Type: "objectId"}}}}},
+								{Item: Item{Type: Type{Type: "objectID"}}}}},
 							{F_name: "name", Constraints: []Constraint{
 								{Item: Item{Type: Type{Type: "string", P_Prefix: "a", P_Suffix: "m", P_Length: 5}}}}},
 							{F_name: "sex", Omit_weight: 5, Constraints: []Constraint{
@@ -145,7 +145,7 @@ func TestGetSSConfig(t *testing.T) {
 						Count:  30,
 						Fields: []Field{
 							{F_name: "s_id", Constraints: []Constraint{
-								{Item: Item{Type: Type{Type: "objectId"}}}}},
+								{Item: Item{Type: Type{Type: "objectID"}}}}},
 							{F_name: "name", Constraints: []Constraint{
 								{Item: Item{Type: Type{Type: "string"}}}}},
 						},
@@ -158,7 +158,7 @@ func TestGetSSConfig(t *testing.T) {
 						Count:  15,
 						Fields: []Field{
 							{F_name: "t_id", Constraints: []Constraint{
-								{Item: Item{Type: Type{Type: "objectId"}}}}},
+								{Item: Item{Type: Type{Type: "objectID"}}}}},
 							{F_name: "name", Constraints: []Constraint{
 								{Item: Item{Type: Type{Type: "string"}}}}},
 							{F_name: "age", Constraints: []Constraint{
@@ -195,7 +195,7 @@ func TestGetSSConfig(t *testing.T) {
 // 					Count:  30,
 // 					Fields: []Field{
 // 						{F_name: "s_id", Constraints: []Constraint{
-// 							{Item: Item{Type: Type{Type: "objectId"}}}}},
+// 							{Item: Item{Type: Type{Type: "objectID"}}}}},
 // 						{F_name: "name", Constraints: []Constraint{
 // 							{Item: Item{Type: Type{Type: "string"}}}}},
 // 						{F_name: "class", Constraints: []Constraint{

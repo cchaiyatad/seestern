@@ -6,7 +6,7 @@ c_name = "movie"
 
 # collection: movie field:_id
 [[collection.fields]]
-constraint = [{type = "objectId"}]
+constraint = [{type = "objectID"}]
 f_name = "_id"
 
 # collection: movie field:title
@@ -50,12 +50,12 @@ c_name = "movie_details"
 
 # collection: movie_details field:_id
 [[collection.fields]]
-constraint = [{type = "objectId"}]
+constraint = [{type = "objectID"}]
 f_name = "_id"
 
 # collection: movie_details field:movie_id
 [[collection.fields]]
-constraint = [{type = "objectId", ref = "movie._id"}]
+constraint = [{type = "objectID", ref = "movie._id"}]
 f_name = "movie_id"
 
 # collection: movie_details field:poster

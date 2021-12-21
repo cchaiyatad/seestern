@@ -5,7 +5,7 @@ databases:
       count: 30
       fields:
         - constraints:
-            - type: objectId
+            - type: objectID
           f_name: s_id
         - f_name: name
           constraints:

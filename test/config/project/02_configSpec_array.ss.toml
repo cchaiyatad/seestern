@@ -6,7 +6,7 @@ c_name = "item"
 
 # collection: item field:i_id
 [[collection.fields]]
-constraint = [{type = "objectId"}]
+constraint = [{type = "objectID"}]
 f_name = "i_id"
 
 # collection: item field:name

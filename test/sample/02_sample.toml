@@ -6,12 +6,7 @@ d_name = "school"
 # collection: student
 [databases.collection]
 c_name = "student"
-count = 30
-
-# collection: student field:s_id
-# [[databases.collection.fields]]
-# constraints = [{type = "objectID"}]
-# f_name = "_id"
+count = 20
 
 # collection: student field:name
 [[databases.collection.fields]]
@@ -32,10 +27,22 @@ f_name = "age"
 constraints = [{type = "boolean"}]
 f_name = "isHonor"
 
-[[databases.collection.fields]]
-constraints = [{type = "double"}]
-f_name = "gpa"
+# simple
 
+[[databases]]
+d_name = "school"
+
+# collection: student
+[databases.collection]
+c_name = "teacher"
+count = 15
+
+# collection: student field:name
 [[databases.collection.fields]]
-constraints = [{type = "null"}]
-f_name = "invalid"
+f_name = "name"
+constraints = [{type = "string"}]
+
+# collection: student field:s_id
+[[databases.collection.fields]]
+constraints = [{type = "integer"}]
+f_name = "age"
