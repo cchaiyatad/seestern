@@ -23,4 +23,6 @@ constraints = [{type = "string"}]
 constraints = [{type = "integer", min = 5, max = 8}]
 f_name = "age"
 
-
+[[databases.collection.fields]]
+constraints = [{value = "M", weight = 2}, {value = "F", weight = 3}]
+f_name = "sex"

@@ -24,7 +24,7 @@ func GenInt(min, max int) int {
 
 func genNumValidate(min, max int) (int, int, int) {
 	if min >= max {
-		return 0, 20, 1
+		max = 100 + min
 	}
 
 	if max <= 0 && min <= 0 {
@@ -37,8 +37,7 @@ func genNumValidate(min, max int) (int, int, int) {
 // [,)
 func GenDouble(min, max float64) float64 {
 	if min >= max {
-		min = 0
-		max = 20
+		max = 100 + min
 	}
 	return min + rand.Float64()*(max-min)
 }

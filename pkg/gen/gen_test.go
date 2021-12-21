@@ -15,8 +15,8 @@ func TestGenInt(t *testing.T) {
 		expectedMin int
 		expectedMax int
 	}{
-		{0, 0, 0, 20},
-		{10, 0, 0, 20},
+		{0, 0, 0, 100},
+		{10, 0, 10, 110},
 
 		{10, 15, 10, 14},
 		{0, 100, 0, 99},
@@ -30,8 +30,7 @@ func TestGenInt(t *testing.T) {
 	for _, tc := range cases {
 		tc := tc
 		t.Run(fmt.Sprintf("GenInt with min: %d max: %d", tc.min, tc.max), func(t *testing.T) {
-			// t.Parallel()
-
+			t.Parallel()
 			got := GenInt(tc.min, tc.max)
 
 			assert.GreaterOrEqual(t, got, tc.expectedMin)
@@ -47,8 +46,8 @@ func TestGenDouble(t *testing.T) {
 		expectedMin float64
 		expectedMax float64
 	}{
-		{0, 0, 0, 20},
-		{10, 0, 0, 20},
+		{0, 0, 0, 100},
+		{10, 0, 0, 110},
 
 		{10, 15, 10, 15},
 		{0, 100, 0, 100},

@@ -27,7 +27,7 @@ type = "string"
 [[databases.collection.fields]]
 constraints = [{value = "M", weight = 2}, {value = "F", weight = 3}]
 f_name = "sex"
-omit_weight = 5
+omit_weight = 0.4
 
 # collection: student field:year
 [[databases.collection.fields]]
