@@ -21,9 +21,8 @@ func TestGen(t *testing.T) {
 							{Item: Item{Type: Type{Type: "boolean"}}}}},
 						{F_name: "invalid", Constraints: []Constraint{
 							{Item: Item{Type: Type{Type: "null"}}}}},
-
-						// {F_name: "gpa", Constraints: []Constraint{
-						// 	{Item: Item{Type: Type{Type: "double"}}}}},
+						{F_name: "gpa", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "double"}}}}},
 					}}}},
 	}
 	ssconfig.Gen()

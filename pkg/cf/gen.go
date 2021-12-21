@@ -2,7 +2,6 @@ package cf
 
 import (
 	"fmt"
-	"math"
 	"math/rand"
 	"time"
 
@@ -118,10 +117,6 @@ func genString(t Type) interface{} {
 func genInt(t Type) interface{} {
 	min := t.MinInt()
 	max := t.MaxInt()
-
-	if max == min {
-		max = math.MaxInt
-	}
 
 	return gen.GenInt(min, max)
 }

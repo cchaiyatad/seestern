@@ -16,15 +16,31 @@ func setSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// [,)
 func GenInt(min, max int) int {
-	return rand.Intn(max+min) - min
+	validateMin, validateMax, sign := genNumValidate(min, max)
+	return (rand.Intn(validateMax-validateMin) + validateMin) * sign
 }
 
+func genNumValidate(min, max int) (int, int, int) {
+	if min >= max {
+		return 0, 20, 1
+	}
+
+	if max <= 0 && min <= 0 {
+		return -1 * max, -1 * min, -1
+	}
+
+	return min, max, 1
+}
+
+// [,)
 func GenDouble(min, max float64) float64 {
-	maxInt := int(max) - 1
-	minInt := int(min)
-	intValue := GenInt(maxInt, minInt)
-	return float64(intValue) + rand.Float64()
+	if min >= max {
+		min = 0
+		max = 20
+	}
+	return min + rand.Float64()*(max-min)
 }
 
 func GenBoolean() bool {
