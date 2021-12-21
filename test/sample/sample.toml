@@ -39,3 +39,7 @@ f_name = "isHonor"
 [[databases.collection.fields]]
 constraints = [{type = "double"}]
 f_name = "gpa"
+
+[[databases.collection.fields]]
+constraints = [{type = "null"}]
+f_name = "invalid"

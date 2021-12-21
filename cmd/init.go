@@ -32,6 +32,11 @@ func initFunc(cmd *cobra.Command, _ []string) {
 	fileType := cmd.Flag(fileTypeKey).Value.String()
 
 	log.Logf(log.Info, "init with %s connection string\n", connectionStr)
+	if err := isEitherVerboseOrOutSet(out, verbose); err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
+
 	param := &db.InitParam{
 		CntStr:      connectionStr,
 		Vendor:      "mongo",
@@ -39,11 +44,6 @@ func initFunc(cmd *cobra.Command, _ []string) {
 		Outpath:     out,
 		Verbose:     verbose,
 		FileType:    fileType,
-	}
-
-	if err := isEitherVerboseOrOutSet(out, verbose); err != nil {
-		log.Log(log.Error, err)
-		cobra.CheckErr(err)
 	}
 
 	path, err := db.Init(param)

@@ -32,6 +32,13 @@ func isEitherVerboseOrOutSet(out string, verbose bool) error {
 	return nil
 }
 
+func isEitherVerboseOrOutOrInsertSet(out string, verbose bool, insert bool) error {
+	if out == "" && !verbose && !insert {
+		return errors.New("insert, verbose or out has to be set at least one")
+	}
+	return nil
+}
+
 func isCntStrSetWhenEitherDropOrInsertSet(cntStr string, isDrop bool, isInsert bool) error {
 	if (isDrop || isInsert) && cntStr == "" {
 		return errors.New("if set drop or insert, connection string has to be provided")

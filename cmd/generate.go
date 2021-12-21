@@ -31,6 +31,15 @@ func genFunc(cmd *cobra.Command, _ []string) {
 	out := cmd.Flag(outputKey).Value.String()
 
 	log.Logf(log.Info, "generate with configuration file %s", file)
+	if err := isEitherVerboseOrOutOrInsertSet(out, verbose, isInsert); err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
+
+	if err := isCntStrSetWhenEitherDropOrInsertSet(connectionStr, isDrop, isInsert); err != nil {
+		log.Log(log.Error, err)
+		cobra.CheckErr(err)
+	}
 	param := &db.GenParam{
 		CntStr:   connectionStr,
 		Vendor:   "mongo",
@@ -39,16 +48,6 @@ func genFunc(cmd *cobra.Command, _ []string) {
 		Verbose:  verbose,
 		IsDrop:   isDrop,
 		IsInsert: isInsert,
-	}
-
-	if err := isEitherVerboseOrOutSet(out, verbose); err != nil {
-		log.Log(log.Error, err)
-		cobra.CheckErr(err)
-	}
-
-	if err := isCntStrSetWhenEitherDropOrInsertSet(connectionStr, isDrop, isInsert); err != nil {
-		log.Log(log.Error, err)
-		cobra.CheckErr(err)
 	}
 
 	err := db.Gen(param)
