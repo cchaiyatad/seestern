@@ -5,8 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/cchaiyatad/seestern/pkg/gen"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/cchaiyatad/seestern/internal/random"
 )
 
 type document map[string]interface{}
@@ -20,6 +19,16 @@ type ErrCollectionCountIsInvalid struct {
 func (e *ErrCollectionCountIsInvalid) Error() string {
 	return fmt.Sprintf("count have to be more than zero got: %d (db: %s, coll: %s)", e.count, e.dbName, e.collName)
 }
+
+type fieldGenerator struct {
+	fields        []Field
+	constraintGen constraintRandomizer
+	setGen        setGenerator
+	vendor        string
+}
+
+type constraintRandomizer map[string]*random.RandomWeightTree
+type setGenerator map[string]map[int]*Item
 
 func init() {
 	setSeed()
@@ -89,89 +98,94 @@ func shouldOmit(omitWeight float64) bool {
 	return rand.Float64() < omitWeight
 }
 
-func getValueFromItem(item *Item, vendor string) interface{} {
-	value := item.Value.Value
-	enum := item.Enum.Enum
-	t := item.Type
-
-	if value != nil {
-		return value
+func newFieldGenerator(fields []Field, vendor string) *fieldGenerator {
+	return &fieldGenerator{
+		fields:        fields,
+		constraintGen: newConstraintRandomizer(fields),
+		setGen:        newSetGenerator(fields),
+		vendor:        vendor,
 	}
-	if len(enum) > 0 {
-		return enum[rand.Intn(len(enum))]
-	}
-	return genType(t, vendor, true)
 }
 
-func genType(t Type, vendor string, isConstraint bool) interface{} {
-	switch t.Type {
-	case Null:
-		return genNull()
-	case String:
-		return genString(t)
-	case Integer:
-		return genInt(t)
-	case Double:
-		return genDouble(t)
-	case Boolean:
-		return genBoolean(t)
-	case ObjectID:
-		return genObjectID(t, vendor)
-	case Array:
-		return genArray(t)
-	case Object:
-		return genObject(t)
+func (gen *fieldGenerator) getItemFromConstraint(fieldName string) *Item {
+	return gen.constraintGen.getItemFromConstraint(fieldName)
+}
+
+func (gen *fieldGenerator) genFromConstraint(fieldName string) interface{} {
+	item := gen.getItemFromConstraint(fieldName)
+	if item == nil {
+		return nil
+	}
+	return getValueFromItemFromConstraint(item, gen.vendor)
+}
+
+func (gen *fieldGenerator) getItemFromSet(fieldName string, idx int) (*Item, bool) {
+	return gen.setGen.getItemFromSet(fieldName, idx)
+}
+
+func (gen *fieldGenerator) genFromSet(fieldName string, idx int) (interface{}, bool) {
+	if item, ok := gen.getItemFromSet(fieldName, idx); ok {
+		return getValueFromItemFromSet(item, gen.vendor), true
+	}
+	return nil, false
+}
+
+func newConstraintRandomizer(fields []Field) constraintRandomizer {
+	randomizer := make(constraintRandomizer)
+
+	for _, field := range fields {
+		tree := random.NewRandomWeightTree()
+		for _, con := range field.Constraints {
+			tree.Insert(con.Weight, con)
+		}
+		randomizer[field.F_name] = tree
+	}
+
+	return randomizer
+}
+
+func (randomizer constraintRandomizer) getItemFromConstraint(field string) *Item {
+	if tree, ok := randomizer[field]; ok {
+		if con, ok := tree.GetRandom().(Constraint); ok {
+			return &Item{
+				Value: con.Value,
+				Enum:  con.Enum,
+				Type:  con.Type,
+			}
+		}
+		return nil
 	}
 	return nil
 }
 
-func genNull() interface{} {
-	return nil
-}
+func newSetGenerator(fields []Field) setGenerator {
+	generator := make(setGenerator)
 
-func genString(t Type) interface{} {
-	prefix := t.Prefix()
-	suffix := t.Suffix()
-	lenght := t.Length()
+	for _, field := range fields {
+		setMap := make(map[int]*Item)
 
-	if lenght == 0 {
-		lenght = 20
+		for _, set := range field.Sets {
+			for _, at := range set.At {
+				setMap[at] = &Item{
+					Value: set.Value,
+					Enum:  set.Enum,
+					Type:  set.Type,
+				}
+			}
+		}
+
+		generator[field.F_name] = setMap
 	}
 
-	return gen.GenString(lenght, prefix, suffix)
+	return generator
 }
 
-func genInt(t Type) interface{} {
-	min := t.MinInt()
-	max := t.MaxInt()
-
-	return gen.GenInt(min, max)
-}
-
-func genDouble(t Type) interface{} {
-	min := t.MinDouble()
-	max := t.MaxDouble()
-
-	return gen.GenDouble(min, max)
-}
-
-func genBoolean(t Type) interface{} {
-	return gen.GenBoolean()
-}
-
-func genObjectID(t Type, vendor string) interface{} {
-	if vendor == "mongo" {
-		return primitive.NewObjectID()
+func (gen setGenerator) getItemFromSet(field string, idx int) (*Item, bool) {
+	if set, ok := gen[field]; ok {
+		if item, ok := set[idx]; ok {
+			return item, true
+		}
+		return nil, false
 	}
-	return gen.GenString(20, "", "")
-}
-
-func genArray(t Type) interface{} {
-	// TODO 3: Array?
-	return false
-}
-
-func genObject(t Type) interface{} {
-	// TODO 4: Object?
-	return false
+	return nil, false
 }
