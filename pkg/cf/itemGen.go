@@ -44,7 +44,7 @@ func genType(t Type, vendor string, isConstraint bool) interface{} {
 	case ObjectID:
 		return genObjectID(t, vendor)
 	case Array:
-		return genArray(t)
+		return genArray(t, vendor)
 	case Object:
 		return genObject(t, vendor)
 	}
@@ -92,16 +92,30 @@ func genObjectID(t Type, vendor string) interface{} {
 	return gen.GenString(20, "", "")
 }
 
-func genArray(t Type) interface{} {
-	// TODO 3: Array?
-
+func genArray(t Type, vendor string) interface{} {
+	data := []interface{}{}
 	minItem := t.MinItem()
 	maxItem := t.MaxItem()
-	if minItem > maxItem {
-		return []interface{}{}
-	}
-	data := []interface{}{}
 
+	if minItem > maxItem {
+		return data
+	}
+
+	constraintRandomTree := NewConstraintRandomTree(t.ElementTypeArray())
+	setMap := newSetMap(t.Sets())
+
+	maxItem = rand.Intn(maxItem-minItem) + minItem
+
+	for i := minItem; i < maxItem; i++ {
+		if item, ok := setMap.getItem(i); ok {
+			value := getValueFromItemFromSet(item, vendor)
+			data = append(data, value)
+		}
+
+		item := constraintRandomTree.getItem()
+		value := getValueFromItemFromConstraint(item, vendor)
+		data = append(data, value)
+	}
 	return data
 }
 

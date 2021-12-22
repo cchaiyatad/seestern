@@ -27,8 +27,13 @@ type fieldGenerator struct {
 	vendor        string
 }
 
-type constraintRandomizer map[string]*random.RandomWeightTree
-type setGenerator map[string]map[int]*Item
+type constraintRandomizer map[string]*constraintRandomTree
+type constraintRandomTree struct {
+	tree *random.RandomWeightTree
+}
+
+type setGenerator map[string]setMap
+type setMap map[int]*Item
 
 func init() {
 	setSeed()
@@ -134,11 +139,7 @@ func newConstraintRandomizer(fields []Field) constraintRandomizer {
 	randomizer := make(constraintRandomizer)
 
 	for _, field := range fields {
-		tree := random.NewRandomWeightTree()
-		for _, con := range field.Constraints {
-			tree.Insert(con.Weight, con)
-		}
-		randomizer[field.F_name] = tree
+		randomizer[field.F_name] = NewConstraintRandomTree(field.Constraints)
 	}
 
 	return randomizer
@@ -146,14 +147,26 @@ func newConstraintRandomizer(fields []Field) constraintRandomizer {
 
 func (randomizer constraintRandomizer) getItemFromConstraint(field string) *Item {
 	if tree, ok := randomizer[field]; ok {
-		if con, ok := tree.GetRandom().(Constraint); ok {
-			return &Item{
-				Value: con.Value,
-				Enum:  con.Enum,
-				Type:  con.Type,
-			}
+		return tree.getItem()
+	}
+	return nil
+}
+
+func NewConstraintRandomTree(constraints []Constraint) *constraintRandomTree {
+	tree := random.NewRandomWeightTree()
+	for _, con := range constraints {
+		tree.Insert(con.Weight, con)
+	}
+	return &constraintRandomTree{tree: tree}
+}
+
+func (tree *constraintRandomTree) getItem() *Item {
+	if con, ok := tree.tree.GetRandom().(Constraint); ok {
+		return &Item{
+			Value: con.Value,
+			Enum:  con.Enum,
+			Type:  con.Type,
 		}
-		return nil
 	}
 	return nil
 }
@@ -162,19 +175,7 @@ func newSetGenerator(fields []Field) setGenerator {
 	generator := make(setGenerator)
 
 	for _, field := range fields {
-		setMap := make(map[int]*Item)
-
-		for _, set := range field.Sets {
-			for _, at := range set.At {
-				setMap[at] = &Item{
-					Value: set.Value,
-					Enum:  set.Enum,
-					Type:  set.Type,
-				}
-			}
-		}
-
-		generator[field.F_name] = setMap
+		generator[field.F_name] = newSetMap(field.Sets)
 	}
 
 	return generator
@@ -182,10 +183,28 @@ func newSetGenerator(fields []Field) setGenerator {
 
 func (gen setGenerator) getItemFromSet(field string, idx int) (*Item, bool) {
 	if set, ok := gen[field]; ok {
-		if item, ok := set[idx]; ok {
-			return item, true
+		return set.getItem(idx)
+	}
+	return nil, false
+}
+
+func newSetMap(sets []Set) setMap {
+	setMap := make(setMap)
+	for _, set := range sets {
+		for _, at := range set.At {
+			setMap[at] = &Item{
+				Value: set.Value,
+				Enum:  set.Enum,
+				Type:  set.Type,
+			}
 		}
-		return nil, false
+	}
+	return setMap
+}
+
+func (setMap setMap) getItem(idx int) (*Item, bool) {
+	if item, ok := setMap[idx]; ok {
+		return item, true
 	}
 	return nil, false
 }
