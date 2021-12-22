@@ -57,6 +57,8 @@ func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {
 	}
 
 	documents := make(documents, 0, count)
+	// createConstarint map -> tree
+
 	for i := 0; i < count; i++ {
 		doc := ssconfig.genDocument(i, db.Collection.Fields)
 		documents = append(documents, doc)
@@ -84,6 +86,7 @@ func (ssconfig *SSConfig) genDocument(idx int, fields []Field) document {
 }
 
 func genFromSet(sets []Set, idx int, vendor string) (interface{}, bool) {
+	// Big O performance
 	for _, set := range sets {
 		for _, at := range set.At {
 			if at == idx {
