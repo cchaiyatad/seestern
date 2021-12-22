@@ -32,8 +32,8 @@ func getAlias(filepath string) (Alias, error) {
 		return nil, ErrAliasNotSupport
 	}
 
-	if err := isTomlFileValid(filepath); err != nil {
-		return nil, &ErrTomlFileIsInvalid{err}
+	if err := isTomlFileValidAndHasAliase(filepath); err != nil {
+		return nil, err
 	}
 
 	alias := make(Alias)
@@ -50,13 +50,9 @@ func (alias Alias) getCreateAliasByLineFunc() func(string) {
 }
 
 func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
-	alias, err := getAlias(filepath)
+	_, err := getAlias(filepath)
 	if err != nil {
 		return nil, err
-	}
-
-	if len(alias) == 0 {
-		return nil, ErrDoesnotHaveAlias
 	}
 
 	parseFunc := func(data []byte) []byte {
@@ -64,11 +60,27 @@ func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
 	}
 
 	return parseFunc, nil
-
 }
 
-func isTomlFileValid(filepath string) error {
-	var tmp interface{}
-	_, err := toml.DecodeFile(filepath, &tmp)
-	return err
+type T_Aliases struct {
+	Aliases []T_Aliases `toml:"alias"`
+}
+
+type T_Alias struct {
+	Key   string      `toml:"key"`
+	Value interface{} `toml:"value"`
+}
+
+func isTomlFileValidAndHasAliase(filepath string) error {
+	var aliases T_Aliases
+
+	if _, err := toml.DecodeFile(filepath, &aliases); err != nil {
+		return &ErrTomlFileIsInvalid{err}
+	}
+
+	if len(aliases.Aliases) == 0 {
+		return ErrDoesnotHaveAlias
+	}
+
+	return nil
 }
