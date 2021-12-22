@@ -1,6 +1,7 @@
 package cf
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/cchaiyatad/seestern/pkg/gen"
@@ -46,7 +47,7 @@ func genType(t Type, vendor string, isConstraint bool) interface{} {
 	case Array:
 		return genArray(t)
 	case Object:
-		return genObject(t)
+		return genObject(t, vendor)
 	}
 	return nil
 }
@@ -94,10 +95,23 @@ func genObjectID(t Type, vendor string) interface{} {
 
 func genArray(t Type) interface{} {
 	// TODO 3: Array?
-	return false
+
+	minItem := t.MinItem()
+	maxItem := t.MaxItem()
+	if minItem > maxItem {
+		return []interface{}{}
+	}
+	data := []interface{}{}
+
+	return data
 }
 
-func genObject(t Type) interface{} {
-	// TODO 4: Object?
-	return false
+func genObject(t Type, vendor string) interface{} {
+	fields := t.ElementTypeObject()
+	fmt.Println(fields)
+
+	fieldGen := newFieldGenerator(fields, vendor)
+	document := genDocument(0, fieldGen)
+
+	return document
 }

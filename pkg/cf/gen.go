@@ -69,14 +69,14 @@ func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {
 	fieldGen := newFieldGenerator(db.Collection.Fields, ssconfig.vendor)
 
 	for i := 0; i < count; i++ {
-		doc := ssconfig.genDocument(i, fieldGen)
+		doc := genDocument(i, fieldGen)
 		documents = append(documents, doc)
 	}
 
 	return documents, nil
 }
 
-func (*SSConfig) genDocument(idx int, fieldGen *fieldGenerator) document {
+func genDocument(idx int, fieldGen *fieldGenerator) document {
 	document := make(document)
 
 	for _, field := range fieldGen.fields {

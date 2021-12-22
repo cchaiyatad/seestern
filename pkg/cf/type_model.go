@@ -152,6 +152,7 @@ func (t Type) ElementTypeObject() []Field {
 	}
 
 	for _, value := range t.P_ElementType {
+		fmt.Printf("%#v\n", value)
 		if field, ok := value.(Field); ok {
 			fields = append(fields, field)
 		}
