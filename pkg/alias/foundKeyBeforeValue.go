@@ -1,7 +1,5 @@
 package alias
 
-import "fmt"
-
 type foundKeyBeforeValue struct {
 	parser *parser
 }
@@ -18,7 +16,6 @@ func (s *foundKeyBeforeValue) isFoundValue(line string) error {
 		return nil
 	}
 
-	fmt.Printf("value: %s\n", value)
 	s.parser.currentValue.WriteString(value)
 	s.parser.setState(s.parser.validateValue)
 	return nil

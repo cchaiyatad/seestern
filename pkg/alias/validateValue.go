@@ -1,8 +1,6 @@
 package alias
 
 import (
-	"fmt"
-
 	"github.com/BurntSushi/toml"
 )
 
@@ -23,20 +21,30 @@ func (s *validateValue) isValueComplete() error {
 	value := s.parser.currentValue.String()
 
 	if err := isTomlValid(value); err != nil {
-		fmt.Println(value)
-		fmt.Println(err)
-
-		if s.parser.currentKey == "" {
-			s.parser.setState(s.parser.foundValueBeforeKey)
-		} else {
-			s.parser.setState(s.parser.foundValueAfterKey)
-		}
+		s.setStateByKey(s.parser.foundValueAfterKey, s.parser.foundValueBeforeKey)
 		return nil
 	}
 
-	s.parser.insertCurrentAlias()
-	s.parser.setState(s.parser.waitForAilas)
+	s.callBackByKey(s.parser.insertCurrentAlias, func() {})
+	s.setStateByKey(s.parser.waitForAilas, s.parser.foundKeyAfterValue)
 	return nil
+}
+
+func (s *validateValue) setStateByKey(foundKeyFirst, foundValueFirst state) {
+	s.callBackByKey(s.getSetStateFunc(foundKeyFirst), s.getSetStateFunc(foundValueFirst))
+}
+
+func (s *validateValue) getSetStateFunc(state state) func() {
+	return func() {
+		s.parser.setState(state)
+	}
+}
+func (s *validateValue) callBackByKey(foundKeyFirstFuncs, foundValueFirstFuncs func()) {
+	if s.parser.currentKey == "" {
+		foundValueFirstFuncs()
+	} else {
+		foundKeyFirstFuncs()
+	}
 }
 
 func isTomlValid(tomlData string) error {

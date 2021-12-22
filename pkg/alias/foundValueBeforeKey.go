@@ -11,7 +11,11 @@ func (s *foundValueBeforeKey) isFoundKey(line string) error {
 	panic("not implement")
 }
 func (s *foundValueBeforeKey) isFoundValue(line string) error {
-	panic("not implement")
+	value := strip(line)
+
+	s.parser.currentValue.WriteString(value)
+	s.parser.setState(s.parser.validateValue)
+	return nil
 }
 func (s *foundValueBeforeKey) isValueComplete() error {
 	panic("not implement")

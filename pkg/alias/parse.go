@@ -59,13 +59,18 @@ func (parser *parser) parse(line string) {
 		err = parser.isFoundAlias(line)
 	case parser.foundAilas:
 		err = parser.isFoundKey(line)
+		// err = parser.isFoundValue(line)
+
 	case parser.foundKeyBeforeValue:
 		err = parser.isFoundValue(line)
 	case parser.foundValueAfterKey:
+		err = parser.isFoundValue(line)
 
 	case parser.foundValueBeforeKey:
+		err = parser.isFoundValue(line)
 
 	case parser.foundKeyAfterValue:
+		err = parser.isFoundKey(line)
 
 	}
 	parser.checkIllegalState(err)

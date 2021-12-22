@@ -1,7 +1,5 @@
 package alias
 
-import "fmt"
-
 type foundAilas struct {
 	parser *parser
 }
@@ -15,7 +13,6 @@ func (s *foundAilas) isFoundKey(line string) error {
 		return nil
 	}
 
-	fmt.Printf("key: %s\n", key)
 	s.parser.currentKey = key
 	s.parser.setState(s.parser.foundKeyBeforeValue)
 	return nil
@@ -26,7 +23,6 @@ func (s *foundAilas) isFoundValue(line string) error {
 		return nil
 	}
 
-	fmt.Printf("value: %s\n", value)
 	s.parser.currentValue.WriteString(value)
 	s.parser.setState(s.parser.foundValueBeforeKey)
 	return nil
