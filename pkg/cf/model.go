@@ -32,10 +32,10 @@ func (c Collection) String() string {
 }
 
 type Field struct {
-	F_name      string       `json:"f_name" toml:"f_name" yaml:"f_name"`
-	Omit_weight float64      `json:"omit_weight,omitempty" toml:"omit_weight,omitzero" yaml:"omit_weight,omitempty"`
-	Constraints []Constraint `json:"constraints" toml:"constraints" yaml:"constraints"`
-	Sets        []Set        `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
+	F_name      string       `json:"f_name" toml:"f_name" yaml:"f_name" mapstructure:"f_name"`
+	Omit_weight float64      `json:"omit_weight,omitempty" toml:"omit_weight,omitzero" yaml:"omit_weight,omitempty" mapstructure:"omit_weight,omitempty"`
+	Constraints []Constraint `json:"constraints" toml:"constraints" yaml:"constraints" mapstructure:"constraints"`
+	Sets        []Set        `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty" mapstructure:"sets,omitempty"`
 }
 
 func (f Field) String() string {
@@ -43,8 +43,8 @@ func (f Field) String() string {
 }
 
 type Constraint struct {
-	Weight int `json:"weight,omitempty" toml:"weight,omitzero" yaml:"weight,omitempty"`
-	Item   `json:",omitempty" yaml:",inline,omitempty"`
+	Weight int `json:"weight,omitempty" toml:"weight,omitzero" yaml:"weight,omitempty" mapstructure:"weight,omitempty"`
+	Item   `json:",omitempty" yaml:",inline,omitempty" mapstructure:",squash"`
 }
 
 func (c Constraint) String() string {
@@ -52,8 +52,8 @@ func (c Constraint) String() string {
 }
 
 type Set struct {
-	At   []int `json:"at,omitempty" toml:"at,omitzero" yaml:"at,omitempty"`
-	Item `json:",omitempty" toml:",omitzero"  yaml:",inline,omitempty"`
+	At   []int `json:"at,omitempty" toml:"at,omitzero" yaml:"at,omitempty" mapstructure:"at,omitempty"`
+	Item `json:",omitempty" toml:",omitzero"  yaml:",inline,omitempty" mapstructure:",squash"`
 }
 
 func (s Set) String() string {
@@ -61,9 +61,9 @@ func (s Set) String() string {
 }
 
 type Item struct {
-	Value `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty"`
-	Enum  `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty"`
-	Type  `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty"`
+	Value `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty" mapstructure:",squash"`
+	Enum  `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty" mapstructure:",squash"`
+	Type  `json:",omitempty" toml:",omitzero" yaml:",inline,omitempty" mapstructure:",squash"`
 }
 
 func (i Item) String() string {
@@ -71,7 +71,7 @@ func (i Item) String() string {
 }
 
 type Value struct {
-	Value interface{} `json:"value,omitempty" toml:"value,omitzero" yaml:"value,omitempty"`
+	Value interface{} `json:"value,omitempty" toml:"value,omitzero" yaml:"value,omitempty" mapstructure:"value,omitempty"`
 }
 
 func (v Value) String() string {
@@ -79,7 +79,7 @@ func (v Value) String() string {
 }
 
 type Enum struct {
-	Enum []interface{} `json:"enum,omitempty" toml:"enum,omitzero" yaml:"enum,omitempty"`
+	Enum []interface{} `json:"enum,omitempty" toml:"enum,omitzero" yaml:"enum,omitempty" mapstructure:"enum,omitempty"`
 }
 
 func (e Enum) String() string {

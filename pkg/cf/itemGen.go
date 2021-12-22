@@ -1,7 +1,6 @@
 package cf
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/cchaiyatad/seestern/pkg/gen"
@@ -108,7 +107,6 @@ func genArray(t Type) interface{} {
 
 func genObject(t Type, vendor string) interface{} {
 	fields := t.ElementTypeObject()
-	fmt.Println(fields)
 
 	fieldGen := newFieldGenerator(fields, vendor)
 	document := genDocument(0, fieldGen)

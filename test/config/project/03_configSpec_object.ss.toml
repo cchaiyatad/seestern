@@ -1,8 +1,12 @@
 # sample object
 
+[[databases]]
+d_name = "school"
+
 # collection: student
-[[collection]]
+[databases.collection]
 c_name = "student"
+count = 3
 
 # collection: student field:s_id
 [[collection.fields]]

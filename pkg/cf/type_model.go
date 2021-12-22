@@ -1,29 +1,33 @@
 package cf
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/mitchellh/mapstructure"
+)
 
 type Type struct {
-	Type DataType `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty"`
+	Type DataType `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty" mapstructure:"type,omitempty"`
 
 	// array and object
-	P_ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty"`
+	P_ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty" mapstructure:"element_type,omitempty"`
 
 	// only constraint
-	P_Ref string `json:"ref,omitempty" toml:"ref,omitzero" yaml:"ref,omitempty"`
+	P_Ref string `json:"ref,omitempty" toml:"ref,omitzero" yaml:"ref,omitempty" mapstructure:"ref,omitempty"`
 
 	// string
-	P_Prefix string `json:"prefix,omitempty" toml:"prefix,omitzero" yaml:"prefix,omitempty"`
-	P_Suffix string `json:"suffix,omitempty" toml:"suffix,omitzero" yaml:"suffix,omitempty"`
-	P_Length int    `json:"length,omitempty" toml:"length,omitzero" yaml:"length,omitempty"`
+	P_Prefix string `json:"prefix,omitempty" toml:"prefix,omitzero" yaml:"prefix,omitempty" mapstructure:"prefix,omitempty"`
+	P_Suffix string `json:"suffix,omitempty" toml:"suffix,omitzero" yaml:"suffix,omitempty" mapstructure:"suffix,omitempty"`
+	P_Length int    `json:"length,omitempty" toml:"length,omitzero" yaml:"length,omitempty" mapstructure:"length,omitempty"`
 
 	// int, double
-	P_Min interface{} `json:"min,omitempty" toml:"min,omitzero" yaml:"min,omitempty"`
-	P_Max interface{} `json:"max,omitempty" toml:"max,omitzero" yaml:"max,omitempty"`
+	P_Min interface{} `json:"min,omitempty" toml:"min,omitzero" yaml:"min,omitempty" mapstructure:"min,omitempty"`
+	P_Max interface{} `json:"max,omitempty" toml:"max,omitzero" yaml:"max,omitempty" mapstructure:"max,omitempty"`
 
 	// array
-	P_Sets    []Set `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
-	P_MaxItem int   `json:"max_item,omitempty" toml:"max_item,omitzero" yaml:"max_item,omitempty"`
-	P_MinItem int   `json:"min_item,omitempty" toml:"min_item,omitzero" yaml:"min_item,omitempty"`
+	P_Sets    []Set `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty" mapstructure:"sets,omitempty"`
+	P_MaxItem int   `json:"max_item,omitempty" toml:"max_item,omitzero" yaml:"max_item,omitempty" mapstructure:"max_item,omitempty"`
+	P_MinItem int   `json:"min_item,omitempty" toml:"min_item,omitzero" yaml:"min_item,omitempty" mapstructure:"min_item,omitempty"`
 }
 
 func (t Type) String() string {
@@ -137,9 +141,11 @@ func (t Type) ElementTypeArray() []Constraint {
 	}
 
 	for _, value := range t.P_ElementType {
-		if constraint, ok := value.(Constraint); ok {
-			constraints = append(constraints, constraint)
+		var con Constraint
+		if err := mapstructure.Decode(value, &con); err == nil {
+			constraints = append(constraints, con)
 		}
+
 	}
 
 	return constraints
@@ -152,8 +158,8 @@ func (t Type) ElementTypeObject() []Field {
 	}
 
 	for _, value := range t.P_ElementType {
-		fmt.Printf("%#v\n", value)
-		if field, ok := value.(Field); ok {
+		var field Field
+		if err := mapstructure.Decode(value, &field); err == nil {
 			fields = append(fields, field)
 		}
 	}
