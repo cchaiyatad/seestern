@@ -57,17 +57,17 @@ func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {
 	}
 
 	documents := make(documents, 0, count)
-	// createConstarint map -> tree
 
+	constarintRandomizer := genConstraintRandomizer(db.Collection.Fields)
 	for i := 0; i < count; i++ {
-		doc := ssconfig.genDocument(i, db.Collection.Fields)
+		doc := ssconfig.genDocument(i, db.Collection.Fields, constarintRandomizer)
 		documents = append(documents, doc)
 	}
 
 	return documents, nil
 }
 
-func (ssconfig *SSConfig) genDocument(idx int, fields []Field) document {
+func (ssconfig *SSConfig) genDocument(idx int, fields []Field, constarintRandomizer *constraintRandomizer) document {
 	document := make(document)
 
 	for _, field := range fields {
@@ -80,7 +80,7 @@ func (ssconfig *SSConfig) genDocument(idx int, fields []Field) document {
 			continue
 		}
 
-		document[field.F_name] = genFromConstraint(field.Constraints, ssconfig.vendor)
+		document[field.F_name] = genFromConstraint(field.F_name, constarintRandomizer, ssconfig.vendor)
 	}
 	return document
 }
@@ -97,14 +97,12 @@ func genFromSet(sets []Set, idx int, vendor string) (interface{}, bool) {
 	return nil, false
 }
 
-func genFromConstraint(constraints []Constraint, vendor string) interface{} {
-	constraint := getRandomConstraint(constraints)
+func genFromConstraint(fieldName string, constarintRandomizer *constraintRandomizer, vendor string) interface{} {
+	constraint := constarintRandomizer.getConstraint(fieldName)
+	if constraint == nil {
+		return nil
+	}
 	return getValueFromItem(constraint.Value.Value, constraint.Enum.Enum, constraint.Type, vendor)
-}
-
-func getRandomConstraint(constraints []Constraint) Constraint {
-	// TODO 1: Use weight?
-	return constraints[rand.Intn(len(constraints))]
 }
 
 func getValueFromItem(value interface{}, enum []interface{}, t Type, vendor string) interface{} {

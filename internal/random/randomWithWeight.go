@@ -14,16 +14,16 @@ func setSeed() {
 }
 
 // AVL
-type randomWeightTree struct {
+type RandomWeightTree struct {
 	sumOfWeight int
 	tree        *SplayTree
 }
 
-func NewRandomWeightTree() *randomWeightTree {
-	return &randomWeightTree{tree: NewSplayTree(less, inRandomRange)}
+func NewRandomWeightTree() *RandomWeightTree {
+	return &RandomWeightTree{tree: NewSplayTree(less, inRandomRange)}
 }
 
-func (t *randomWeightTree) Insert(weight int, payload interface{}) {
+func (t *RandomWeightTree) Insert(weight int, payload interface{}) {
 	if weight <= 0 {
 		weight = 1
 	}
@@ -36,7 +36,7 @@ func (t *randomWeightTree) Insert(weight int, payload interface{}) {
 	t.sumOfWeight += weight
 }
 
-func (t *randomWeightTree) GetRandom() interface{} {
+func (t *RandomWeightTree) GetRandom() interface{} {
 	randomWeight := rand.Intn(t.sumOfWeight)
 	value := t.tree.Get(randomWeight)
 	if value == nil {
