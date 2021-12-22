@@ -57,21 +57,21 @@ func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {
 	}
 
 	documents := make(documents, 0, count)
+	fieldGen := newFieldGenerator(db.Collection.Fields, ssconfig.vendor)
 
-	constarintRandomizer := genConstraintRandomizer(db.Collection.Fields)
 	for i := 0; i < count; i++ {
-		doc := ssconfig.genDocument(i, db.Collection.Fields, constarintRandomizer)
+		doc := ssconfig.genDocument(i, fieldGen)
 		documents = append(documents, doc)
 	}
 
 	return documents, nil
 }
 
-func (ssconfig *SSConfig) genDocument(idx int, fields []Field, constarintRandomizer *constraintRandomizer) document {
+func (*SSConfig) genDocument(idx int, fieldGen *fieldGenerator) document {
 	document := make(document)
 
-	for _, field := range fields {
-		if value, ok := genFromSet(field.Sets, idx, ssconfig.vendor); ok {
+	for _, field := range fieldGen.fields {
+		if value, ok := fieldGen.genFromSet(field.Sets, idx); ok {
 			document[field.F_name] = value
 			continue
 		}
@@ -80,29 +80,9 @@ func (ssconfig *SSConfig) genDocument(idx int, fields []Field, constarintRandomi
 			continue
 		}
 
-		document[field.F_name] = genFromConstraint(field.F_name, constarintRandomizer, ssconfig.vendor)
+		document[field.F_name] = fieldGen.genFromConstraint(field.F_name)
 	}
 	return document
-}
-
-func genFromSet(sets []Set, idx int, vendor string) (interface{}, bool) {
-	// Big O performance
-	for _, set := range sets {
-		for _, at := range set.At {
-			if at == idx {
-				return getValueFromItem(set.Value.Value, set.Enum.Enum, set.Type, vendor), true
-			}
-		}
-	}
-	return nil, false
-}
-
-func genFromConstraint(fieldName string, constarintRandomizer *constraintRandomizer, vendor string) interface{} {
-	constraint := constarintRandomizer.getConstraint(fieldName)
-	if constraint == nil {
-		return nil
-	}
-	return getValueFromItem(constraint.Value.Value, constraint.Enum.Enum, constraint.Type, vendor)
 }
 
 func getValueFromItem(value interface{}, enum []interface{}, t Type, vendor string) interface{} {
