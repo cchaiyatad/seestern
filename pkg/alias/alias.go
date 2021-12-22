@@ -3,7 +3,6 @@ package alias
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/BurntSushi/toml"
 	"github.com/cchaiyatad/seestern/internal/dataformat"
@@ -48,10 +47,6 @@ func getAlias(filepath string) (Alias, error) {
 func (alias Alias) getCreateAliasByLineFunc() func(string) {
 	parser := alias.newParser()
 	return parser.getParseFunc()
-}
-
-func strip(s string) string {
-	return strings.TrimSpace(s)
 }
 
 func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
