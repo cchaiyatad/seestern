@@ -71,7 +71,7 @@ func (*SSConfig) genDocument(idx int, fieldGen *fieldGenerator) document {
 	document := make(document)
 
 	for _, field := range fieldGen.fields {
-		if value, ok := fieldGen.genFromSet(field.Sets, idx); ok {
+		if value, ok := fieldGen.genFromSet(field.F_name, idx); ok {
 			document[field.F_name] = value
 			continue
 		}
@@ -85,7 +85,15 @@ func (*SSConfig) genDocument(idx int, fieldGen *fieldGenerator) document {
 	return document
 }
 
-func getValueFromItem(value interface{}, enum []interface{}, t Type, vendor string) interface{} {
+func shouldOmit(omitWeight float64) bool {
+	return rand.Float64() < omitWeight
+}
+
+func getValueFromItem(item *Item, vendor string) interface{} {
+	value := item.Value.Value
+	enum := item.Enum.Enum
+	t := item.Type
+
 	if value != nil {
 		return value
 	}
@@ -93,10 +101,6 @@ func getValueFromItem(value interface{}, enum []interface{}, t Type, vendor stri
 		return enum[rand.Intn(len(enum))]
 	}
 	return genType(t, vendor, true)
-}
-
-func shouldOmit(omitWeight float64) bool {
-	return rand.Float64() < omitWeight
 }
 
 func genType(t Type, vendor string, isConstraint bool) interface{} {
