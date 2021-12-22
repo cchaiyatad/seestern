@@ -24,7 +24,7 @@ f_name = "elective_class"
 [[alias]]
 key = "class_constraint"
 value = [
-    {type = "array", element_type = [
+  {type = "array", element_type = [
     {type = "object", fields = [
       {f_name = "class_name", constraint = [{type = "string"}]},
       {f_name = "instructor", constraint = [{type = "string"}]},

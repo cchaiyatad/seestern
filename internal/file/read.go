@@ -1,6 +1,7 @@
 package file
 
 import (
+	"bufio"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -20,6 +21,19 @@ func GetBytesFromFile(path string) ([]byte, error) {
 	}
 
 	return b, nil
+}
+func IterateLineFromFile(path string, callback func(string)) error {
+	file, err := openFile(path)
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		callback(scanner.Text())
+	}
+	return scanner.Err()
 }
 
 func openFile(path string) (*os.File, error) {
