@@ -8,14 +8,14 @@ type parser struct {
 	waitForAilas state
 	foundAilas   state
 
-	foundKeyBeforeValue state
-	foundValueAfterKey  state
+	waitForValueAfterFoundKey                 state
+	waitForValueToCompleteBeforeGoToWaitAlias state
 
-	foundValueBeforeKey state
-	foundKeyAfterValue  state
-	validateValue       state
+	waitForValueToCompleteBeforeGoToKey state
+	waitForKeyAfterFoundValue           state
 
-	currentState state
+	validateValue state
+	currentState  state
 
 	alias        Alias
 	currentKey   string
@@ -28,11 +28,11 @@ func (alias Alias) newParser() *parser {
 	parser.waitForAilas = &waitForAilas{parser: parser}
 	parser.foundAilas = &foundAilas{parser: parser}
 
-	parser.foundKeyBeforeValue = &foundKeyBeforeValue{parser: parser}
-	parser.foundValueAfterKey = &foundValueAfterKey{parser: parser}
+	parser.waitForValueAfterFoundKey = &waitForValueAfterFoundKey{parser: parser}
+	parser.waitForValueToCompleteBeforeGoToWaitAlias = &waitForValueToCompleteBeforeGoToWaitAlias{parser: parser}
 
-	parser.foundValueBeforeKey = &foundValueBeforeKey{parser: parser}
-	parser.foundKeyAfterValue = &foundKeyAfterValue{parser: parser}
+	parser.waitForValueToCompleteBeforeGoToKey = &waitForValueToCompleteBeforeGoToKey{parser: parser}
+	parser.waitForKeyAfterFoundValue = &waitForKeyAfterFoundValue{parser: parser}
 
 	parser.validateValue = &validateValue{parser: parser}
 
@@ -58,18 +58,17 @@ func (parser *parser) parse(line string) {
 	case parser.waitForAilas:
 		err = parser.isFoundAlias(line)
 	case parser.foundAilas:
+		// TODO: fix maybe use err not found key to move to isFoundValue
 		err = parser.isFoundKey(line)
 		// err = parser.isFoundValue(line)
 
-	case parser.foundKeyBeforeValue:
+	case parser.waitForValueAfterFoundKey:
 		err = parser.isFoundValue(line)
-	case parser.foundValueAfterKey:
+	case parser.waitForValueToCompleteBeforeGoToWaitAlias:
 		err = parser.isFoundValue(line)
-
-	case parser.foundValueBeforeKey:
+	case parser.waitForValueToCompleteBeforeGoToKey:
 		err = parser.isFoundValue(line)
-
-	case parser.foundKeyAfterValue:
+	case parser.waitForKeyAfterFoundValue:
 		err = parser.isFoundKey(line)
 
 	}

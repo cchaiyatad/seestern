@@ -14,7 +14,7 @@ func (s *foundAilas) isFoundKey(line string) error {
 	}
 
 	s.parser.currentKey = key
-	s.parser.setState(s.parser.foundKeyBeforeValue)
+	s.parser.setState(s.parser.waitForValueAfterFoundKey)
 	return nil
 }
 func (s *foundAilas) isFoundValue(line string) error {
@@ -24,7 +24,7 @@ func (s *foundAilas) isFoundValue(line string) error {
 	}
 
 	s.parser.currentValue.WriteString(value)
-	s.parser.setState(s.parser.foundValueBeforeKey)
+	s.parser.setState(s.parser.validateValue)
 	return nil
 }
 

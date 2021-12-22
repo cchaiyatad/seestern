@@ -46,7 +46,7 @@ func getAlias(filepath string) (Alias, error) {
 
 func (alias Alias) getCreateAliasByLineFunc() func(string) {
 	parser := alias.newParser()
-	return parser.getParseFunc()
+	return parser.parse
 }
 
 func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
@@ -62,16 +62,16 @@ func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
 	return parseFunc, nil
 }
 
-type T_Aliases struct {
-	Aliases []T_Aliases `toml:"alias"`
-}
-
-type T_Alias struct {
-	Key   string      `toml:"key"`
-	Value interface{} `toml:"value"`
-}
-
 func isTomlFileValidAndHasAliase(filepath string) error {
+	type T_Alias struct {
+		Key   string      `toml:"key"`
+		Value interface{} `toml:"value"`
+	}
+
+	type T_Aliases struct {
+		Aliases []T_Alias `toml:"alias"`
+	}
+
 	var aliases T_Aliases
 
 	if _, err := toml.DecodeFile(filepath, &aliases); err != nil {

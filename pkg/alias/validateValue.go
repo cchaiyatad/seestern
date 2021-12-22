@@ -21,12 +21,12 @@ func (s *validateValue) isValueComplete() error {
 	value := s.parser.currentValue.String()
 
 	if err := isTomlValid(value); err != nil {
-		s.setStateByKey(s.parser.foundValueAfterKey, s.parser.foundValueBeforeKey)
+		s.setStateByKey(s.parser.waitForValueToCompleteBeforeGoToWaitAlias, s.parser.waitForValueToCompleteBeforeGoToKey)
 		return nil
 	}
 
 	s.callBackByKey(s.parser.insertCurrentAlias, func() {})
-	s.setStateByKey(s.parser.waitForAilas, s.parser.foundKeyAfterValue)
+	s.setStateByKey(s.parser.waitForAilas, s.parser.waitForKeyAfterFoundValue)
 	return nil
 }
 
