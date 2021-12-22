@@ -9,7 +9,7 @@ import (
 	"github.com/cchaiyatad/seestern/internal/file"
 )
 
-type Alias map[string]string
+type Alias map[string][]byte
 
 var ErrAliasNotSupport = errors.New("error: alias only support in toml")
 var ErrDoesnotHaveAlias = errors.New("error: this file does not have alias")

@@ -16,6 +16,6 @@ func (s *waitForAilas) isFoundKey(line string) error {
 func (s *waitForAilas) isFoundValue(line string) error {
 	panic("not implement")
 }
-func (s *waitForAilas) isValueComplete(line string) error {
+func (s *waitForAilas) isValueComplete() error {
 	panic("not implement")
 }

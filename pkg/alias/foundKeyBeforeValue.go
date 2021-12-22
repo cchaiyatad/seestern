@@ -20,11 +20,10 @@ func (s *foundKeyBeforeValue) isFoundValue(line string) error {
 
 	fmt.Printf("value: %s\n", value)
 	s.parser.currentValue.WriteString(value)
-	// check is complete
-	s.parser.setState(s.parser.waitForAilas)
+	s.parser.setState(s.parser.validateValue)
 	return nil
 }
 
-func (s *foundKeyBeforeValue) isValueComplete(line string) error {
+func (s *foundKeyBeforeValue) isValueComplete() error {
 	panic("not implement")
 }

@@ -9,8 +9,8 @@ import (
 
 var (
 	// noAliasPath     = "./test/alias/00_no_alias.ss.toml"
-	simpleAliasPath = "./test/alias/01_simple_alias.ss.toml"
-	// complexAliasPath         = "./test/alias/02_complex_alias.ss.toml"
+	// simpleAliasPath = "./test/alias/01_simple_alias.ss.toml"
+	complexAliasPath = "./test/alias/02_complex_alias.ss.toml"
 	// simpleWithOtherValuePath = "./test/alias/03_simple_with_other_value.ss.toml"
 	// twoAliasPath             = "./test/alias/04_two_alias.ss.toml"
 	// noCoresspondAliasPath    = "./test/alias/05_no_coresspond_alias.ss.toml"
@@ -50,7 +50,8 @@ func TestGetAlias(t *testing.T) {
 
 	// TODO 5: Fix Alias
 	t.Run("getAlias with simpleAliasPath file", func(t *testing.T) {
-		givenPath := simpleAliasPath
+		// givenPath := simpleAliasPath
+		givenPath := complexAliasPath
 
 		// expectedAlias := []Alias{
 		// 	{Key: "stringLenTen", Value: []interface{}{map[string]interface{}{"length": 10, "type": "string"}}},
@@ -58,7 +59,10 @@ func TestGetAlias(t *testing.T) {
 
 		gotAliases, gotErr := getAlias(givenPath)
 		assert.Nil(t, gotErr)
-		fmt.Println(gotAliases)
+
+		for k, v := range gotAliases {
+			fmt.Printf("%s: %s\n", k, string(v))
+		}
 		// assert.Equal(t, expectedAlias, gotAliases.Aliases)
 	})
 	// t.Run("getAlias with complexAlias file", func(t *testing.T) {

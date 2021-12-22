@@ -32,6 +32,6 @@ func (s *foundAilas) isFoundValue(line string) error {
 	return nil
 }
 
-func (s *foundAilas) isValueComplete(line string) error {
+func (s *foundAilas) isValueComplete() error {
 	panic("not implement")
 }

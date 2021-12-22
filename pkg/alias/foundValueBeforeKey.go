@@ -13,6 +13,6 @@ func (s *foundValueBeforeKey) isFoundKey(line string) error {
 func (s *foundValueBeforeKey) isFoundValue(line string) error {
 	panic("not implement")
 }
-func (s *foundValueBeforeKey) isValueComplete(line string) error {
+func (s *foundValueBeforeKey) isValueComplete() error {
 	panic("not implement")
 }
