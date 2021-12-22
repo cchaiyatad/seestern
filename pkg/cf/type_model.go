@@ -21,7 +21,9 @@ type Type struct {
 	P_Max interface{} `json:"max,omitempty" toml:"max,omitzero" yaml:"max,omitempty"`
 
 	// array
-	P_Sets []Set `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
+	P_Sets    []Set `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty"`
+	P_MaxItem int   `json:"max_item,omitempty" toml:"max_item,omitzero" yaml:"max_item,omitempty"`
+	P_MinItem int   `json:"min_item,omitempty" toml:"min_item,omitzero" yaml:"min_item,omitempty"`
 }
 
 func (t Type) String() string {
@@ -104,6 +106,28 @@ func (t Type) Sets() []Set {
 	}
 
 	return t.P_Sets
+}
+
+func (t Type) MinItem() int {
+	if t.Type != Array {
+		return 0
+	}
+
+	if t.P_MinItem > 0 {
+		return t.P_MinItem
+	}
+	return 0
+}
+
+func (t Type) MaxItem() int {
+	if t.Type != Array {
+		return 0
+	}
+
+	if t.P_MaxItem > 0 {
+		return t.P_MaxItem
+	}
+	return 10
 }
 
 func (t Type) ElementTypeArray() []Constraint {
