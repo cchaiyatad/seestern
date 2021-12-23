@@ -465,22 +465,118 @@ func TestGetSSConfigProjectAlias(t *testing.T) {
 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
 }
 
-// func TestGetSSConfigProjectEmbedded(t *testing.T) {
-// 	filePath := "./../../test/config/project/05_configSpec_embedded.ss.toml"
-// 	expectedData := &SSConfig{}
+func TestGetSSConfigProjectEmbedded(t *testing.T) {
+	filePath := "./../../test/config/project/05_configSpec_embedded.ss.toml"
+	expectedData := &SSConfig{
+		Databases: []Database{
+			{
+				D_name: "imdb",
+				Collection: Collection{
+					C_name: "movie",
+					Count:  10,
+					Fields: []Field{
+						{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "title", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "runtime", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+						{F_name: "released", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "type", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "directors", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}}}}}},
+						{F_name: "countries", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}}}}}},
+						{F_name: "genres", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}}}}}},
+					},
+				},
+			},
+			{
+				D_name: "imdb", Collection: Collection{
+					C_name: "movie_details",
+					Count:  20,
+					Fields: []Field{
+						{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "movie_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID", P_Ref: "movie._id"}}}}},
+						{F_name: "poster", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "plot", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "fullplot", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "lastupdated", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{
+							F_name: "imdb",
+							Constraints: []Constraint{
+								{Item: Item{Type: Type{Type: "object",
+									P_Fields: []Field{
+										{F_name: "rating", Constraints: []Constraint{{Item: Item{Type: Type{Type: "double"}}}}},
+										{F_name: "votes", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+										{F_name: "id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+									}}}},
+							},
+						},
+						{
+							F_name: "tomatoes",
+							Constraints: []Constraint{
+								{Item: Item{
+									Type: Type{
+										Type: "object",
+										P_Fields: []Field{
+											{F_name: "viewer", Constraints: []Constraint{{Item: Item{Type: Type{
+												Type: "object",
+												P_Fields: []Field{
+													{F_name: "rating", Constraints: []Constraint{{Item: Item{Type: Type{Type: "double"}}}}},
+													{F_name: "numReviews", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+												}}}}},
+											},
+											{F_name: "lastUpdated", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+										},
+									},
+								},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		vendor: "",
+	}
 
-// 	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
-// 	assert.Nil(t, gotErr)
-// 	fmt.Printf("%#v", gotSSConfig)
-// 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
-// }
+	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}
 
-// func TestGetSSConfigProjectRefs(t *testing.T) {
-// 	filePath := "./../../test/config/project/06_configSpec_refs.ss.toml"
-// 	expectedData := &SSConfig{}
+func TestGetSSConfigProjectRefs(t *testing.T) {
+	filePath := "./../../test/config/project/06_configSpec_refs.ss.toml"
+	expectedData := &SSConfig{
+		Databases: []Database{
+			{
+				D_name: "bookstore",
+				Collection: Collection{
+					C_name: "publisher",
+					Count:  5,
+					Fields: []Field{
+						{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "founded", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+						{F_name: "location", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+					},
+				},
+			},
+			{
+				D_name: "bookstore",
+				Collection: Collection{
+					C_name: "book",
+					Count:  20,
+					Fields: []Field{
+						{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "author", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}}}}}},
+						{F_name: "published_date", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "pages", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+						{F_name: "language", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "publisher_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID", P_Ref: "publisher._id"}}}}},
+					},
+				},
+			},
+		},
+	}
 
-// 	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
-// 	assert.Nil(t, gotErr)
-// 	fmt.Printf("%#v", gotSSConfig)
-// 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
-// }
+	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}

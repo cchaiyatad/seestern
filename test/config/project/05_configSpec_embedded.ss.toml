@@ -1,114 +1,122 @@
 # sample One-to-One Relationships with Embedded Documents
 
+[[databases]]
+d_name = "imdb"
+
 # collection: movie
-[[collection]]
+[databases.collection]
 c_name = "movie"
+count = 10
 
 # collection: movie field:_id
-[[collection.fields]]
-constraint = [{type = "objectID"}]
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
 f_name = "_id"
 
 # collection: movie field:title
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "title"
 
 # collection: movie field:runtime
-[[collection.fields]]
-constraint = [{type = "integer"}]
+[[databases.collection.fields]]
+constraints = [{type = "integer"}]
 f_name = "runtime"
 
 # collection: movie field:released
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "released"
 
 # collection: movie field:type
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "type"
 
 # collection: movie field:directors
-[[collection.fields]]
-constraint = [{type = "array", element_type = [{type = "string"}]}]
+[[databases.collection.fields]]
+constraints = [{type = "array", element_type = [{type = "string"}]}]
 f_name = "directors"
 
 # collection: movie field:countries
-[[collection.fields]]
-constraint = [{type = "array", element_type = [{type = "string"}]}]
+[[databases.collection.fields]]
+constraints = [{type = "array", element_type = [{type = "string"}]}]
 f_name = "countries"
 
 # collection: movie field:genres
-[[collection.fields]]
-constraint = [{type = "array", element_type = [{type = "string"}]}]
+[[databases.collection.fields]]
+constraints = [{type = "array", element_type = [{type = "string"}]}]
 f_name = "genres"
 
+[[databases]]
+d_name = "imdb"
+
 # collection: movie_details
-[[collection]]
+[databases.collection]
 c_name = "movie_details"
+count = 20
 
 # collection: movie_details field:_id
-[[collection.fields]]
-constraint = [{type = "objectID"}]
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
 f_name = "_id"
 
 # collection: movie_details field:movie_id
-[[collection.fields]]
-constraint = [{type = "objectID", ref = "movie._id"}]
+[[databases.collection.fields]]
+constraints = [{type = "objectID", ref = "movie._id"}]
 f_name = "movie_id"
 
 # collection: movie_details field:poster
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "poster"
 
 # collection: movie_details field:plot
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "plot"
 
 # collection: movie_details field:fullplot
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "fullplot"
 
 # collection: movie_details field:lastupdated
-[[collection.fields]]
-constraint = [{type = "string"}]
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
 f_name = "lastupdated"
 
 # collection: movie_details field:imdb
-[[collection.fields]]
-constraint = "#{{imdb_constraint}}"
+[[databases.collection.fields]]
+constraints = "#{{imdb_constraints}}"
 f_name = "imdb"
 
 # collection: movie_details field:tomatoes
-[[collection.fields]]
-constraint = "#{{tomatoes_constraint}}"
+[[databases.collection.fields]]
+constraints = "#{{tomatoes_constraints}}"
 f_name = "tomatoes"
 
 [[alias]]
-key = "imdb_constraint"
-value = {type = "object", fields = [
-  {f_name = "rating", constraint = [{type = "double"}]},
-  {f_name = "votes", constraint = [{type = "integer"}]},
-  {f_name = "id", constraint = [{type = "integer"}]},
-]}
+key = "imdb_constraints"
+value = [{type = "object", fields = [
+  {f_name = "rating", constraints = [{type = "double"}]},
+  {f_name = "votes", constraints = [{type = "integer"}]},
+  {f_name = "id", constraints = [{type = "integer"}]},
+]}]
 
 [[alias]]
-key = "tomatoes_constraint"
-value = {type = "object", fields = [
-  {f_name = "viewer", constraint = [{type = "#{{tomatoes_viewer_constraint}}"}]},
-  {f_name = "lastUpdated", constraint = [{type = "datetime"}]},
-]}
+key = "tomatoes_constraints"
+value = [{type = "object", fields = [
+  {f_name = "viewer", constraints = "#{{tomatoes_viewer_constraints}}"},
+  {f_name = "lastUpdated", constraints = [{type = "integer"}]},
+]}]
 
 [[alias]]
-key = "tomatoes_viewer_constraint"
-value = {type = "object", fields = [
-  {f_name = "rating", constraint = [{type = "double"}]},
-  {f_name = "numReviews", constraint = [{type = "integer"}]},
-]}
+key = "tomatoes_viewer_constraints"
+value = [{type = "object", fields = [
+  {f_name = "rating", constraints = [{type = "double"}]},
+  {f_name = "numReviews", constraints = [{type = "integer"}]},
+]}]
 
 # collection: movie
 # collection: movie field:_id
