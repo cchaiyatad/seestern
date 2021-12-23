@@ -28,7 +28,7 @@ func getValueFromItem(item *Item, vendor string, isConstraint bool) interface{} 
 	return genType(t, vendor, isConstraint)
 }
 
-// TODO: ref (using isConstraint value)
+// TODO 6: ref (using isConstraint value)
 func genType(t Type, vendor string, isConstraint bool) interface{} {
 	switch t.Type {
 	case Null:

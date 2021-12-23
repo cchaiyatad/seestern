@@ -2,7 +2,6 @@ package alias
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 )
 
@@ -33,7 +32,6 @@ func (parser *parser) setState(s state) {
 
 func (parser *parser) checkIllegalState(err error) {
 	if err != nil {
-		fmt.Println("illegal")
 		parser.currentState = parser.waitForAilas
 		parser.clearCurrentData()
 	}

@@ -22,17 +22,20 @@ func (err *ErrTomlFileIsInvalid) Error() string {
 	return fmt.Sprintf("error: this .toml file is invalid reason: %s", err.reason)
 }
 
-func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
-	_, err := getAlias(filepath)
+func GetParseAliasFunc(filepath string) ([]dataformat.DecodeOption, error) {
+	ailas, err := getAlias(filepath)
 	if err != nil {
 		return nil, err
 	}
+	parseFuncs := make([]dataformat.DecodeOption, 0, len(ailas))
 
-	parseFunc := func(data []byte) []byte {
-		return data
+	for key, value := range ailas {
+		if funcs, err := getReplaceAliasFuncFromKey(key, value); err == nil {
+			parseFuncs = append(parseFuncs, funcs)
+		}
 	}
 
-	return parseFunc, nil
+	return parseFuncs, nil
 }
 
 func getAlias(filepath string) (Alias, error) {

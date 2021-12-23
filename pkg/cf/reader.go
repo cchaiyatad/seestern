@@ -2,6 +2,8 @@ package cf
 
 import (
 	"github.com/cchaiyatad/seestern/internal/dataformat"
+	"github.com/cchaiyatad/seestern/internal/file"
+	"github.com/cchaiyatad/seestern/pkg/alias"
 )
 
 type ConfigFileReader struct {
@@ -21,6 +23,7 @@ func (c *ConfigFileReader) GetSSConfig() (*SSConfig, error) {
 
 	var ssConfig SSConfig
 	if err = decoder.Decode(&ssConfig, c.getDecodeOpts()...); err != nil {
+
 		return nil, err
 	}
 
@@ -31,17 +34,16 @@ func (c *ConfigFileReader) GetSSConfig() (*SSConfig, error) {
 func (c *ConfigFileReader) getDecodeOpts() []dataformat.DecodeOption {
 	var opts []dataformat.DecodeOption
 
-	// TODO: Add alias
-	// fileType, err := file.GetFileType(c.filepath)
-	// if err != nil {
-	// 	return opts
-	// }
+	fileType, err := file.GetFileType(c.filepath)
+	if err != nil {
+		return opts
+	}
 
-	// if fileType == "toml" {
-	// 	if fun, err := getParseAliasFunc(c.filepath); err != nil && fun != nil {
-	// 		opts = append(opts, fun)
-	// 	}
-	// }
+	if fileType == "toml" {
+		if fun, err := alias.GetParseAliasFunc(c.filepath); err == nil && fun != nil {
+			opts = append(opts, fun...)
+		}
+	}
 
 	return opts
 }
