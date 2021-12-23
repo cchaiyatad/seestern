@@ -101,7 +101,7 @@ func genArray(t Type, vendor string) interface{} {
 		return data
 	}
 
-	constraintRandomTree := NewConstraintRandomTree(t.ElementTypeArray())
+	constraintRandomTree := NewConstraintRandomTree(t.ElementType())
 	setMap := newSetMap(t.Sets())
 
 	maxItem = rand.Intn(maxItem-minItem) + minItem
@@ -120,7 +120,7 @@ func genArray(t Type, vendor string) interface{} {
 }
 
 func genObject(t Type, vendor string) interface{} {
-	fields := t.ElementTypeObject()
+	fields := t.Fields()
 
 	fieldGen := newFieldGenerator(fields, vendor)
 	document := genDocument(0, fieldGen)

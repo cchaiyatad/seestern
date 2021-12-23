@@ -135,7 +135,7 @@ func (t Type) MaxItem() int {
 	return 10
 }
 
-func (t Type) ElementTypeArray() []Constraint {
+func (t Type) ElementType() []Constraint {
 	constraints := []Constraint{}
 	if t.Type != Array {
 		return constraints
@@ -152,7 +152,7 @@ func (t Type) ElementTypeArray() []Constraint {
 	return constraints
 }
 
-func (t Type) ElementTypeObject() []Field {
+func (t Type) Fields() []Field {
 	if t.Type != Object {
 		return []Field{}
 	}
