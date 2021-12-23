@@ -9,9 +9,6 @@ import (
 type Type struct {
 	Type DataType `json:"type,omitempty" toml:"type,omitzero" yaml:"type,omitempty" mapstructure:"type,omitempty"`
 
-	// array and object
-	P_ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty" mapstructure:"element_type,omitempty"`
-
 	// only constraint
 	P_Ref string `json:"ref,omitempty" toml:"ref,omitzero" yaml:"ref,omitempty" mapstructure:"ref,omitempty"`
 
@@ -25,9 +22,13 @@ type Type struct {
 	P_Max interface{} `json:"max,omitempty" toml:"max,omitzero" yaml:"max,omitempty" mapstructure:"max,omitempty"`
 
 	// array
-	P_Sets    []Set `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty" mapstructure:"sets,omitempty"`
-	P_MaxItem int   `json:"max_item,omitempty" toml:"max_item,omitzero" yaml:"max_item,omitempty" mapstructure:"max_item,omitempty"`
-	P_MinItem int   `json:"min_item,omitempty" toml:"min_item,omitzero" yaml:"min_item,omitempty" mapstructure:"min_item,omitempty"`
+	P_Sets        []Set         `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty" mapstructure:"sets,omitempty"`
+	P_MaxItem     int           `json:"max_item,omitempty" toml:"max_item,omitzero" yaml:"max_item,omitempty" mapstructure:"max_item,omitempty"`
+	P_MinItem     int           `json:"min_item,omitempty" toml:"min_item,omitzero" yaml:"min_item,omitempty" mapstructure:"min_item,omitempty"`
+	P_ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty" mapstructure:"element_type,omitempty"`
+
+	// object
+	P_Fields []Field `json:"fields,omitempty" toml:"fields,omitzero" yaml:"fields,omitempty" mapstructure:"fields,omitempty"`
 }
 
 func (t Type) String() string {
@@ -152,17 +153,8 @@ func (t Type) ElementTypeArray() []Constraint {
 }
 
 func (t Type) ElementTypeObject() []Field {
-	fields := []Field{}
 	if t.Type != Object {
-		return fields
+		return []Field{}
 	}
-
-	for _, value := range t.P_ElementType {
-		var field Field
-		if err := mapstructure.Decode(value, &field); err == nil {
-			fields = append(fields, field)
-		}
-	}
-
-	return fields
+	return t.P_Fields
 }

@@ -274,7 +274,7 @@ func (n *NodeType) toConstraint() Constraint {
 	case Object:
 		for _, payload := range n.Payload {
 			field := payload.toField()
-			item.P_ElementType = append(item.P_ElementType, field)
+			item.P_Fields = append(item.P_Fields, field)
 		}
 	}
 

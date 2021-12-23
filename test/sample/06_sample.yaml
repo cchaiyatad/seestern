@@ -20,11 +20,11 @@ databases:
             - f_name: end station location
               constraints:
                 - type: object
-                  element_type:
+                  fields:
                     - f_name: start station location
                       constraints:
                         - type: object
-                          element_type:
+                          fields:
                             - f_name: coordinates
                               constraints:
                                 - type: array

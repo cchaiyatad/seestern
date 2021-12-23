@@ -45,7 +45,7 @@
                         "constraints": [
                             {
                                 "type": "object",
-                                "element_type": [
+                                "fields": [
                                     {
                                         "f_name": "coordinates",
                                         "constraints": [
@@ -92,7 +92,7 @@
                         "constraints": [
                             {
                                 "type": "object",
-                                "element_type": [
+                                "fields": [
                                     {
                                         "f_name": "coordinates",
                                         "constraints": [
@@ -198,7 +198,7 @@
                                 "element_type": [
                                     {
                                         "type": "object",
-                                        "element_type": [
+                                        "fields": [
                                             {
                                                 "f_name": "author",
                                                 "constraints": [

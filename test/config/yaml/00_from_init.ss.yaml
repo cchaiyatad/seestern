@@ -19,7 +19,7 @@ databases:
             - f_name: end station location
               constraints:
                 - type: object
-                  element_type:
+                  fields:
                     - f_name: coordinates
                       constraints:
                         - type: array
@@ -37,7 +37,7 @@ databases:
             - f_name: start station location
               constraints:
                 - type: object
-                  element_type:
+                  fields:
                     - f_name: coordinates
                       constraints:
                         - type: array
@@ -79,7 +79,7 @@ databases:
                 - type: array
                   element_type:
                     - type: object
-                      element_type:
+                      fields:
                         - f_name: author
                           constraints:
                             - type: string
