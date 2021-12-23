@@ -387,13 +387,11 @@ func TestGetSSConfigProjectObject(t *testing.T) {
 								{
 									At: []int{0, 2},
 									Item: Item{
-										Value: Value{
-											Value: map[string]interface{}{
-												"fields": []interface{}{
-													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "Special Class"}}, "f_name": "approve class"},
-													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "No-one"}}, "f_name": "instructor"},
-												},
-												"type": "object",
+										Type: Type{
+											Type: "object",
+											P_Fields: []Field{
+												{F_name: "approve class", Constraints: []Constraint{{Item: Item{Value: Value{Value: "Special Class"}}}}},
+												{F_name: "instructor", Constraints: []Constraint{{Item: Item{Value: Value{Value: "No-one"}}}}},
 											},
 										},
 									},

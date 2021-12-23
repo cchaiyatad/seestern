@@ -53,10 +53,11 @@ type = "array"
 
 [[databases.collection.fields.sets]]
 at = [0, 2]
-value = {type = "object", fields = [
+type = "object"
+fields = [
   {f_name = "approve class", constraints = [{value = "Special Class"}]},
   {f_name = "instructor", constraints = [{value = "No-one"}]},
-]}
+]
 
 # collection: student
 # collection: student field:s_id

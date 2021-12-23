@@ -23,7 +23,6 @@ func (c *ConfigFileReader) GetSSConfig() (*SSConfig, error) {
 
 	var ssConfig SSConfig
 	if err = decoder.Decode(&ssConfig, c.getDecodeOpts()...); err != nil {
-
 		return nil, err
 	}
 
