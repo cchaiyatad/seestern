@@ -22,8 +22,8 @@ func init() {
 	initCmd.Flags().StringSliceVarP(&collections, collectionKey, "c", []string{}, "specific database and collection to create (in <database>.<collection> format)")
 	initCmd.Flags().BoolVarP(&verbose, verboseKey, "v", false, "verbose output")
 
-	initCmd.MarkFlagRequired(connectionStringKey)
-	initCmd.MarkFlagRequired(collectionKey)
+	_ = initCmd.MarkFlagRequired(connectionStringKey)
+	_ = initCmd.MarkFlagRequired(collectionKey)
 }
 
 func initFunc(cmd *cobra.Command, _ []string) {

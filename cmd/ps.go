@@ -19,7 +19,8 @@ func init() {
 
 	psCmd.Flags().StringP(connectionStringKey, "s", "", "connection string to database")
 	psCmd.Flags().StringP(databaseKey, "d", "", "specific database to list collection")
-	psCmd.MarkFlagRequired(connectionStringKey)
+
+	_ = psCmd.MarkFlagRequired(connectionStringKey)
 }
 
 func ps(cmd *cobra.Command, _ []string) {

@@ -22,7 +22,7 @@ func init() {
 	generateCmd.Flags().BoolVarP(&isDrop, dropKey, "d", false, "drop all document in collection in configuration file")
 	generateCmd.Flags().BoolVarP(&isInsert, insertKey, "i", false, "insert document in collection in configuration file")
 
-	generateCmd.MarkFlagRequired(fileKey)
+	_ = generateCmd.MarkFlagRequired(fileKey)
 }
 
 func genFunc(cmd *cobra.Command, _ []string) {
