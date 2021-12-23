@@ -268,7 +268,7 @@ func (n *NodeType) toConstraint() Constraint {
 		for _, payload := range n.Payload {
 			for _, payloadNodeType := range payload.NodeTypes {
 				con := payloadNodeType.toConstraint()
-				item.P_ElementType = append(item.P_ElementType, con.Item)
+				item.P_ElementType = append(item.P_ElementType, con)
 			}
 		}
 	case Object:

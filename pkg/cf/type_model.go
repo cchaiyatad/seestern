@@ -2,8 +2,6 @@ package cf
 
 import (
 	"fmt"
-
-	"github.com/mitchellh/mapstructure"
 )
 
 type Type struct {
@@ -22,10 +20,10 @@ type Type struct {
 	P_Max interface{} `json:"max,omitempty" toml:"max,omitzero" yaml:"max,omitempty" mapstructure:"max,omitempty"`
 
 	// array
-	P_Sets        []Set         `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty" mapstructure:"sets,omitempty"`
-	P_MaxItem     int           `json:"max_item,omitempty" toml:"max_item,omitzero" yaml:"max_item,omitempty" mapstructure:"max_item,omitempty"`
-	P_MinItem     int           `json:"min_item,omitempty" toml:"min_item,omitzero" yaml:"min_item,omitempty" mapstructure:"min_item,omitempty"`
-	P_ElementType []interface{} `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty" mapstructure:"element_type,omitempty"`
+	P_Sets        []Set        `json:"sets,omitempty" toml:"sets,omitzero" yaml:"sets,omitempty" mapstructure:"sets,omitempty"`
+	P_MaxItem     int          `json:"max_item,omitempty" toml:"max_item,omitzero" yaml:"max_item,omitempty" mapstructure:"max_item,omitempty"`
+	P_MinItem     int          `json:"min_item,omitempty" toml:"min_item,omitzero" yaml:"min_item,omitempty" mapstructure:"min_item,omitempty"`
+	P_ElementType []Constraint `json:"element_type,omitempty" toml:"element_type,omitzero" yaml:"element_type,omitempty" mapstructure:"element_type,omitempty"`
 
 	// object
 	P_Fields []Field `json:"fields,omitempty" toml:"fields,omitzero" yaml:"fields,omitempty" mapstructure:"fields,omitempty"`
@@ -136,20 +134,11 @@ func (t Type) MaxItem() int {
 }
 
 func (t Type) ElementType() []Constraint {
-	constraints := []Constraint{}
 	if t.Type != Array {
-		return constraints
+		return []Constraint{}
 	}
 
-	for _, value := range t.P_ElementType {
-		var con Constraint
-		if err := mapstructure.Decode(value, &con); err == nil {
-			constraints = append(constraints, con)
-		}
-
-	}
-
-	return constraints
+	return t.P_ElementType
 }
 
 func (t Type) Fields() []Field {

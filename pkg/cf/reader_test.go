@@ -57,7 +57,7 @@ func TestGetSSConfig(t *testing.T) {
 										Item: Item{Type: Type{
 											Type: "object",
 											P_Fields: []Field{
-												{F_name: "coordinates", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"type": "double"}}}}}}},
+												{F_name: "coordinates", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{{Item: Item{Type: Type{Type: "double"}}}}}}}}},
 												{F_name: "type", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 											},
 										}},
@@ -71,7 +71,7 @@ func TestGetSSConfig(t *testing.T) {
 								Constraints: []Constraint{
 									{
 										Item: Item{Type: Type{Type: "object", P_Fields: []Field{
-											{F_name: "coordinates", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"type": "double"}}}}}}},
+											{F_name: "coordinates", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{{Item: Item{Type: Type{Type: "double"}}}}}}}}},
 											{F_name: "type", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 										}}},
 									},
@@ -93,10 +93,16 @@ func TestGetSSConfig(t *testing.T) {
 							{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
 							{F_name: "author", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 							{F_name: "body", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
-							{F_name: "comments", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"fields": []interface{}{map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "author"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "body"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "email"}}, "type": "object"}}}}}}},
+							{F_name: "comments", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{
+								{Item: Item{Type: Type{Type: Object, P_Fields: []Field{
+									{F_name: "author", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+									{F_name: "body", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+									{F_name: "email", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+								}}}},
+							}}}}}},
 							{F_name: "date", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
 							{F_name: "permalink", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
-							{F_name: "tags", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"type": "string"}}}}}}},
+							{F_name: "tags", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}}}}}},
 							{F_name: "title", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}}}}}}}
 
 		for _, tc := range cases {
@@ -294,10 +300,12 @@ func TestGetSSConfigProjectArray(t *testing.T) {
 							F_name: "sampleArray",
 							Constraints: []Constraint{{Item: Item{Type: Type{
 								Type: "array",
-								P_ElementType: []interface{}{
-									map[string]interface{}{"value": int64(5), "weight": int64(2)},
-									map[string]interface{}{"type": "string"},
-									map[string]interface{}{"element_type": []interface{}{map[string]interface{}{"type": "boolean"}}, "type": "array"},
+								P_ElementType: []Constraint{
+									{Item: Item{Value: Value{int64(5)}}, Weight: 2},
+									{Item: Item{Type: Type{Type: "string"}}},
+									{Item: Item{Type: Type{Type: "array", P_ElementType: []Constraint{
+										{Item: Item{Type: Type{Type: "boolean"}}},
+									}}}},
 								}}}}},
 							Sets: []Set{{At: []int{1, 3}, Item: Item{Value: Value{Value: []interface{}{3.14, "test", "array"}}}}},
 						},
@@ -345,14 +353,11 @@ func TestGetSSConfigProjectObject(t *testing.T) {
 									Item: Item{
 										Type: Type{
 											Type: "array",
-											P_ElementType: []interface{}{
-												map[string]interface{}{
-													"fields": []interface{}{
-														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
-														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
-													},
-													"type": "object",
-												},
+											P_ElementType: []Constraint{
+												{Item: Item{Type: Type{Type: "object", P_Fields: []Field{
+													{F_name: "class_name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+													{F_name: "instructor", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+												}}}},
 											},
 											P_MaxItem: 7,
 											P_MinItem: 0,
@@ -368,14 +373,11 @@ func TestGetSSConfigProjectObject(t *testing.T) {
 									Item: Item{
 										Type: Type{
 											Type: "array",
-											P_ElementType: []interface{}{
-												map[string]interface{}{
-													"fields": []interface{}{
-														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "some classes"}}, "f_name": "class_name"},
-														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"enum": []interface{}{"Mr.C", "Mrs.D"}}}, "f_name": "instructor"},
-													},
-													"type": "object",
-												},
+											P_ElementType: []Constraint{
+												{Item: Item{Type: Type{Type: "object", P_Fields: []Field{
+													{F_name: "class_name", Constraints: []Constraint{{Item: Item{Value: Value{Value: "some classes"}}}}},
+													{F_name: "instructor", Constraints: []Constraint{{Item: Item{Enum: Enum{Enum: []interface{}{"Mr.C", "Mrs.D"}}}}}},
+												}}}},
 											},
 										},
 									},
@@ -426,14 +428,11 @@ func TestGetSSConfigProjectAlias(t *testing.T) {
 							{Item: Item{
 								Type: Type{
 									Type: "array",
-									P_ElementType: []interface{}{
-										map[string]interface{}{
-											"fields": []interface{}{
-												map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
-												map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
-											},
-											"type": "object",
-										},
+									P_ElementType: []Constraint{
+										{Item: Item{Type: Type{Type: "object", P_Fields: []Field{
+											{F_name: "class_name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+											{F_name: "instructor", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+										}}}},
 									},
 								},
 							},
@@ -447,14 +446,11 @@ func TestGetSSConfigProjectAlias(t *testing.T) {
 								Item: Item{
 									Type: Type{
 										Type: "array",
-										P_ElementType: []interface{}{
-											map[string]interface{}{
-												"fields": []interface{}{
-													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
-													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
-												},
-												"type": "object",
-											},
+										P_ElementType: []Constraint{
+											{Item: Item{Type: Type{Type: "object", P_Fields: []Field{
+												{F_name: "class_name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+												{F_name: "instructor", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+											}}}},
 										},
 									},
 								},
@@ -466,7 +462,6 @@ func TestGetSSConfigProjectAlias(t *testing.T) {
 		},
 		},
 	}
-
 	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
 	assert.Nil(t, gotErr)
 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
