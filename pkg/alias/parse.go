@@ -17,12 +17,12 @@ type parser struct {
 	validateValue state
 	currentState  state
 
-	alias        Alias
+	alias        *Alias
 	currentKey   string
 	currentValue *strings.Builder
 }
 
-func (alias Alias) newParser() *parser {
+func (alias *Alias) newParser() *parser {
 	parser := &parser{alias: alias}
 
 	parser.waitForAilas = &waitForAilas{parser: parser}
@@ -49,7 +49,8 @@ func (parser *parser) clearCurrentData() {
 
 func (parser *parser) insertCurrentAlias() {
 	key := strings.Trim(parser.currentKey, `"`)
-	parser.alias[key] = []byte(parser.currentValue.String())
+	parser.alias.dict[key] = []byte(parser.currentValue.String())
+	parser.alias.order = append(parser.alias.order, key)
 	parser.clearCurrentData()
 }
 

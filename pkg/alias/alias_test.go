@@ -61,11 +61,13 @@ func TestGetAlias(t *testing.T) {
 	t.Run("getAlias with simpleAliasPath file", func(t *testing.T) {
 		givenPath := simpleAliasPath
 
-		expectedAlias := Alias{
-			"stringLenTen": []byte(`[{type = "string", length = 10}]`),
+		expectedAlias := &Alias{
+			dict:  map[string][]byte{"stringLenTen": []byte(`[{type = "string", length = 10}]`)},
+			order: []string{"stringLenTen"},
 		}
 
 		gotAliases, gotErr := getAlias(givenPath)
+
 		assert.Nil(t, gotErr)
 		assert.Equal(t, expectedAlias, gotAliases)
 	})
@@ -73,8 +75,9 @@ func TestGetAlias(t *testing.T) {
 	t.Run("getAlias with complexAlias file", func(t *testing.T) {
 		givenPath := complexAliasPath
 
-		expectedAlias := Alias{
-			"class_constraint": []byte(`[{type = "array", element_type = [{type = "object", fields = [{f_name = "class_name", constraint = [{type = "string"}]},{f_name = "instructor", constraint = [{type = "string"}]},]},]},]`),
+		expectedAlias := &Alias{
+			dict:  map[string][]byte{"class_constraint": []byte(`[{type = "array", element_type = [{type = "object", fields = [{f_name = "class_name", constraint = [{type = "string"}]},{f_name = "instructor", constraint = [{type = "string"}]},]},]},]`)},
+			order: []string{"class_constraint"},
 		}
 
 		gotAliases, gotErr := getAlias(givenPath)
@@ -85,8 +88,9 @@ func TestGetAlias(t *testing.T) {
 	t.Run("getAlias with simpleWithOtherValue file", func(t *testing.T) {
 		givenPath := simpleWithOtherValuePath
 
-		expectedAlias := Alias{
-			"stringLenTen": []byte(`[{type = "string", length = 10}]`),
+		expectedAlias := &Alias{
+			dict:  map[string][]byte{"stringLenTen": []byte(`[{type = "string", length = 10}]`)},
+			order: []string{"stringLenTen"},
 		}
 
 		gotAliases, gotErr := getAlias(givenPath)
@@ -96,9 +100,12 @@ func TestGetAlias(t *testing.T) {
 	t.Run("getAlias with twoAlias file", func(t *testing.T) {
 		givenPath := twoAliasPath
 
-		expectedAlias := Alias{
-			"stringLenFifteen": []byte(`[{type = "string", length = 15}]`),
-			"stringLenTen":     []byte(`[{type = "string", length = 10}]`),
+		expectedAlias := &Alias{
+			dict: map[string][]byte{
+				"stringLenFifteen": []byte(`[{type = "string", length = 15}]`),
+				"stringLenTen":     []byte(`[{type = "string", length = 10}]`),
+			},
+			order: []string{"stringLenTen", "stringLenFifteen"},
 		}
 
 		gotAliases, gotErr := getAlias(givenPath)
@@ -108,8 +115,9 @@ func TestGetAlias(t *testing.T) {
 	t.Run("getAlias with noCoresspondAlias file", func(t *testing.T) {
 		givenPath := noCoresspondAliasPath
 
-		expectedAlias := Alias{
-			"stringLenFive": []byte(`[{type = "string", length = 5}]`),
+		expectedAlias := &Alias{
+			dict:  map[string][]byte{"stringLenFive": []byte(`[{type = "string", length = 5}]`)},
+			order: []string{"stringLenFive"},
 		}
 
 		gotAliases, gotErr := getAlias(givenPath)
@@ -119,8 +127,9 @@ func TestGetAlias(t *testing.T) {
 	t.Run("getAlias with complexAlias value before key file", func(t *testing.T) {
 		givenPath := complexAliasValueBeforeKeyPath
 
-		expectedAlias := Alias{
-			"class_constraint": []byte(`[{type = "array", element_type = [{type = "object", fields = [{f_name = "class_name", constraint = [{type = "string"}]},{f_name = "instructor", constraint = [{type = "string"}]},]},]},]`),
+		expectedAlias := &Alias{
+			dict:  map[string][]byte{"class_constraint": []byte(`[{type = "array", element_type = [{type = "object", fields = [{f_name = "class_name", constraint = [{type = "string"}]},{f_name = "instructor", constraint = [{type = "string"}]},]},]},]`)},
+			order: []string{"class_constraint"},
 		}
 
 		gotAliases, gotErr := getAlias(givenPath)
@@ -133,7 +142,10 @@ func TestGetAliasForInvalidFile(t *testing.T) {
 	t.Run("getAlias with noValuePath file", func(t *testing.T) {
 		givenPath := noValuePath
 
-		expectedAlias := Alias{}
+		expectedAlias := &Alias{
+			dict:  make(map[string][]byte),
+			order: make([]string, 0),
+		}
 
 		gotAliases, gotErr := getAlias(givenPath)
 		assert.Nil(t, gotErr)
@@ -142,7 +154,10 @@ func TestGetAliasForInvalidFile(t *testing.T) {
 	t.Run("getAlias with noKeyPath file", func(t *testing.T) {
 		givenPath := noKeyPath
 
-		expectedAlias := Alias{}
+		expectedAlias := &Alias{
+			dict:  make(map[string][]byte),
+			order: make([]string, 0),
+		}
 
 		gotAliases, gotErr := getAlias(givenPath)
 		assert.Nil(t, gotErr)
