@@ -9,53 +9,53 @@ c_name = "student"
 count = 3
 
 # collection: student field:s_id
-[[collection.fields]]
-constraint = [{type = "objectID"}]
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
 f_name = "s_id"
 
 # collection: student field:name
-[[collection.fields]]
-constraint = [
-  {type = "object", fields = [
-    {f_name = "first", constraint = [{type = "string"}]},
-    {f_name = "last", constraint = [{type = "string"}]},
+[[databases.collection.fields]]
+constraints = [
+  {type = "object", element_type = [
+    {f_name = "first", constraints = [{type = "string"}]},
+    {f_name = "last", constraints = [{type = "string"}]},
   ]},
 ]
 f_name = "name"
 
 # collection: student field:class
-[[collection.fields]]
+[[databases.collection.fields]]
 f_name = "class"
 
-[[collection.fields.constraint]]
+[[databases.collection.fields.constraints]]
 element_type = [
-  {type = "object", fields = [
-    {f_name = "class_name", constraint = [{type = "string"}]},
-    {f_name = "instructor", constraint = [{type = "string"}]},
+  {type = "object", element_type = [
+    {f_name = "class_name", constraints = [{type = "string"}]},
+    {f_name = "instructor", constraints = [{type = "string"}]},
   ]},
 ]
 max_item = 7
 type = "array"
 
 # collection: student field:elective_class
-[[collection.fields]]
+[[databases.collection.fields]]
 f_name = "elective_class"
 
-[[collection.fields.constraint]]
+[[databases.collection.fields.constraints]]
 element_type = [
-  {type = "object", fields = [
-    {f_name = "class_name", constraint = [{value = "some classes"}]},
-    {f_name = "instructor", constraint = [{enum = ["Mr.C", "Mrs.D"]}]},
+  {type = "object", element_type = [
+    {f_name = "class_name", constraints = [{value = "some classes"}]},
+    {f_name = "instructor", constraints = [{enum = ["Mr.C", "Mrs.D"]}]},
   ]},
 ]
 maxItem = 2
 type = "array"
 
-[[collection.fields.set]]
+[[databases.collection.fields.sets]]
 at = [0, 2]
-value = {type = "object", fields = [
-  {f_name = "approve class", constraint = [{value = "Special Class"}]},
-  {f_name = "instructor", constraint = [{value = "No-one"}]},
+value = {type = "object", element_type = [
+  {f_name = "approve class", constraints = [{value = "Special Class"}]},
+  {f_name = "instructor", constraints = [{value = "No-one"}]},
 ]}
 
 # collection: student

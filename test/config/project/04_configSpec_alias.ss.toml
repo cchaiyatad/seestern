@@ -10,31 +10,31 @@ count = 35
 
 # collection: student field:s_id
 [[databases.collection.fields]]
-constraint = [{type = "objectID"}]
+constraints = [{type = "objectID"}]
 f_name = "s_id"
 
 # collection: student field:name
 [[databases.collection.fields]]
-constraint = [{type = "string"}]
+constraints = [{type = "string"}]
 f_name = "name"
 
 # collection: student field:class
 [[databases.collection.fields]]
-constraint = "#{{class_constraint}}"
+constraints = "#{{class_constraint}}"
 f_name = "class"
 
 # collection: student field:elective_class
 [[databases.collection.fields]]
-constraint = "#{{class_constraint}}"
+constraints = "#{{class_constraint}}"
 f_name = "elective_class"
 
 [[alias]]
 key = "class_constraint"
 value = [
   {type = "array", element_type = [
-    {type = "object", fields = [
-      {f_name = "class_name", constraint = [{type = "string"}]},
-      {f_name = "instructor", constraint = [{type = "string"}]},
+    {type = "object", element_type = [
+      {f_name = "class_name", constraints = [{type = "string"}]},
+      {f_name = "instructor", constraints = [{type = "string"}]},
     ]},
   ]},
 ]

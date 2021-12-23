@@ -182,7 +182,6 @@ func TestGetSSConfig(t *testing.T) {
 }
 
 func TestGetSSConfigWithAlias(t *testing.T) {
-
 	filePath := "./../../test/config/toml/03_simple_alias.ss.toml"
 
 	expectedData := &SSConfig{
@@ -212,9 +211,259 @@ func TestGetSSConfigWithAlias(t *testing.T) {
 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
 }
 
-// "./../../test/config/project/01_configSpec_simple.ss.toml"
-// "./../../test/config/project/02_configSpec_array.ss.toml"
-// "./../../test/config/project/03_configSpec_object.ss.toml"
-// "./../../test/config/project/04_configSpec_alias.ss.toml"
-// "./../../test/config/project/05_configSpec_embedded.ss.toml"
-// "./../../test/config/project/06_configSpec_refs.ss.toml"
+func TestGetSSConfigProjectSimple(t *testing.T) {
+	filePath := "./../../test/config/project/01_configSpec_simple.ss.toml"
+
+	expectedData := &SSConfig{
+		Databases: []Database{
+			{
+				D_name: "school",
+				Collection: Collection{
+					C_name: "student",
+					Count:  30,
+					Fields: []Field{
+						{F_name: "s_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string", P_Prefix: "a", P_Suffix: "m", P_Length: 5}}}}},
+						{F_name: "sex", Omit_weight: 0.4, Constraints: []Constraint{{Weight: 2, Item: Item{Value: Value{Value: "M"}}}, {Weight: 3, Item: Item{Value: Value{Value: "F"}}}}},
+						{
+							F_name:      "year",
+							Constraints: []Constraint{{Item: Item{Enum: Enum{Enum: []interface{}{"freshman", "sophomore", "junior", "senior"}}, Type: Type{Type: ""}}}},
+							Sets: []Set{
+								{At: []int{1, 2, 3}, Item: Item{Value: Value{Value: "super senior"}, Type: Type{Type: ""}}},
+								{At: []int{5}, Item: Item{Type: Type{Type: "integer", P_Min: 5, P_Max: 8}}},
+							},
+						},
+					},
+				},
+			},
+			{
+				D_name: "school",
+				Collection: Collection{
+					C_name: "teacher", Count: 15,
+					Fields: []Field{
+						{F_name: "t_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "age", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
+					},
+				},
+			},
+		},
+	}
+
+	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}
+
+func TestGetSSConfigProjectArray(t *testing.T) {
+	filePath := "./../../test/config/project/02_configSpec_array.ss.toml"
+	expectedData := &SSConfig{
+		Databases: []Database{
+			{
+				D_name: "database",
+				Collection: Collection{
+					C_name: "item", Count: 30,
+					Fields: []Field{
+						{F_name: "i_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						{
+							F_name: "sampleArray",
+							Constraints: []Constraint{{Item: Item{Type: Type{
+								Type: "array",
+								P_ElementType: []interface{}{
+									map[string]interface{}{"value": int64(5), "weight": int64(2)},
+									map[string]interface{}{"type": "string"},
+									map[string]interface{}{"element_type": []interface{}{map[string]interface{}{"type": "boolean"}}, "type": "array"},
+								}}}}},
+							Sets: []Set{{At: []int{1, 3}, Item: Item{Value: Value{Value: []interface{}{3.14, "test", "array"}}}}},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}
+
+func TestGetSSConfigObjectArray(t *testing.T) {
+	filePath := "./../../test/config/project/03_configSpec_object.ss.toml"
+	expectedData := &SSConfig{
+		Databases: []Database{
+			{
+				D_name: "school",
+				Collection: Collection{
+					C_name: "student",
+					Count:  3,
+					Fields: []Field{
+						{F_name: "s_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{
+							F_name: "name",
+							Constraints: []Constraint{
+								{Item: Item{
+									Type: Type{
+										Type: "object",
+										P_ElementType: []interface{}{
+											map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "first"},
+											map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "last"},
+										},
+									},
+								},
+								},
+							},
+						},
+						{
+							F_name: "class",
+							Constraints: []Constraint{
+								{
+									Item: Item{
+										Type: Type{
+											Type: "array",
+											P_ElementType: []interface{}{
+												map[string]interface{}{
+													"element_type": []interface{}{
+														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
+														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
+													},
+													"type": "object",
+												},
+											},
+											P_MaxItem: 7,
+											P_MinItem: 0,
+										},
+									},
+								},
+							},
+						},
+						{
+							F_name: "elective_class",
+							Constraints: []Constraint{
+								{
+									Item: Item{
+										Type: Type{
+											Type: "array",
+											P_ElementType: []interface{}{
+												map[string]interface{}{
+													"element_type": []interface{}{
+														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "some classes"}}, "f_name": "class_name"},
+														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"enum": []interface{}{"Mr.C", "Mrs.D"}}}, "f_name": "instructor"},
+													},
+													"type": "object",
+												},
+											},
+										},
+									},
+								},
+							},
+							Sets: []Set{
+								{
+									At: []int{0, 2},
+									Item: Item{
+										Value: Value{
+											Value: map[string]interface{}{
+												"element_type": []interface{}{
+													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "Special Class"}}, "f_name": "approve class"},
+													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "No-one"}}, "f_name": "instructor"},
+												},
+												"type": "object",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}
+
+func TestGetSSConfigProjectAlias(t *testing.T) {
+	filePath := "./../../test/config/project/04_configSpec_alias.ss.toml"
+	expectedData := &SSConfig{
+		Databases: []Database{{
+			D_name: "school",
+			Collection: Collection{
+				C_name: "student",
+				Count:  35,
+				Fields: []Field{
+					{F_name: "s_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
+					{F_name: "name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+					{
+						F_name: "class",
+						Constraints: []Constraint{
+							{Item: Item{
+								Type: Type{
+									Type: "array",
+									P_ElementType: []interface{}{
+										map[string]interface{}{
+											"element_type": []interface{}{
+												map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
+												map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
+											},
+											"type": "object",
+										},
+									},
+								},
+							},
+							},
+						},
+					},
+					{
+						F_name: "elective_class",
+						Constraints: []Constraint{
+							{
+								Item: Item{
+									Type: Type{
+										Type: "array",
+										P_ElementType: []interface{}{
+											map[string]interface{}{
+												"element_type": []interface{}{
+													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
+													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
+												},
+												"type": "object",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		},
+	}
+
+	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}
+
+// func TestGetSSConfigProjectEmbedded(t *testing.T) {
+// 	filePath := "./../../test/config/project/05_configSpec_embedded.ss.toml"
+// 	expectedData := &SSConfig{}
+
+// 	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+// 	assert.Nil(t, gotErr)
+// 	fmt.Printf("%#v", gotSSConfig)
+// 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+// }
+
+// func TestGetSSConfigProjectRefs(t *testing.T) {
+// 	filePath := "./../../test/config/project/06_configSpec_refs.ss.toml"
+// 	expectedData := &SSConfig{}
+
+// 	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+// 	assert.Nil(t, gotErr)
+// 	fmt.Printf("%#v", gotSSConfig)
+// 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+// }
