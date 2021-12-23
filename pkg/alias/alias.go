@@ -29,13 +29,17 @@ func (a *Alias) len() int {
 	return len(a.order)
 }
 
-func GetParseAliasFunc(filepath string) ([]dataformat.DecodeOption, error) {
+func GetParseAliasFuncFromFile(filepath string) ([]dataformat.DecodeOption, error) {
 	ailas, err := getAlias(filepath)
 	if err != nil {
 		return nil, err
 	}
-	parseFuncs := make([]dataformat.DecodeOption, 0, ailas.len())
 
+	return ailas.getParseAliasFunc(), nil
+}
+
+func (ailas *Alias) getParseAliasFunc() []dataformat.DecodeOption {
+	parseFuncs := make([]dataformat.DecodeOption, 0, ailas.len())
 	for _, key := range ailas.order {
 		value := ailas.dict[key]
 		if funcs, err := getReplaceAliasFuncFromKey(key, value); err == nil {
@@ -43,7 +47,7 @@ func GetParseAliasFunc(filepath string) ([]dataformat.DecodeOption, error) {
 		}
 	}
 
-	return parseFuncs, nil
+	return parseFuncs
 }
 
 func getAlias(filepath string) (*Alias, error) {

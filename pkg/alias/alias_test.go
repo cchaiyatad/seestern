@@ -181,5 +181,39 @@ func TestGetAliasForInvalidFile(t *testing.T) {
 		assert.Regexp(t, regexp.MustCompile(expectPrefixRegexErr), gotErr.Error())
 		assert.Nil(t, gotAliases)
 	})
+}
 
+func TestGetParseAliasFuncOrder(t *testing.T) {
+	givenAlias := &Alias{
+		dict:  map[string][]byte{"0": []byte(`A"#{{1}}"`), "1": []byte(`B`), "2": []byte(`"#{{0}}"C`), "3": []byte(`D"#{{1}}"`)},
+		order: []string{"2", "1", "0", "3"},
+	}
+
+	gotFunc := givenAlias.getParseAliasFunc()
+
+	cases := []struct {
+		given    string
+		expected string
+	}{
+		{"0123", "0123"},
+		{`"#{{1}}"`, "B"},
+		{`"#{{2}}"`, `A"#{{1}}"C`},
+		{`"#{{3}}"`, `D"#{{1}}"`},
+		{`"#{{1}}""#{{3}}"`, `BD"#{{1}}"`},
+		{`"#{{1}}""#{{1}}""#{{1}}""#{{1}}"`, "BBBB"},
+		{`"#{{2}}""#{{1}}"`, `A"#{{1}}"CB`},
+	}
+
+	for _, tc := range cases {
+		tc := tc
+		t.Run(fmt.Sprintf("Prase alias order given %s", tc.given), func(t *testing.T) {
+			t.Parallel()
+			data := []byte(tc.given)
+			for _, funcs := range gotFunc {
+				data = funcs(data)
+			}
+
+			assert.Equal(t, tc.expected, string(data))
+		})
+	}
 }

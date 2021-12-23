@@ -21,7 +21,7 @@ func removeRegex(re *regexp.Regexp, source string) string {
 	return re.ReplaceAllString(source, "")
 }
 
-var replaceAliasKeyPattern = `"#{{%s}}"`
+var replaceAliasKeyPattern = `"#\{\{%s\}\}"`
 
 func getReplaceAliasFuncFromKey(key string, value []byte) (func([]byte) []byte, error) {
 	pattern := fmt.Sprintf(replaceAliasKeyPattern, key)
