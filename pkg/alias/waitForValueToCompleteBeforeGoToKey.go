@@ -4,11 +4,15 @@ type waitForValueToCompleteBeforeGoToKey struct {
 	parser *parser
 }
 
+func (*waitForValueToCompleteBeforeGoToKey) String() string {
+	return "waitForValueToCompleteBeforeGoToKey"
+}
+
 func (s *waitForValueToCompleteBeforeGoToKey) isFoundAilas(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *waitForValueToCompleteBeforeGoToKey) isFoundKey(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *waitForValueToCompleteBeforeGoToKey) isFoundValue(line string) error {
 	value := strip(line)
@@ -18,5 +22,5 @@ func (s *waitForValueToCompleteBeforeGoToKey) isFoundValue(line string) error {
 	return nil
 }
 func (s *waitForValueToCompleteBeforeGoToKey) isValueComplete() error {
-	panic("not implement")
+	return ErrIllegalMethod
 }

@@ -4,8 +4,12 @@ type waitForKeyAfterFoundValue struct {
 	parser *parser
 }
 
+func (*waitForKeyAfterFoundValue) String() string {
+	return "waitForKeyAfterFoundValue"
+}
+
 func (s *waitForKeyAfterFoundValue) isFoundAilas(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *waitForKeyAfterFoundValue) isFoundKey(line string) error {
 	key, ok := findKey(line)
@@ -19,8 +23,8 @@ func (s *waitForKeyAfterFoundValue) isFoundKey(line string) error {
 	return nil
 }
 func (s *waitForKeyAfterFoundValue) isFoundValue(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *waitForKeyAfterFoundValue) isValueComplete() error {
-	panic("not implement")
+	return ErrIllegalMethod
 }

@@ -4,6 +4,10 @@ type waitForAilas struct {
 	parser *parser
 }
 
+func (*waitForAilas) String() string {
+	return "waitForAilas"
+}
+
 func (s *waitForAilas) isFoundAilas(line string) error {
 	if strip(line) == "[[alias]]" {
 		s.parser.setState(s.parser.foundAilas)
@@ -11,11 +15,11 @@ func (s *waitForAilas) isFoundAilas(line string) error {
 	return nil
 }
 func (s *waitForAilas) isFoundKey(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *waitForAilas) isFoundValue(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *waitForAilas) isValueComplete() error {
-	panic("not implement")
+	return ErrIllegalMethod
 }

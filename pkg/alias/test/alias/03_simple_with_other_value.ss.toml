@@ -1,3 +1,5 @@
+# has word value in other field
+
 [[databases]]
 d_name = "school"
 
@@ -24,4 +26,3 @@ f_name = "elective_class"
 [[alias]]
 key = "stringLenTen"
 value = [{type = "string", length = 10}]
-

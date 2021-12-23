@@ -1,9 +1,12 @@
 package alias
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 )
+
+var ErrIllegalMethod = errors.New("this method is not implemented for this state")
 
 type state interface {
 	isFoundAilas(string) error

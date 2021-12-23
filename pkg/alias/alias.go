@@ -22,6 +22,19 @@ func (err *ErrTomlFileIsInvalid) Error() string {
 	return fmt.Sprintf("error: this .toml file is invalid reason: %s", err.reason)
 }
 
+func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
+	_, err := getAlias(filepath)
+	if err != nil {
+		return nil, err
+	}
+
+	parseFunc := func(data []byte) []byte {
+		return data
+	}
+
+	return parseFunc, nil
+}
+
 func getAlias(filepath string) (Alias, error) {
 	fileType, err := file.GetFileType(filepath)
 	if err != nil {
@@ -47,19 +60,6 @@ func getAlias(filepath string) (Alias, error) {
 func (alias Alias) getCreateAliasByLineFunc() func(string) {
 	parser := alias.newParser()
 	return parser.parse
-}
-
-func getParseAliasFunc(filepath string) (dataformat.DecodeOption, error) {
-	_, err := getAlias(filepath)
-	if err != nil {
-		return nil, err
-	}
-
-	parseFunc := func(data []byte) []byte {
-		return data
-	}
-
-	return parseFunc, nil
 }
 
 func isTomlFileValidAndHasAliase(filepath string) error {

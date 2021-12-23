@@ -8,14 +8,18 @@ type validateValue struct {
 	parser *parser
 }
 
+func (*validateValue) String() string {
+	return "validateValue"
+}
+
 func (s *validateValue) isFoundAilas(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *validateValue) isFoundKey(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *validateValue) isFoundValue(line string) error {
-	panic("not implement")
+	return ErrIllegalMethod
 }
 func (s *validateValue) isValueComplete() error {
 	value := s.parser.currentValue.String()
@@ -25,8 +29,8 @@ func (s *validateValue) isValueComplete() error {
 		return nil
 	}
 
-	s.callBackByKey(s.parser.insertCurrentAlias, func() {})
 	s.setStateByKey(s.parser.waitForAilas, s.parser.waitForKeyAfterFoundValue)
+	s.callBackByKey(s.parser.insertCurrentAlias, func() {})
 	return nil
 }
 

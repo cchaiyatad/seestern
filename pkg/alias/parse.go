@@ -48,7 +48,8 @@ func (parser *parser) clearCurrentData() {
 }
 
 func (parser *parser) insertCurrentAlias() {
-	parser.alias[parser.currentKey] = []byte(parser.currentValue.String())
+	key := strings.Trim(parser.currentKey, `"`)
+	parser.alias[key] = []byte(parser.currentValue.String())
 	parser.clearCurrentData()
 }
 
@@ -58,10 +59,11 @@ func (parser *parser) parse(line string) {
 	case parser.waitForAilas:
 		err = parser.isFoundAlias(line)
 	case parser.foundAilas:
-		// TODO: fix maybe use err not found key to move to isFoundValue
-		err = parser.isFoundKey(line)
-		// err = parser.isFoundValue(line)
-
+		if keyErr := parser.isFoundKey(line); keyErr == ErrKeyNotFound {
+			err = parser.isFoundValue(line)
+		} else {
+			err = keyErr
+		}
 	case parser.waitForValueAfterFoundKey:
 		err = parser.isFoundValue(line)
 	case parser.waitForValueToCompleteBeforeGoToWaitAlias:
@@ -78,9 +80,4 @@ func (parser *parser) parse(line string) {
 		err = parser.isValueComplete()
 		parser.checkIllegalState(err)
 	}
-}
-
-func (parser *parser) getParseFunc() func(string) {
-
-	return parser.parse
 }
