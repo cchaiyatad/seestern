@@ -32,7 +32,7 @@ f_name = "elective_class"
 key = "class_constraint"
 value = [
   {type = "array", element_type = [
-    {type = "object", element_type = [
+    {type = "object", fields = [
       {f_name = "class_name", constraints = [{type = "string"}]},
       {f_name = "instructor", constraints = [{type = "string"}]},
     ]},

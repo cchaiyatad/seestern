@@ -48,19 +48,43 @@ func TestGetSSConfig(t *testing.T) {
 						Fields: []Field{
 							{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
 							{F_name: "bikeid", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
-							{F_name: "birth year", Constraints: []Constraint{
-								{Item: Item{Type: Type{Type: "integer"}}},
-								{Item: Item{Type: Type{Type: "string"}}}}},
+							{F_name: "birth year", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}, {Item: Item{Type: Type{Type: "string"}}}}},
 							{F_name: "end station id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
-							{F_name: "end station location", Constraints: []Constraint{{Item: Item{Type: Type{Type: "object", P_ElementType: []interface{}{map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"element_type": []interface{}{map[string]interface{}{"type": "double"}}, "type": "array"}}, "f_name": "coordinates"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "type"}}}}}}},
+							{
+								F_name: "end station location",
+								Constraints: []Constraint{
+									{
+										Item: Item{Type: Type{
+											Type: "object",
+											P_Fields: []Field{
+												{F_name: "coordinates", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"type": "double"}}}}}}},
+												{F_name: "type", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+											},
+										}},
+									},
+								},
+							},
 							{F_name: "end station name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 							{F_name: "start station id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
-							{F_name: "start station location", Constraints: []Constraint{{Item: Item{Type: Type{Type: "object", P_ElementType: []interface{}{map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"element_type": []interface{}{map[string]interface{}{"type": "double"}}, "type": "array"}}, "f_name": "coordinates"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "type"}}}}}}},
+							{
+								F_name: "start station location",
+								Constraints: []Constraint{
+									{
+										Item: Item{Type: Type{Type: "object", P_Fields: []Field{
+											{F_name: "coordinates", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"type": "double"}}}}}}},
+											{F_name: "type", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+										}}},
+									},
+								},
+							},
 							{F_name: "start station name", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 							{F_name: "start time", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
 							{F_name: "stop time", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
 							{F_name: "tripduration", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
-							{F_name: "usertype", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}}}}},
+							{F_name: "usertype", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+						},
+					},
+				},
 				{
 					D_name: "sample_training",
 					Collection: Collection{
@@ -69,7 +93,7 @@ func TestGetSSConfig(t *testing.T) {
 							{F_name: "_id", Constraints: []Constraint{{Item: Item{Type: Type{Type: "objectID"}}}}},
 							{F_name: "author", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 							{F_name: "body", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
-							{F_name: "comments", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"element_type": []interface{}{map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "author"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "body"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "email"}}, "type": "object"}}}}}}},
+							{F_name: "comments", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"fields": []interface{}{map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "author"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "body"}, map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "email"}}, "type": "object"}}}}}}},
 							{F_name: "date", Constraints: []Constraint{{Item: Item{Type: Type{Type: "integer"}}}}},
 							{F_name: "permalink", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 							{F_name: "tags", Constraints: []Constraint{{Item: Item{Type: Type{Type: "array", P_ElementType: []interface{}{map[string]interface{}{"type": "string"}}}}}}},
@@ -288,7 +312,7 @@ func TestGetSSConfigProjectArray(t *testing.T) {
 	assert.Equal(t, expectedData.String(), gotSSConfig.String())
 }
 
-func TestGetSSConfigObjectArray(t *testing.T) {
+func TestGetSSConfigProjectObject(t *testing.T) {
 	filePath := "./../../test/config/project/03_configSpec_object.ss.toml"
 	expectedData := &SSConfig{
 		Databases: []Database{
@@ -305,9 +329,9 @@ func TestGetSSConfigObjectArray(t *testing.T) {
 								{Item: Item{
 									Type: Type{
 										Type: "object",
-										P_ElementType: []interface{}{
-											map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "first"},
-											map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "last"},
+										P_Fields: []Field{
+											{F_name: "first", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
+											{F_name: "last", Constraints: []Constraint{{Item: Item{Type: Type{Type: "string"}}}}},
 										},
 									},
 								},
@@ -323,7 +347,7 @@ func TestGetSSConfigObjectArray(t *testing.T) {
 											Type: "array",
 											P_ElementType: []interface{}{
 												map[string]interface{}{
-													"element_type": []interface{}{
+													"fields": []interface{}{
 														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
 														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
 													},
@@ -346,7 +370,7 @@ func TestGetSSConfigObjectArray(t *testing.T) {
 											Type: "array",
 											P_ElementType: []interface{}{
 												map[string]interface{}{
-													"element_type": []interface{}{
+													"fields": []interface{}{
 														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "some classes"}}, "f_name": "class_name"},
 														map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"enum": []interface{}{"Mr.C", "Mrs.D"}}}, "f_name": "instructor"},
 													},
@@ -363,7 +387,7 @@ func TestGetSSConfigObjectArray(t *testing.T) {
 									Item: Item{
 										Value: Value{
 											Value: map[string]interface{}{
-												"element_type": []interface{}{
+												"fields": []interface{}{
 													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "Special Class"}}, "f_name": "approve class"},
 													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"value": "No-one"}}, "f_name": "instructor"},
 												},
@@ -404,7 +428,7 @@ func TestGetSSConfigProjectAlias(t *testing.T) {
 									Type: "array",
 									P_ElementType: []interface{}{
 										map[string]interface{}{
-											"element_type": []interface{}{
+											"fields": []interface{}{
 												map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
 												map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
 											},
@@ -425,7 +449,7 @@ func TestGetSSConfigProjectAlias(t *testing.T) {
 										Type: "array",
 										P_ElementType: []interface{}{
 											map[string]interface{}{
-												"element_type": []interface{}{
+												"fields": []interface{}{
 													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "class_name"},
 													map[string]interface{}{"constraints": []interface{}{map[string]interface{}{"type": "string"}}, "f_name": "instructor"},
 												},
