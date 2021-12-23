@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/jinzhu/copier v0.3.4
+	github.com/mitchellh/mapstructure v1.4.3
 	github.com/spf13/cobra v1.2.1
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
@@ -12,7 +13,6 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
-	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 )
 

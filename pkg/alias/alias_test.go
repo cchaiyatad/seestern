@@ -2,18 +2,26 @@ package alias
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	noAliasPath              = "./test/alias/00_no_alias.ss.toml"
-	simpleAliasPath          = "./test/alias/01_simple_alias.ss.toml"
-	complexAliasPath         = "./test/alias/02_complex_alias.ss.toml"
-	simpleWithOtherValuePath = "./test/alias/03_simple_with_other_value.ss.toml"
-	twoAliasPath             = "./test/alias/04_two_alias.ss.toml"
-	noCoresspondAliasPath    = "./test/alias/05_no_coresspond_alias.ss.toml"
+	noAliasPath                    = "./test/valid/00_no_alias.ss.toml"
+	simpleAliasPath                = "./test/valid/01_simple_alias.ss.toml"
+	complexAliasPath               = "./test/valid/02_complex_alias.ss.toml"
+	simpleWithOtherValuePath       = "./test/valid/03_simple_with_other_value.ss.toml"
+	twoAliasPath                   = "./test/valid/04_two_alias.ss.toml"
+	noCoresspondAliasPath          = "./test/valid/05_no_coresspond_alias.ss.toml"
+	complexAliasValueBeforeKeyPath = "./test/valid/06_complex_value_before_key.ss.toml"
+
+	// Invalid
+	noValuePath        = "./test/invalid/01_no_value.ss.toml"
+	noKeyPath          = "./test/invalid/02_no_key.ss.toml"
+	noKeyInvalidPath   = "./test/invalid/03_key_invalid.ss.toml"
+	noValueInvalidPath = "./test/invalid/04_value_invalid.ss.toml"
 )
 
 func TestGetAlias(t *testing.T) {
@@ -24,9 +32,9 @@ func TestGetAlias(t *testing.T) {
 			filePath    string
 			expectedErr string
 		}{
-			{"./test/alias/no-exist", "stat ./test/alias/no-exist: no such file or directory"},
-			{"./test/alias", "a given path is not a file: ./test/alias"},
-			{"./test/alias/config.ss.json", "error: alias only support in toml"},
+			{"./test/valid/no-exist", "stat ./test/valid/no-exist: no such file or directory"},
+			{"./test/valid", "a given path is not a file: ./test/valid"},
+			{"./test/valid/config.ss.json", "error: alias only support in toml"},
 		}
 
 		for _, tc := range cases {
@@ -95,9 +103,6 @@ func TestGetAlias(t *testing.T) {
 
 		gotAliases, gotErr := getAlias(givenPath)
 		assert.Nil(t, gotErr)
-		// for k, v := range gotAliases {
-		// 	fmt.Printf("%s: %s\n", k, string(v))
-		// }
 		assert.Equal(t, expectedAlias, gotAliases)
 	})
 	t.Run("getAlias with noCoresspondAlias file", func(t *testing.T) {
@@ -111,4 +116,55 @@ func TestGetAlias(t *testing.T) {
 		assert.Nil(t, gotErr)
 		assert.Equal(t, expectedAlias, gotAliases)
 	})
+	t.Run("getAlias with complexAlias value before key file", func(t *testing.T) {
+		givenPath := complexAliasValueBeforeKeyPath
+
+		expectedAlias := Alias{
+			"class_constraint": []byte(`[{type = "array", element_type = [{type = "object", fields = [{f_name = "class_name", constraint = [{type = "string"}]},{f_name = "instructor", constraint = [{type = "string"}]},]},]},]`),
+		}
+
+		gotAliases, gotErr := getAlias(givenPath)
+		assert.Nil(t, gotErr)
+		assert.Equal(t, expectedAlias, gotAliases)
+	})
+}
+
+func TestGetAliasForInvalidFile(t *testing.T) {
+	t.Run("getAlias with noValuePath file", func(t *testing.T) {
+		givenPath := noValuePath
+
+		expectedAlias := Alias{}
+
+		gotAliases, gotErr := getAlias(givenPath)
+		assert.Nil(t, gotErr)
+		assert.Equal(t, expectedAlias, gotAliases)
+	})
+	t.Run("getAlias with noKeyPath file", func(t *testing.T) {
+		givenPath := noKeyPath
+
+		expectedAlias := Alias{}
+
+		gotAliases, gotErr := getAlias(givenPath)
+		assert.Nil(t, gotErr)
+		assert.Equal(t, expectedAlias, gotAliases)
+	})
+	t.Run("getAlias with noKeyInvalidPath file", func(t *testing.T) {
+		givenPath := noKeyInvalidPath
+
+		expectPrefixRegexErr := "error: this .toml file is invalid reason: "
+
+		gotAliases, gotErr := getAlias(givenPath)
+		assert.Regexp(t, regexp.MustCompile(expectPrefixRegexErr), gotErr.Error())
+		assert.Nil(t, gotAliases)
+	})
+	t.Run("getAlias with noValueInvalidPath file", func(t *testing.T) {
+		givenPath := noValueInvalidPath
+
+		expectPrefixRegexErr := "error: this .toml file is invalid reason: "
+
+		gotAliases, gotErr := getAlias(givenPath)
+		assert.Regexp(t, regexp.MustCompile(expectPrefixRegexErr), gotErr.Error())
+		assert.Nil(t, gotAliases)
+	})
+
 }

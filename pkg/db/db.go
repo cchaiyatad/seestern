@@ -154,7 +154,7 @@ func Gen(param *GenParam) error {
 			}
 
 			if param.Verbose {
-				fmt.Printf("database %s collection %s\n", db, coll)
+				fmt.Printf("// database %s collection %s\n", db, coll)
 				fmt.Println(string(outByte))
 			}
 

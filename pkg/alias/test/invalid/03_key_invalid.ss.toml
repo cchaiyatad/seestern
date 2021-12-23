@@ -1,0 +1,18 @@
+[[databases]]
+d_name = "school"
+
+[databases.collection]
+c_name = "student"
+count = 35
+
+[[databases.collection.fields]]
+constraint = [{type = "objectID"}]
+f_name = "s_id"
+
+[[databases.collection.fields]]
+constraint = "#{{stringLenTen}}"
+f_name = "elective_class"
+
+[[alias]]
+key = "stringLe
+value = [{type = "string", length = 10}]
