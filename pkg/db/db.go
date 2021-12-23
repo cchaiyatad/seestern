@@ -123,8 +123,11 @@ func Gen(param *GenParam) error {
 	for db, colls := range result {
 		for coll := range colls {
 			if param.IsDrop {
-				controller.worker.drop(db, coll)
-				log.Logf(log.Info, "drop database %s collection %s\n", db, coll)
+				if err := controller.worker.drop(db, coll); err == nil {
+					log.Logf(log.Info, "drop database %s collection %s\n", db, coll)
+				} else {
+					log.Logf(log.Warning, "drop database %s collection %s fail with reason %s\n", db, coll, err.Error())
+				}
 			}
 
 			documents, err := result.GetDocuments(db, coll)
@@ -133,8 +136,11 @@ func Gen(param *GenParam) error {
 			}
 
 			if param.IsInsert {
-				controller.worker.insert(db, coll, documents.ToInterfaceSlice()...)
-				log.Logf(log.Info, "insert database %s collection %s\n", db, coll)
+				if err := controller.worker.insert(db, coll, documents.ToInterfaceSlice()...); err == nil {
+					log.Logf(log.Info, "insert database %s collection %s\n", db, coll)
+				} else {
+					log.Logf(log.Warning, "insert database %s collection %s fail with reason\n %s", db, coll, err.Error())
+				}
 			}
 
 			if !param.shouldGenJson() {

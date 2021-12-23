@@ -173,7 +173,9 @@ func mergeSchemaTree(t1, t2 *SchemaTree) (*SchemaTree, error) {
 	}
 
 	mergedTree := &SchemaTree{}
-	copier.Copy(mergedTree, t1)
+	if err := copier.Copy(mergedTree, t1); err != nil {
+		return nil, err
+	}
 
 	mergedPayload := mergedTree.getRootPayload()
 	t2Payloads := t2.getRootPayload()

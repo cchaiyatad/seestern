@@ -59,7 +59,8 @@ func TestEncoderEncode(t *testing.T) {
 			t.Parallel()
 			gotEncoder := NewEncoder(tc.fileType)
 
-			gotEncoder.Encode(givenData)
+			err := gotEncoder.Encode(givenData)
+			assert.Nil(t, err)
 			assert.Equal(t, tc.expected, gotEncoder.Buf.String())
 		})
 	}
