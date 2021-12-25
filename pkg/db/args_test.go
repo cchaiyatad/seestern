@@ -65,9 +65,10 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 	t.Run("ParseCollectionInputFromArgs on two dot", func(t *testing.T) {
+		// collection name should not be two dot to avoid ambigious
 		givenArgs := []string{"db1.coll1.sub"}
 
-		expected := map[string][]string{"db1": {"coll1.sub"}}
+		expected := map[string][]string{"db1": {"coll1"}}
 		got := parseCollectionInputFromArgs(givenArgs)
 
 		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
