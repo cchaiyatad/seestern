@@ -74,9 +74,9 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.Con
 		return err
 	}
 
-	toGenColls := parseCollectionInputFromArgs(param.TargetColls)
+	collsToGen := parseCollectionInputFromArgs(param.TargetColls)
 
-	for db, colls := range toGenColls {
+	for db, colls := range collsToGen {
 		for _, coll := range colls {
 			if _, ok := records[db][coll]; !ok {
 				log.Logf(log.Warning, "%s\n", &ErrSkipCreateConfigfile{db, coll, "not exist"})
