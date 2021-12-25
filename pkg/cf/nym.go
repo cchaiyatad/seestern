@@ -15,12 +15,14 @@ var nymRefReg = regexp.MustCompile("[^.\n ]+([.][^.\n ]+)*")
 // nymRef is <f_name>[.<f_name>....]
 // ref is <nym>.<nymRef>
 func SplitRef(ref string) (string, string, bool) {
+	ref = strings.TrimSpace(ref)
 	if !nymReg.MatchString(ref) {
 		return "", "", false
 	}
 	nym := nymReg.FindString(ref)
 
-	ref = nymReg.ReplaceAllString(ref, "")
+	ref = ref[len(nym):]
+	ref = strings.Trim(ref, delimiter)
 
 	if !nymRefReg.MatchString(ref) {
 		return "", "", false
@@ -56,12 +58,16 @@ func CreateNym(dbName, collName string) string {
 }
 
 func CreateNymRef(nymRef, fName string) string {
-	if nymRef == "" {
-		return fName
-	}
 	return joinDelimiter(nymRef, fName)
 }
 
 func joinDelimiter(s1, s2 string) string {
+	if s1 == "" {
+		return s2
+	}
+
+	if s2 == "" {
+		return s1
+	}
 	return fmt.Sprintf("%s%s%s", s1, delimiter, s2)
 }
