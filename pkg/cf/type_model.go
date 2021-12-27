@@ -34,8 +34,26 @@ func (t Type) String() string {
 }
 
 // TODO: refactor with generic
-func (t Type) Ref() string {
-	return t.P_Ref
+func (t Type) Ref() []string {
+	if t.Type == Array {
+		refs := make([]string, 0)
+		for _, con := range t.ElementType() {
+			refs = append(refs, con.Ref()...)
+		}
+		return refs
+	}
+
+	if t.Type == Object {
+		refs := make([]string, 0)
+		for _, field := range t.Fields() {
+			for _, con := range field.Constraints {
+				refs = append(refs, con.Ref()...)
+			}
+		}
+		return refs
+	}
+
+	return []string{t.P_Ref}
 }
 
 func (t Type) Prefix() string {

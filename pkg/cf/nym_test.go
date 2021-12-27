@@ -27,6 +27,9 @@ func TestSplitRef(t *testing.T) {
 
 		{"school.student.name.firstname", "school.student", "name.firstname", true},
 		{"school.student.name.firstname.middlename", "school.student", "name.firstname.middlename", true},
+
+		{" school.student.name.firstname.middlename", "school.student", "name.firstname.middlename", true},
+		{"school.student.name.firstname.middlename ", "school.student", "name.firstname.middlename", true},
 	}
 
 	for _, tc := range cases {

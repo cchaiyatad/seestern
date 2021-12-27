@@ -16,20 +16,30 @@ var nymRefReg = regexp.MustCompile("[^.\n ]+([.][^.\n ]+)*")
 // ref is <nym>.<nymRef>
 func SplitRef(ref string) (string, string, bool) {
 	ref = strings.TrimSpace(ref)
-	if !nymReg.MatchString(ref) {
+	if !isRefValid(ref) {
 		return "", "", false
 	}
+
 	nym := nymReg.FindString(ref)
-
-	ref = ref[len(nym):]
-	ref = strings.Trim(ref, delimiter)
-
-	if !nymRefReg.MatchString(ref) {
-		return "", "", false
-	}
+	ref = splitNymFromRef(ref, nym)
 
 	nymRef := nymRefReg.FindString(ref)
 	return nym, nymRef, true
+}
+
+func isRefValid(ref string) bool {
+	if !nymReg.MatchString(ref) {
+		return false
+	}
+	nym := nymReg.FindString(ref)
+	ref = splitNymFromRef(ref, nym)
+
+	return nymRefReg.MatchString(ref)
+}
+
+func splitNymFromRef(ref, nym string) string {
+	ref = ref[len(nym):]
+	return strings.Trim(ref, delimiter)
 }
 
 func SplitNymRef(nymRef string) ([]string, bool) {

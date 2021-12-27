@@ -1,8 +1,25 @@
 package cf
 
 func (d *Database) GetRef() []string {
-	var ref []string
-	return ref
+	refs := make([]string, 0)
+	for _, field := range d.Collection.Fields {
+		for _, con := range field.Constraints {
+			refs = append(refs, con.getRef()...)
+		}
+	}
+	return refs
+}
+
+func (c *Constraint) getRef() []string {
+	refs := c.Type.Ref()
+	validateRef := make([]string, 0, len(refs))
+	for _, ref := range refs {
+		if !isRefValid(ref) {
+			continue
+		}
+		validateRef = append(validateRef, ref)
+	}
+	return validateRef
 }
 
 func (d *Database) getNym() (string, bool) {
