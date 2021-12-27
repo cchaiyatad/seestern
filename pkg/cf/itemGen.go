@@ -53,6 +53,9 @@ func shouldGenFromRef(t Type) bool {
 }
 
 func genFromRef(gen *fieldGenerator, refs []string) interface{} {
+	if len(refs) == 0 {
+		return nil
+	}
 	ref := refs[rand.Intn(len(refs))]
 	nym, nymRef, ok := SplitRef(ref)
 	if !ok {
@@ -76,6 +79,9 @@ func genFromRef(gen *fieldGenerator, refs []string) interface{} {
 
 	nymRef = "#." + nymRef
 	refResult := gjson.Get(string(json), nymRef).Array()
+	if len(refResult) == 0 {
+		return nil
+	}
 	refValue := refResult[rand.Intn(len(refResult))]
 	return refValue.Value()
 }

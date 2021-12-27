@@ -1,0 +1,54 @@
+[[databases]]
+d_name = "school"
+
+    [databases.collection]
+    c_name = "student"
+    count = 3
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID"}]
+    f_name = "s_id"
+
+    [[databases.collection.fields]]
+    constraints = [
+    {type = "object", fields = [
+        {f_name = "first", constraints = [{type = "string"}]},
+        {f_name = "last", constraints = [{type = "string"}]},
+    ]},
+    ]
+    f_name = "name"
+
+[[databases]]
+d_name = "school"
+
+    [databases.collection]
+    c_name = "teacher"
+    count = 3
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID"}]
+    f_name = "t_id"
+
+    [[databases.collection.fields]]
+    constraints = [{type = "object", ref = "school.student.name"}]
+    f_name = "name"
+
+[[databases]]
+d_name = "school"
+
+    [databases.collection]
+    c_name = "principle"
+    count = 3
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID"}]
+    f_name = "p_id"
+
+    [[databases.collection.fields]]
+    constraints = [
+    {type = "object", fields = [
+        {f_name = "student_first", constraints = [{type = "string", ref = "school.student.name.first"}]},
+        {f_name = "student_last", constraints = [{type = "string", ref = "school.student.name.last"}]},
+    ]},
+    ]
+    f_name = "name"

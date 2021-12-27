@@ -37,6 +37,9 @@ func (t *RandomWeightTree) Insert(weight int, payload interface{}) {
 }
 
 func (t *RandomWeightTree) GetRandom() interface{} {
+	if t.sumOfWeight == 0 {
+		return nil
+	}
 	randomWeight := rand.Intn(t.sumOfWeight)
 	value := t.tree.Get(randomWeight)
 	if value == nil {

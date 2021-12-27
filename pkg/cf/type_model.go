@@ -35,6 +35,10 @@ func (t Type) String() string {
 
 // TODO: refactor with generic
 func (t Type) Ref() []string {
+	if t.P_Ref != "" {
+		return []string{t.P_Ref}
+	}
+
 	if t.Type == Array {
 		refs := make([]string, 0)
 		for _, con := range t.ElementType() {
@@ -53,9 +57,6 @@ func (t Type) Ref() []string {
 		return refs
 	}
 
-	if t.P_Ref != "" {
-		return []string{t.P_Ref}
-	}
 	return []string{}
 }
 
