@@ -2,6 +2,7 @@ package alias
 
 import (
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"testing"
 
@@ -9,19 +10,19 @@ import (
 )
 
 var (
-	noAliasPath                    = "./test/valid/00_no_alias.ss.toml"
-	simpleAliasPath                = "./test/valid/01_simple_alias.ss.toml"
-	complexAliasPath               = "./test/valid/02_complex_alias.ss.toml"
-	simpleWithOtherValuePath       = "./test/valid/03_simple_with_other_value.ss.toml"
-	twoAliasPath                   = "./test/valid/04_two_alias.ss.toml"
-	noCoresspondAliasPath          = "./test/valid/05_no_coresspond_alias.ss.toml"
-	complexAliasValueBeforeKeyPath = "./test/valid/06_complex_value_before_key.ss.toml"
+	noAliasPath                    = filepath.FromSlash("./test/valid/00_no_alias.ss.toml")
+	simpleAliasPath                = filepath.FromSlash("./test/valid/01_simple_alias.ss.toml")
+	complexAliasPath               = filepath.FromSlash("./test/valid/02_complex_alias.ss.toml")
+	simpleWithOtherValuePath       = filepath.FromSlash("./test/valid/03_simple_with_other_value.ss.toml")
+	twoAliasPath                   = filepath.FromSlash("./test/valid/04_two_alias.ss.toml")
+	noCoresspondAliasPath          = filepath.FromSlash("./test/valid/05_no_coresspond_alias.ss.toml")
+	complexAliasValueBeforeKeyPath = filepath.FromSlash("./test/valid/06_complex_value_before_key.ss.toml")
 
 	// Invalid
-	noValuePath        = "./test/invalid/01_no_value.ss.toml"
-	noKeyPath          = "./test/invalid/02_no_key.ss.toml"
-	noKeyInvalidPath   = "./test/invalid/03_key_invalid.ss.toml"
-	noValueInvalidPath = "./test/invalid/04_value_invalid.ss.toml"
+	noValuePath        = filepath.FromSlash("./test/invalid/01_no_value.ss.toml")
+	noKeyPath          = filepath.FromSlash("./test/invalid/02_no_key.ss.toml")
+	noKeyInvalidPath   = filepath.FromSlash("./test/invalid/03_key_invalid.ss.toml")
+	noValueInvalidPath = filepath.FromSlash("./test/invalid/04_value_invalid.ss.toml")
 )
 
 func TestGetAlias(t *testing.T) {
@@ -32,9 +33,9 @@ func TestGetAlias(t *testing.T) {
 			filePath    string
 			expectedErr string
 		}{
-			{"./test/valid/no-exist", "stat ./test/valid/no-exist: no such file or directory"},
-			{"./test/valid", "a given path is not a file: ./test/valid"},
-			{"./test/valid/config.ss.json", "error: alias only support in toml"},
+			{filepath.FromSlash("./test/valid/no-exist"), "stat ./test/valid/no-exist: no such file or directory"},
+			{filepath.FromSlash("./test/valid"), "a given path is not a file: ./test/valid"},
+			{filepath.FromSlash("./test/valid/config.ss.json"), "error: alias only support in toml"},
 		}
 
 		for _, tc := range cases {

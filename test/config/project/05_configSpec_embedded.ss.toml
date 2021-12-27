@@ -63,7 +63,7 @@ f_name = "_id"
 
 # collection: movie_details field:movie_id
 [[databases.collection.fields]]
-constraints = [{type = "objectID", ref = "movie._id"}]
+constraints = [{type = "objectID", ref = "imdb.movie._id"}]
 f_name = "movie_id"
 
 # collection: movie_details field:poster

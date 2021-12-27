@@ -2,6 +2,7 @@ package cf
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,12 +13,12 @@ func TestNewGenOrderSimple(t *testing.T) {
 		givenPath      string
 		exptectedOrder []int
 	}{
-		{"./test/01_simple_ref.ss.toml", []int{0, 1}},
-		{"./test/02_two_simple_ref.ss.toml", []int{0, 1}},
-		{"./test/03_array_ref.ss.toml", []int{0, 1}},
-		{"./test/04_object_ref.ss.toml", []int{0, 1}},
-		{"./test/09_simple_ref_ref_come_first.ss.toml", []int{1, 0}},
-		{"./test/10_complex_ref.ss.toml", []int{0, 3, 1, 2}},
+		{filepath.FromSlash("./test/01_simple_ref.ss.toml"), []int{0, 1}},
+		{filepath.FromSlash("./test/02_two_simple_ref.ss.toml"), []int{0, 1}},
+		{filepath.FromSlash("./test/03_array_ref.ss.toml"), []int{0, 1}},
+		{filepath.FromSlash("./test/04_object_ref.ss.toml"), []int{0, 1}},
+		{filepath.FromSlash("./test/09_simple_ref_ref_come_first.ss.toml"), []int{1, 0}},
+		{filepath.FromSlash("./test/10_complex_ref.ss.toml"), []int{0, 3, 1, 2}},
 	}
 
 	for _, tc := range cases {
@@ -38,10 +39,10 @@ func TestNewGenOrderWithErr(t *testing.T) {
 		givenPath   string
 		expectedErr error
 	}{
-		{"./test/05_with_invalid_ref.ss.toml", nil}, // it is filltered out before find order
-		{"./test/06_self_ref.ss.toml", ErrSelfReference},
-		{"./test/07_not_exist_ref.ss.toml", ErrRefToNotExist},
-		{"./test/08_cyclic_ref.ss.toml", ErrRefIsCyclic},
+		{filepath.FromSlash("./test/05_with_invalid_ref.ss.toml"), nil}, // it is filltered out before find order
+		{filepath.FromSlash("./test/06_self_ref.ss.toml"), ErrSelfReference},
+		{filepath.FromSlash("./test/07_not_exist_ref.ss.toml"), ErrRefToNotExist},
+		{filepath.FromSlash("./test/08_cyclic_ref.ss.toml"), ErrRefIsCyclic},
 	}
 
 	for _, tc := range cases {
@@ -62,16 +63,16 @@ func TestGenOrderIterate(t *testing.T) {
 		givenPath     string
 		expectedOrder []string
 	}{
-		{"./test/01_simple_ref.ss.toml", []string{"bookstore.publisher", "bookstore.book"}},
-		{"./test/02_two_simple_ref.ss.toml", []string{"bookstore.publisher", "bookstore.book"}},
-		{"./test/03_array_ref.ss.toml", []string{"bookstore.publisher", "bookstore.book"}},
-		{"./test/04_object_ref.ss.toml", []string{"bookstore.publisher", "bookstore.book"}},
-		{"./test/05_with_invalid_ref.ss.toml", []string{"bookstore.publisher", "bookstore.book"}},
-		{"./test/06_self_ref.ss.toml", []string{}},
-		{"./test/07_not_exist_ref.ss.toml", []string{}},
-		{"./test/08_cyclic_ref.ss.toml", []string{}},
-		{"./test/09_simple_ref_ref_come_first.ss.toml", []string{"bookstore.publisher", "bookstore.book"}},
-		{"./test/10_complex_ref.ss.toml", []string{"db.A", "db.D", "db.B", "db.C"}},
+		{filepath.FromSlash("./test/01_simple_ref.ss.toml"), []string{"bookstore.publisher", "bookstore.book"}},
+		{filepath.FromSlash("./test/02_two_simple_ref.ss.toml"), []string{"bookstore.publisher", "bookstore.book"}},
+		{filepath.FromSlash("./test/03_array_ref.ss.toml"), []string{"bookstore.publisher", "bookstore.book"}},
+		{filepath.FromSlash("./test/04_object_ref.ss.toml"), []string{"bookstore.publisher", "bookstore.book"}},
+		{filepath.FromSlash("./test/05_with_invalid_ref.ss.toml"), []string{"bookstore.publisher", "bookstore.book"}},
+		{filepath.FromSlash("./test/06_self_ref.ss.toml"), []string{}},
+		{filepath.FromSlash("./test/07_not_exist_ref.ss.toml"), []string{}},
+		{filepath.FromSlash("./test/08_cyclic_ref.ss.toml"), []string{}},
+		{filepath.FromSlash("./test/09_simple_ref_ref_come_first.ss.toml"), []string{"bookstore.publisher", "bookstore.book"}},
+		{filepath.FromSlash("./test/10_complex_ref.ss.toml"), []string{"db.A", "db.D", "db.B", "db.C"}},
 	}
 
 	for _, tc := range cases {

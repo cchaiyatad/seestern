@@ -2,6 +2,7 @@ package cf
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,9 +15,9 @@ func TestGetSSConfig(t *testing.T) {
 			filePath string
 			errorMsg string
 		}{
-			{"./../../test/config", "a given path is not a file: ./../../test/config"},
-			{"./../../test/config/invalid", "error: not support file type (support only .json .toml .yaml)"},
-			{"./../../test/config/not-exist", "stat ./../../test/config/not-exist: no such file or directory"},
+			{filepath.FromSlash("./../../test/config"), "a given path is not a file: ./../../test/config"},
+			{filepath.FromSlash("./../../test/config/invalid"), "error: not support file type (support only .json .toml .yaml)"},
+			{filepath.FromSlash("./../../test/config/not-exist"), "stat ./../../test/config/not-exist: no such file or directory"},
 		}
 
 		for _, tc := range cases {
@@ -35,9 +36,9 @@ func TestGetSSConfig(t *testing.T) {
 		cases := []struct {
 			filePath string
 		}{
-			{"./../../test/config/json/00_from_init.ss.json"},
-			{"./../../test/config/yaml/00_from_init.ss.yaml"},
-			{"./../../test/config/toml/00_from_init.ss.toml"},
+			{filepath.FromSlash("./../../test/config/json/00_from_init.ss.json")},
+			{filepath.FromSlash("./../../test/config/yaml/00_from_init.ss.yaml")},
+			{filepath.FromSlash("./../../test/config/toml/00_from_init.ss.toml")},
 		}
 		expectedData := &SSConfig{
 			Databases: []Database{
@@ -120,9 +121,9 @@ func TestGetSSConfig(t *testing.T) {
 		cases := []struct {
 			filePath string
 		}{
-			{"./../../test/config/json/01_simple.ss.json"},
-			{"./../../test/config/yaml/01_simple.ss.yaml"},
-			{"./../../test/config/toml/01_simple.ss.toml"},
+			{filepath.FromSlash("./../../test/config/json/01_simple.ss.json")},
+			{filepath.FromSlash("./../../test/config/yaml/01_simple.ss.yaml")},
+			{filepath.FromSlash("./../../test/config/toml/01_simple.ss.toml")},
 		}
 		expectedData := &SSConfig{
 			Databases: []Database{
@@ -162,9 +163,9 @@ func TestGetSSConfig(t *testing.T) {
 		cases := []struct {
 			filePath string
 		}{
-			{"./../../test/config/json/02_two_coll.ss.json"},
-			{"./../../test/config/yaml/02_two_coll.ss.yaml"},
-			{"./../../test/config/toml/02_two_coll.ss.toml"},
+			{filepath.FromSlash("./../../test/config/json/02_two_coll.ss.json")},
+			{filepath.FromSlash("./../../test/config/yaml/02_two_coll.ss.yaml")},
+			{filepath.FromSlash("./../../test/config/toml/02_two_coll.ss.toml")},
 		}
 		expectedData := &SSConfig{
 			Databases: []Database{
@@ -212,7 +213,7 @@ func TestGetSSConfig(t *testing.T) {
 }
 
 func TestReadTwoCollectionSameName(t *testing.T) {
-	filePath := "./../../test/config/yaml/03_two_coll_same_name.ss.yaml"
+	filePath := filepath.FromSlash("./../../test/config/yaml/03_two_coll_same_name.ss.yaml")
 	expectedData := &SSConfig{
 		Databases: []Database{
 			{
@@ -253,7 +254,7 @@ func TestReadTwoCollectionSameName(t *testing.T) {
 }
 
 func TestGetSSConfigWithAlias(t *testing.T) {
-	filePath := "./../../test/config/toml/03_simple_alias.ss.toml"
+	filePath := filepath.FromSlash("./../../test/config/toml/03_simple_alias.ss.toml")
 
 	expectedData := &SSConfig{
 		Databases: []Database{
@@ -283,7 +284,7 @@ func TestGetSSConfigWithAlias(t *testing.T) {
 }
 
 func TestGetSSConfigProjectSimple(t *testing.T) {
-	filePath := "./../../test/config/project/01_configSpec_simple.ss.toml"
+	filePath := filepath.FromSlash("./../../test/config/project/01_configSpec_simple.ss.toml")
 
 	expectedData := &SSConfig{
 		Databases: []Database{
@@ -327,7 +328,7 @@ func TestGetSSConfigProjectSimple(t *testing.T) {
 }
 
 func TestGetSSConfigProjectArray(t *testing.T) {
-	filePath := "./../../test/config/project/02_configSpec_array.ss.toml"
+	filePath := filepath.FromSlash("./../../test/config/project/02_configSpec_array.ss.toml")
 	expectedData := &SSConfig{
 		Databases: []Database{
 			{
@@ -362,7 +363,7 @@ func TestGetSSConfigProjectArray(t *testing.T) {
 }
 
 func TestGetSSConfigProjectObject(t *testing.T) {
-	filePath := "./../../test/config/project/03_configSpec_object.ss.toml"
+	filePath := filepath.FromSlash("./../../test/config/project/03_configSpec_object.ss.toml")
 	expectedData := &SSConfig{
 		Databases: []Database{
 			{
@@ -451,7 +452,7 @@ func TestGetSSConfigProjectObject(t *testing.T) {
 }
 
 func TestGetSSConfigProjectAlias(t *testing.T) {
-	filePath := "./../../test/config/project/04_configSpec_alias.ss.toml"
+	filePath := filepath.FromSlash("./../../test/config/project/04_configSpec_alias.ss.toml")
 	expectedData := &SSConfig{
 		Databases: []Database{{
 			D_name: "school",
@@ -507,7 +508,7 @@ func TestGetSSConfigProjectAlias(t *testing.T) {
 }
 
 func TestGetSSConfigProjectEmbedded(t *testing.T) {
-	filePath := "./../../test/config/project/05_configSpec_embedded.ss.toml"
+	filePath := filepath.FromSlash("./../../test/config/project/05_configSpec_embedded.ss.toml")
 	expectedData := &SSConfig{
 		Databases: []Database{
 			{
@@ -583,7 +584,7 @@ func TestGetSSConfigProjectEmbedded(t *testing.T) {
 }
 
 func TestGetSSConfigProjectRefs(t *testing.T) {
-	filePath := "./../../test/config/project/06_configSpec_refs.ss.toml"
+	filePath := filepath.FromSlash("./../../test/config/project/06_configSpec_refs.ss.toml")
 	expectedData := &SSConfig{
 		Databases: []Database{
 			{

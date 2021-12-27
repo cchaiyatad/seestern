@@ -3,6 +3,7 @@ package dataformat
 import (
 	"bytes"
 	"fmt"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -18,12 +19,12 @@ func TestNewDecoder(t *testing.T) {
 			expectedDecoderType string
 			expectedData        string
 		}{
-			{"./test/decoder/file.json", "*dataformat.jsonUnmarshaler", "{\n    \"Age\": 25,\n    \"Cats\": [\n        \"Cauchy\",\n        \"Plato\"\n    ],\n    \"Perfection\": [\n        6,\n        28,\n        496,\n        8128\n    ],\n    \"Pi\": 3.14\n}"},
-			{"./test/decoder/file.yaml", "*dataformat.yamlUnmarshaler", "age: 25\ncats:\n  - Cauchy\n  - Plato\npi: 3.14\nperfection:\n  - 6\n  - 28\n  - 496\n  - 8128"},
-			{"./test/decoder/file.toml", "*dataformat.tomlUnmarshaler", "Age = 25\nCats = [ \"Cauchy\", \"Plato\" ]\nPi = 3.14\nPerfection = [ 6, 28, 496, 8128 ]"},
-			{"./test/decoder/file.ss.json", "*dataformat.jsonUnmarshaler", "{\n    \"Age\": 25,\n    \"Cats\": [\n        \"Cauchy\",\n        \"Plato\"\n    ],\n    \"Perfection\": [\n        6,\n        28,\n        496,\n        8128\n    ],\n    \"Pi\": 3.14\n}"},
-			{"./test/decoder/file.ss.yaml", "*dataformat.yamlUnmarshaler", "age: 25\ncats:\n  - Cauchy\n  - Plato\npi: 3.14\nperfection:\n  - 6\n  - 28\n  - 496\n  - 8128"},
-			{"./test/decoder/file.ss.toml", "*dataformat.tomlUnmarshaler", "Age = 25\nCats = [ \"Cauchy\", \"Plato\" ]\nPi = 3.14\nPerfection = [ 6, 28, 496, 8128 ]"},
+			{filepath.FromSlash("./test/decoder/file.json"), "*dataformat.jsonUnmarshaler", "{\n    \"Age\": 25,\n    \"Cats\": [\n        \"Cauchy\",\n        \"Plato\"\n    ],\n    \"Perfection\": [\n        6,\n        28,\n        496,\n        8128\n    ],\n    \"Pi\": 3.14\n}"},
+			{filepath.FromSlash("./test/decoder/file.yaml"), "*dataformat.yamlUnmarshaler", "age: 25\ncats:\n  - Cauchy\n  - Plato\npi: 3.14\nperfection:\n  - 6\n  - 28\n  - 496\n  - 8128"},
+			{filepath.FromSlash("./test/decoder/file.toml"), "*dataformat.tomlUnmarshaler", "Age = 25\nCats = [ \"Cauchy\", \"Plato\" ]\nPi = 3.14\nPerfection = [ 6, 28, 496, 8128 ]"},
+			{filepath.FromSlash("./test/decoder/file.ss.json"), "*dataformat.jsonUnmarshaler", "{\n    \"Age\": 25,\n    \"Cats\": [\n        \"Cauchy\",\n        \"Plato\"\n    ],\n    \"Perfection\": [\n        6,\n        28,\n        496,\n        8128\n    ],\n    \"Pi\": 3.14\n}"},
+			{filepath.FromSlash("./test/decoder/file.ss.yaml"), "*dataformat.yamlUnmarshaler", "age: 25\ncats:\n  - Cauchy\n  - Plato\npi: 3.14\nperfection:\n  - 6\n  - 28\n  - 496\n  - 8128"},
+			{filepath.FromSlash("./test/decoder/file.ss.toml"), "*dataformat.tomlUnmarshaler", "Age = 25\nCats = [ \"Cauchy\", \"Plato\" ]\nPi = 3.14\nPerfection = [ 6, 28, 496, 8128 ]"},
 		}
 
 		for _, tc := range cases {
@@ -46,10 +47,10 @@ func TestNewDecoder(t *testing.T) {
 			filePath    string
 			expectedErr string
 		}{
-			{"./test/decoder/dir", "a given path is not a file: ./test/decoder/dir"},
-			{"./test/decoder/file", "error: not support file type (support only .json .toml .yaml)"},
-			{"./test/decoder/filejson", "error: not support file type (support only .json .toml .yaml)"},
-			{"./test/decoder/file-not-exist", "stat ./test/decoder/file-not-exist: no such file or directory"},
+			{filepath.FromSlash("./test/decoder/dir"), "a given path is not a file: ./test/decoder/dir"},
+			{filepath.FromSlash("./test/decoder/file"), "error: not support file type (support only .json .toml .yaml)"},
+			{filepath.FromSlash("./test/decoder/filejson"), "error: not support file type (support only .json .toml .yaml)"},
+			{filepath.FromSlash("./test/decoder/file-not-exist"), "stat ./test/decoder/file-not-exist: no such file or directory"},
 		}
 
 		for _, tc := range cases {
@@ -80,9 +81,9 @@ func TestDecoderDecode(t *testing.T) {
 		cases := []struct {
 			filePath string
 		}{
-			{"./test/decoder/file.json"},
-			{"./test/decoder/file.toml"},
-			{"./test/decoder/file.yaml"},
+			{filepath.FromSlash("./test/decoder/file.json")},
+			{filepath.FromSlash("./test/decoder/file.toml")},
+			{filepath.FromSlash("./test/decoder/file.yaml")},
 		}
 
 		for _, tc := range cases {
@@ -101,7 +102,7 @@ func TestDecoderDecode(t *testing.T) {
 	})
 
 	t.Run("Decode with one option", func(t *testing.T) {
-		givenFilePath := "./test/decoder/file.json"
+		givenFilePath := filepath.FromSlash("./test/decoder/file.json")
 		expectedDataWithOpts := data{Age: 25, Cats: []string{"Plato"}, Pi: 3.14, Perfection: []int{6, 28, 496, 8128}}
 
 		givenOpt := func(data []byte) []byte {
@@ -125,7 +126,7 @@ func TestDecoderDecode(t *testing.T) {
 	})
 
 	t.Run("Decode with two option", func(t *testing.T) {
-		givenFilePath := "./test/decoder/file.json"
+		givenFilePath := filepath.FromSlash("./test/decoder/file.json")
 		expectedDataWithOpts := data{Cats: []string{"Plato"}, Pi: 3.14, Perfection: []int{6, 28, 496, 8128}}
 
 		givenOpt1 := func(data []byte) []byte {

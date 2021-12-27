@@ -2,6 +2,7 @@ package file
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +12,7 @@ func TestGetBytesFromFile(t *testing.T) {
 	t.Parallel()
 
 	t.Run("test GetBytesFromFile with exist file", func(t *testing.T) {
-		givenPath := "./test/testRead"
+		givenPath := filepath.FromSlash("./test/testRead")
 		expected := "Hello, World!"
 
 		gotByte, gotErr := GetBytesFromFile(givenPath)
@@ -20,7 +21,7 @@ func TestGetBytesFromFile(t *testing.T) {
 	})
 
 	t.Run("test GetBytesFromFile with non-exist file", func(t *testing.T) {
-		givenPath := "./test/no-exist"
+		givenPath := filepath.FromSlash("./test/no-exist")
 		expected := []byte{}
 		expectedErr := "stat ./test/no-exist: no such file or directory"
 
@@ -31,7 +32,7 @@ func TestGetBytesFromFile(t *testing.T) {
 	})
 
 	t.Run("test GetBytesFromFile with directory", func(t *testing.T) {
-		givenPath := "./test/"
+		givenPath := filepath.FromSlash("./test/")
 		expected := []byte{}
 		expectedErr := "a given path is not a file: ./test/"
 
@@ -48,8 +49,8 @@ func TestGetFileType(t *testing.T) {
 			path     string
 			expected string
 		}{
-			{"./test/fileType/not-exist-file", "stat ./test/fileType/not-exist-file: no such file or directory"},
-			{"./test/fileType/dir", "a given path is not a file: ./test/fileType/dir"},
+			{filepath.FromSlash("./test/fileType/not-exist-file"), "stat ./test/fileType/not-exist-file: no such file or directory"},
+			{filepath.FromSlash("./test/fileType/dir"), "a given path is not a file: ./test/fileType/dir"},
 		}
 
 		for _, tc := range cases {
@@ -70,9 +71,9 @@ func TestGetFileType(t *testing.T) {
 			path     string
 			expected string
 		}{
-			{"./test/fileType/file", ""},
-			{"./test/fileType/file.filetype", "filetype"},
-			{"./test/fileType/file.subfiletype.filetype", "filetype"},
+			{filepath.FromSlash("./test/fileType/file"), ""},
+			{filepath.FromSlash("./test/fileType/file.filetype"), "filetype"},
+			{filepath.FromSlash("./test/fileType/file.subfiletype.filetype"), "filetype"},
 		}
 
 		for _, tc := range cases {
