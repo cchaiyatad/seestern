@@ -43,9 +43,13 @@ func setSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func (ssconfig *SSConfig) Gen() result {
+func (ssconfig *SSConfig) Gen() (result, error) {
 	result := ssconfig.NewResult()
-	order := ssconfig.NewGenOrder()
+
+	order, err := ssconfig.NewGenOrder()
+	if err != nil {
+		return nil, err
+	}
 
 	order.IterateDB(func(db *Database) {
 		documents, err := ssconfig.genDB(db)
@@ -55,7 +59,7 @@ func (ssconfig *SSConfig) Gen() result {
 			result[db.D_name][db.Collection.C_name] = documents
 		}
 	})
-	return result
+	return result, nil
 }
 
 func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {

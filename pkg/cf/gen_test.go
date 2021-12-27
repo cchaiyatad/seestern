@@ -11,7 +11,8 @@ func TestGenWithError(t *testing.T) {
 		givenDB := "school"
 		givenColl := "student"
 		givenConfig := &SSConfig{Databases: []Database{}}
-		gotResult := givenConfig.Gen()
+		gotResult, err := givenConfig.Gen()
+		assert.Nil(t, err)
 
 		expectedResult := make(result)
 		assert.Equal(t, expectedResult, gotResult)
@@ -38,7 +39,8 @@ func TestGenWithError(t *testing.T) {
 								{Item: Item{Type: Type{Type: "integer"}}}}},
 						}}}},
 		}
-		gotResult := givenConfig.Gen()
+		gotResult, err := givenConfig.Gen()
+		assert.Nil(t, err)
 
 		expected := "count have to be more than zero got: 0 (db: school, coll: student)"
 		gotDocuments, gotErr := gotResult.GetDocuments(givenDB, givenColl)
@@ -72,7 +74,8 @@ func TestGen(t *testing.T) {
 								{Item: Item{Type: Type{Type: "double"}}}}},
 						}}}},
 		}
-		gotResult := givenConfig.Gen()
+		gotResult, err := givenConfig.Gen()
+		assert.Nil(t, err)
 
 		_, gotErr := gotResult.GetDocuments(givenDB, givenColl)
 		assert.Nil(t, gotErr)

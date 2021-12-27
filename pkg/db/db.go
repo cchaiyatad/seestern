@@ -118,7 +118,10 @@ func Gen(param *GenParam) error {
 		return err
 	}
 
-	result := ssConfig.Gen()
+	result, err := ssConfig.Gen()
+	if err != nil {
+		return err
+	}
 
 	for db, colls := range result {
 		for coll := range colls {
