@@ -211,6 +211,47 @@ func TestGetSSConfig(t *testing.T) {
 	})
 }
 
+func TestReadTwoCollectionSameName(t *testing.T) {
+	filePath := "./../../test/config/yaml/03_two_coll_same_name.ss.yaml"
+	expectedData := &SSConfig{
+		Databases: []Database{
+			{
+				D_name: "school",
+				Collection: Collection{
+					C_name: "student",
+					Count:  30,
+					Fields: []Field{
+						{F_name: "s_id", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "name", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "string"}}}}},
+					},
+				},
+			},
+			{
+				D_name: "school",
+				Collection: Collection{
+					C_name: "student",
+					Count:  15,
+					Fields: []Field{
+						{F_name: "t_id", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "objectID"}}}}},
+						{F_name: "name", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "string"}}}}},
+						{F_name: "age", Constraints: []Constraint{
+							{Item: Item{Type: Type{Type: "integer", P_Min: 30}}}}},
+					},
+				},
+			},
+		},
+	}
+
+	t.Parallel()
+	gotSSConfig, gotErr := NewConfigFileReader(filePath, "").GetSSConfig()
+	assert.Nil(t, gotErr)
+	assert.Equal(t, expectedData.String(), gotSSConfig.String())
+}
+
 func TestGetSSConfigWithAlias(t *testing.T) {
 	filePath := "./../../test/config/toml/03_simple_alias.ss.toml"
 

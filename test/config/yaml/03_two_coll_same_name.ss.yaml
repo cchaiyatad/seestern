@@ -1,0 +1,27 @@
+databases:
+  - d_name: school
+    collection:
+      c_name: student
+      count: 30
+      fields:
+        - constraints:
+            - type: objectID
+          f_name: s_id
+        - f_name: name
+          constraints:
+            - type: string
+  - d_name: school
+    collection:
+      c_name: student
+      count: 15
+      fields:
+        - constraints:
+            - type: objectID
+          f_name: t_id
+        - constraints:
+            - type: string
+          f_name: name
+        - constraints:
+            - type: integer
+              min: 30
+          f_name: age
