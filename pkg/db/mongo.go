@@ -1,9 +1,7 @@
 package db
 
 import (
-	"context"
 	"sync"
-	"time"
 
 	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/cf"
@@ -27,7 +25,7 @@ func createMongoDBWorker(connectionString string) *mongoDBWorker {
 func (w *mongoDBWorker) connect() (*mongo.Client, error) {
 	var err error
 	w.initClient.Do(func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := getCtxForConnect()
 		defer cancel()
 		w.client, err = mongo.Connect(ctx, options.Client().ApplyURI(w.cntStr))
 	})
@@ -49,7 +47,7 @@ func (w *mongoDBWorker) ping() error {
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := getCtxForTransaction()
 	defer cancel()
 	return client.Ping(ctx, readpref.Primary())
 }
@@ -103,7 +101,10 @@ func (w *mongoDBWorker) insert(dbName, collName string, documents ...interface{}
 	}
 
 	coll := client.Database(dbName).Collection(collName)
-	_, err = coll.InsertMany(context.TODO(), documents)
+
+	ctx, cancel := getCtxForTransaction()
+	defer cancel()
+	_, err = coll.InsertMany(ctx, documents)
 	return err
 }
 
@@ -112,8 +113,9 @@ func (w *mongoDBWorker) drop(dbName, collName string) error {
 	if err != nil {
 		return err
 	}
-
-	return client.Database(dbName).Collection(collName).Drop(context.TODO())
+	ctx, cancel := getCtxForTransaction()
+	defer cancel()
+	return client.Database(dbName).Collection(collName).Drop(ctx)
 }
 
 func (w *mongoDBWorker) getNameRecord() (nameRecord, error) {
@@ -124,13 +126,17 @@ func (w *mongoDBWorker) getNameRecord() (nameRecord, error) {
 
 	record := make(nameRecord)
 
-	dbs, err := client.ListDatabaseNames(context.TODO(), bson.D{})
+	ctx, cancel := getCtxForTransaction()
+	defer cancel()
+	dbs, err := client.ListDatabaseNames(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
 
 	for _, db := range dbs {
-		colls, err := client.Database(db).ListCollectionNames(context.TODO(), bson.D{})
+		ctx, cancel := getCtxForTransaction()
+		defer cancel()
+		colls, err := client.Database(db).ListCollectionNames(ctx, bson.D{})
 		if err != nil {
 			log.Logf(log.Warning, "skip database %s :%s\n", db, err)
 			continue
@@ -150,15 +156,17 @@ func (w *mongoDBWorker) getCursor(dbName string, collName string) (*mongo.Cursor
 		return nil, err
 	}
 	coll := client.Database(dbName).Collection(collName)
-	return coll.Find(context.TODO(), bson.M{})
+	ctx, cancel := getCtxForTransaction()
+	defer cancel()
+	return coll.Find(ctx, bson.M{})
 }
 
 func (*mongoDBWorker) iterateByCursor(cursor *mongo.Cursor, dbName string, collName string, callBack func(map[string]interface{}), onFinish func()) {
 	if cursor == nil {
 		return
 	}
-
-	ctx := context.TODO()
+	ctx, cancel := getCtxForTransaction()
+	defer cancel()
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
