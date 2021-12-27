@@ -25,6 +25,7 @@ type fieldGenerator struct {
 	constraintGen constraintRandomizer
 	setGen        setGenerator
 	vendor        string
+	result        *result
 }
 
 type constraintRandomizer map[string]*constraintRandomTree
@@ -52,7 +53,7 @@ func (ssconfig *SSConfig) Gen() (result, error) {
 	}
 
 	order.IterateDB(func(db *Database) {
-		documents, err := ssconfig.genDB(db)
+		documents, err := ssconfig.genDB(db, &result)
 		if err != nil {
 			result[db.D_name][db.Collection.C_name] = err
 		} else {
@@ -62,7 +63,7 @@ func (ssconfig *SSConfig) Gen() (result, error) {
 	return result, nil
 }
 
-func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {
+func (ssconfig *SSConfig) genDB(db *Database, result *result) (documents, error) {
 	dbName := db.D_name
 	collName := db.Collection.C_name
 
@@ -72,7 +73,7 @@ func (ssconfig *SSConfig) genDB(db *Database) (documents, error) {
 	}
 
 	documents := make(documents, 0, count)
-	fieldGen := newFieldGenerator(db.Collection.Fields, ssconfig.vendor)
+	fieldGen := newFieldGenerator(db.Collection.Fields, ssconfig.vendor, result)
 
 	for i := 0; i < count; i++ {
 		doc := genDocument(i, fieldGen)
@@ -104,12 +105,13 @@ func shouldOmit(omitWeight float64) bool {
 	return rand.Float64() < omitWeight
 }
 
-func newFieldGenerator(fields []Field, vendor string) *fieldGenerator {
+func newFieldGenerator(fields []Field, vendor string, result *result) *fieldGenerator {
 	return &fieldGenerator{
 		fields:        fields,
 		constraintGen: newConstraintRandomizer(fields),
 		setGen:        newSetGenerator(fields),
 		vendor:        vendor,
+		result:        result,
 	}
 }
 
@@ -122,7 +124,7 @@ func (gen *fieldGenerator) genFromConstraint(fieldName string) interface{} {
 	if item == nil {
 		return nil
 	}
-	return getValueFromItemFromConstraint(item, gen.vendor)
+	return getValueFromItemFromConstraint(item, gen)
 }
 
 func (gen *fieldGenerator) getItemFromSet(fieldName string, idx int) (*Item, bool) {
@@ -131,7 +133,7 @@ func (gen *fieldGenerator) getItemFromSet(fieldName string, idx int) (*Item, boo
 
 func (gen *fieldGenerator) genFromSet(fieldName string, idx int) (interface{}, bool) {
 	if item, ok := gen.getItemFromSet(fieldName, idx); ok {
-		return getValueFromItemFromSet(item, gen.vendor), true
+		return getValueFromItemFromSet(item, gen), true
 	}
 	return nil, false
 }

@@ -7,14 +7,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func getValueFromItemFromSet(item *Item, vendor string) interface{} {
-	return getValueFromItem(item, vendor, false)
+func getValueFromItemFromSet(item *Item, fieldGen *fieldGenerator) interface{} {
+	return getValueFromItem(item, fieldGen, false)
 }
-func getValueFromItemFromConstraint(item *Item, vendor string) interface{} {
-	return getValueFromItem(item, vendor, true)
+func getValueFromItemFromConstraint(item *Item, fieldGen *fieldGenerator) interface{} {
+	return getValueFromItem(item, fieldGen, true)
 }
 
-func getValueFromItem(item *Item, vendor string, isConstraint bool) interface{} {
+func getValueFromItem(item *Item, fieldGen *fieldGenerator, isConstraint bool) interface{} {
 	value := item.Value.Value
 	enum := item.Enum.Enum
 	t := item.Type
@@ -25,11 +25,11 @@ func getValueFromItem(item *Item, vendor string, isConstraint bool) interface{} 
 	if len(enum) > 0 {
 		return enum[rand.Intn(len(enum))]
 	}
-	return genType(t, vendor, isConstraint)
+	return genType(t, fieldGen, isConstraint)
 }
 
 // TODO 6: ref (using isConstraint value)
-func genType(t Type, vendor string, isConstraint bool) interface{} {
+func genType(t Type, gen *fieldGenerator, isConstraint bool) interface{} {
 	switch t.Type {
 	case Null:
 		return genNull()
@@ -42,11 +42,11 @@ func genType(t Type, vendor string, isConstraint bool) interface{} {
 	case Boolean:
 		return genBoolean(t)
 	case ObjectID:
-		return genObjectID(t, vendor)
+		return genObjectID(t, gen)
 	case Array:
-		return genArray(t, vendor)
+		return genArray(t, gen)
 	case Object:
-		return genObject(t, vendor)
+		return genObject(t, gen)
 	}
 	return nil
 }
@@ -85,14 +85,14 @@ func genBoolean(t Type) interface{} {
 	return gen.GenBoolean()
 }
 
-func genObjectID(t Type, vendor string) interface{} {
-	if vendor == "mongo" {
+func genObjectID(t Type, fieldGen *fieldGenerator) interface{} {
+	if fieldGen.vendor == "mongo" {
 		return primitive.NewObjectID()
 	}
 	return gen.GenString(20, "", "")
 }
 
-func genArray(t Type, vendor string) interface{} {
+func genArray(t Type, fieldGen *fieldGenerator) interface{} {
 	data := []interface{}{}
 	minItem := t.MinItem()
 	maxItem := t.MaxItem()
@@ -108,22 +108,22 @@ func genArray(t Type, vendor string) interface{} {
 
 	for i := minItem; i < maxItem; i++ {
 		if item, ok := setMap.getItem(i); ok {
-			value := getValueFromItemFromSet(item, vendor)
+			value := getValueFromItemFromSet(item, fieldGen)
 			data = append(data, value)
 		}
 
 		item := constraintRandomTree.getItem()
-		value := getValueFromItemFromConstraint(item, vendor)
+		value := getValueFromItemFromConstraint(item, fieldGen)
 		data = append(data, value)
 	}
 	return data
 }
 
-func genObject(t Type, vendor string) interface{} {
+func genObject(t Type, fieldGen *fieldGenerator) interface{} {
 	fields := t.Fields()
 
-	fieldGen := newFieldGenerator(fields, vendor)
-	document := genDocument(0, fieldGen)
+	newFieldGen := newFieldGenerator(fields, fieldGen.vendor, fieldGen.result)
+	document := genDocument(0, newFieldGen)
 
 	return document
 }
