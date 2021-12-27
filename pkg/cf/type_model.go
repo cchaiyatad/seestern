@@ -53,7 +53,10 @@ func (t Type) Ref() []string {
 		return refs
 	}
 
-	return []string{t.P_Ref}
+	if t.P_Ref != "" {
+		return []string{t.P_Ref}
+	}
+	return []string{}
 }
 
 func (t Type) Prefix() string {

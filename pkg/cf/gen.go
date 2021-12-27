@@ -124,7 +124,7 @@ func (gen *fieldGenerator) genFromConstraint(fieldName string) interface{} {
 	if item == nil {
 		return nil
 	}
-	return getValueFromItemFromConstraint(item, gen)
+	return getValueFromItem(item, gen)
 }
 
 func (gen *fieldGenerator) getItemFromSet(fieldName string, idx int) (*Item, bool) {
@@ -133,7 +133,7 @@ func (gen *fieldGenerator) getItemFromSet(fieldName string, idx int) (*Item, boo
 
 func (gen *fieldGenerator) genFromSet(fieldName string, idx int) (interface{}, bool) {
 	if item, ok := gen.getItemFromSet(fieldName, idx); ok {
-		return getValueFromItemFromSet(item, gen), true
+		return getValueFromItem(item, gen), true
 	}
 	return nil, false
 }

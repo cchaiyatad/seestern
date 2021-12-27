@@ -62,7 +62,7 @@ f_name = "language"
 
 # collection: book field:publisher_id
 [[databases.collection.fields]]
-constraints = [{type = "objectID", ref = "publisher._id"}]
+constraints = [{type = "objectID", ref = "bookstore.publisher._id"}]
 f_name = "publisher_id"
 
 # collection: publisher
