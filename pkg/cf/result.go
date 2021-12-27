@@ -3,10 +3,9 @@ package cf
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 )
 
-// db[coll]
+// db[coll] -> documents
 type result map[string]map[string]interface{}
 type documents []document
 
@@ -51,23 +50,7 @@ func (documents documents) ToInterfaceSlice() []interface{} {
 	}
 	return result
 }
+
 func (documents documents) ToJson() ([]byte, error) {
 	return json.MarshalIndent(documents, "", "    ")
-}
-
-// db.coll
-type dbcollInfo map[string]interface{}
-
-func (ssconfig *SSConfig) GetdbcollInfo() dbcollInfo {
-	info := make(dbcollInfo)
-
-	for _, db := range ssconfig.Databases {
-		dbName := db.D_name
-		collName := db.Collection.C_name
-		key := fmt.Sprintf("%s.%s", dbName, collName)
-
-		info[key] = struct{}{}
-	}
-
-	return info
 }

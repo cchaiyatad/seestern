@@ -63,6 +63,10 @@ func SplitNym(nym string) (string, string, bool) {
 	return db, coll, true
 }
 
+func (db *Database) CreateNym() string {
+	return CreateNym(db.D_name, db.Collection.C_name)
+}
+
 func CreateNym(dbName, collName string) string {
 	return joinDelimiter(dbName, collName)
 }

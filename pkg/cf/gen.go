@@ -45,18 +45,16 @@ func setSeed() {
 
 func (ssconfig *SSConfig) Gen() result {
 	result := ssconfig.NewResult()
-	// dbcollInfo := ssconfig.GetdbcollInfo()
-	// TODO 6: find order and skip duplicate
+	order := ssconfig.NewGenOrder()
 
-	// TODO 6: iterate though order
-	for _, db := range ssconfig.Databases {
-		documents, err := ssconfig.genDB(&db)
+	order.IterateDB(func(db *Database) {
+		documents, err := ssconfig.genDB(db)
 		if err != nil {
 			result[db.D_name][db.Collection.C_name] = err
 		} else {
 			result[db.D_name][db.Collection.C_name] = documents
 		}
-	}
+	})
 	return result
 }
 
