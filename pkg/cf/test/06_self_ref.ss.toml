@@ -1,0 +1,46 @@
+# sample One-to-Many Relationships with Document References
+[[databases]]
+d_name = "bookstore"
+
+# collection: publisher
+[databases.collection]
+c_name = "publisher"
+count = 5
+
+# collection: publisher field:_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "_id"
+
+# collection: publisher field:name
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "name"
+
+[[databases]]
+d_name = "bookstore"
+
+# collection: book
+[databases.collection]
+c_name = "book"
+count = 20
+
+# collection: book field:_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "_id"
+
+# collection: publisher field:name
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "book_name"
+
+# collection: book field:pages
+[[databases.collection.fields]]
+constraints = [{type = "integer"}]
+f_name = "pages"
+
+# collection: book field:publisher_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID", ref = "bookstore.book._id"}]
+f_name = "book_id"

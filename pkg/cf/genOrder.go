@@ -1,6 +1,8 @@
 package cf
 
-import "errors"
+import (
+	"errors"
+)
 
 var ErrRefIsCyclic = errors.New("a ref can not be cyclic")
 var ErrSelfReference = errors.New("a ref can not reference to itself")
@@ -149,9 +151,10 @@ func (order *genOrder) getDBByDBIndex(dbIdx int) (*Database, bool) {
 	return &order.config.Databases[dbIdx], true
 }
 
-// TODO 6: find order and skip duplicate
-// TODO 6: iterate though order
 func (order *genOrder) IterateDB(callback func(*Database)) {
+	if order.error != nil {
+		return
+	}
 	for _, orderGraphIdx := range order.order {
 		dbIdx := order.graph[orderGraphIdx].dbIdx
 		if db, ok := order.getDBByDBIndex(dbIdx); ok {
