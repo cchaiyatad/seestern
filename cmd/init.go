@@ -8,7 +8,7 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Create a configuration file (.ss.toml)",
+	Short: "Create a configuration file",
 	Run:   initFunc,
 }
 
