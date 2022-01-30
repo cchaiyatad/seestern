@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cchaiyatad/seestern/internal/log"
-	"github.com/cchaiyatad/seestern/pkg/db"
+	"github.com/cchaiyatad/seestern/pkg/app"
 	"github.com/spf13/cobra"
 )
 
@@ -29,13 +29,13 @@ func ps(cmd *cobra.Command, _ []string) {
 
 	log.Logf(log.Info, "list collections form %s connection string\n", connectionStr)
 
-	param := &db.PSParam{
+	param := &app.PSParam{
 		CntStr: connectionStr,
 		Vendor: "mongo",
 		DBName: database,
 	}
 
-	info, err := db.PS(param)
+	info, err := app.PS(param)
 
 	if err != nil {
 		log.Log(log.Error, err)

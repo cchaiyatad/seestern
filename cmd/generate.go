@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/cchaiyatad/seestern/internal/log"
-	"github.com/cchaiyatad/seestern/pkg/db"
+	"github.com/cchaiyatad/seestern/pkg/app"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +40,7 @@ func genFunc(cmd *cobra.Command, _ []string) {
 		log.Log(log.Error, err)
 		cobra.CheckErr(err)
 	}
-	param := &db.GenParam{
+	param := &app.GenParam{
 		CntStr:   connectionStr,
 		Vendor:   "mongo",
 		File:     file,
@@ -50,7 +50,7 @@ func genFunc(cmd *cobra.Command, _ []string) {
 		IsInsert: isInsert,
 	}
 
-	err := db.Gen(param)
+	err := app.Gen(param)
 	if err != nil {
 		log.Log(log.Error, err)
 		cobra.CheckErr(err)

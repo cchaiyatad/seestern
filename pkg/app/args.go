@@ -1,4 +1,4 @@
-package db
+package app
 
 import "github.com/cchaiyatad/seestern/pkg/cf"
 

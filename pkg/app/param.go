@@ -1,4 +1,4 @@
-package db
+package app
 
 type PSParam struct {
 	CntStr string

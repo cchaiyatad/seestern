@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/cchaiyatad/seestern/internal/log"
-	"github.com/cchaiyatad/seestern/pkg/db"
+	"github.com/cchaiyatad/seestern/pkg/app"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +37,7 @@ func initFunc(cmd *cobra.Command, _ []string) {
 		cobra.CheckErr(err)
 	}
 
-	param := &db.InitParam{
+	param := &app.InitParam{
 		CntStr:      connectionStr,
 		Vendor:      "mongo",
 		TargetColls: collections,
@@ -46,7 +46,7 @@ func initFunc(cmd *cobra.Command, _ []string) {
 		FileType:    fileType,
 	}
 
-	path, err := db.Init(param)
+	path, err := app.Init(param)
 	if err != nil {
 		log.Log(log.Error, err)
 		cobra.CheckErr(err)
