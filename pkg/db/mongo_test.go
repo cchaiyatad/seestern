@@ -1,4 +1,4 @@
-package app
+package db
 
 import (
 	"regexp"
@@ -12,7 +12,7 @@ func TestConnect(t *testing.T) {
 	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
 
 	t.Run("connect with valid connection string", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr}
 
 		gotClinet, gotErr := givenController.connect()
 
@@ -25,7 +25,7 @@ func TestConnect(t *testing.T) {
 	})
 
 	t.Run("connect with invalid connection string (random)", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: "random"}
+		givenController := mongoDBController{cntStr: "random"}
 
 		expectErr := `error parsing uri: scheme must be "mongodb" or "mongodb+srv"`
 		gotClinet, gotErr := givenController.connect()
@@ -35,7 +35,7 @@ func TestConnect(t *testing.T) {
 	})
 
 	t.Run("connect with invalid connection string (in format)", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr + "123"}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr + "123"}
 
 		expectPrefixRegexErr := `error parsing uri: lookup _mongodb._tcp.ps-command-cluster.h0n2k.mongodb.net123`
 		gotClinet, gotErr := givenController.connect()
@@ -50,7 +50,7 @@ func TestPing(t *testing.T) {
 	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
 
 	t.Run("ping with valid connection string", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr}
 
 		gotErr := givenController.ping()
 
@@ -58,7 +58,7 @@ func TestPing(t *testing.T) {
 	})
 
 	t.Run("ping with invalid connection string (random)", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: "random"}
+		givenController := mongoDBController{cntStr: "random"}
 
 		expectErr := `error parsing uri: scheme must be "mongodb" or "mongodb+srv"`
 		gotErr := givenController.ping()
@@ -67,7 +67,7 @@ func TestPing(t *testing.T) {
 	})
 
 	t.Run("ping with invalid connection string (in format)", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr + "123"}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr + "123"}
 
 		expectPrefixRegexErr := `error parsing uri: lookup _mongodb._tcp.ps-command-cluster.h0n2k.mongodb.net123`
 		gotErr := givenController.ping()
@@ -80,9 +80,9 @@ func TestGetNameRecord(t *testing.T) {
 	t.Parallel()
 	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
 	t.Run("getNameRecord with valid connection string", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr}
 
-		expected := nameRecord{"admin": map[string]struct{}{}, "local": map[string]struct{}{"clustermanager": {}, "oplog.rs": {}, "replset.election": {}, "replset.initialSyncId": {}, "replset.minvalid": {}, "replset.oplogTruncateAfterPoint": {}, "startup_log": {}}, "sample_airbnb": map[string]struct{}{"listingsAndReviews": {}}, "sample_analytics": map[string]struct{}{"accounts": {}, "customers": {}, "transactions": {}}, "sample_geospatial": map[string]struct{}{"shipwrecks": {}}, "sample_mflix": map[string]struct{}{"comments": {}, "movies": {}, "sessions": {}, "theaters": {}, "users": {}}, "sample_restaurants": map[string]struct{}{"neighborhoods": {}, "restaurants": {}}, "sample_supplies": map[string]struct{}{"sales": {}}, "sample_training": map[string]struct{}{"companies": {}, "grades": {}, "inspections": {}, "posts": {}, "routes": {}, "trips": {}, "zips": {}}, "sample_weatherdata": map[string]struct{}{"data": {}}}
+		expected := NameRecord{"admin": map[string]struct{}{}, "local": map[string]struct{}{"clustermanager": {}, "oplog.rs": {}, "replset.election": {}, "replset.initialSyncId": {}, "replset.minvalid": {}, "replset.oplogTruncateAfterPoint": {}, "startup_log": {}}, "sample_airbnb": map[string]struct{}{"listingsAndReviews": {}}, "sample_analytics": map[string]struct{}{"accounts": {}, "customers": {}, "transactions": {}}, "sample_geospatial": map[string]struct{}{"shipwrecks": {}}, "sample_mflix": map[string]struct{}{"comments": {}, "movies": {}, "sessions": {}, "theaters": {}, "users": {}}, "sample_restaurants": map[string]struct{}{"neighborhoods": {}, "restaurants": {}}, "sample_supplies": map[string]struct{}{"sales": {}}, "sample_training": map[string]struct{}{"companies": {}, "grades": {}, "inspections": {}, "posts": {}, "routes": {}, "trips": {}, "zips": {}}, "sample_weatherdata": map[string]struct{}{"data": {}}}
 
 		gotRecord, gotErr := givenController.getNameRecord()
 
@@ -91,7 +91,7 @@ func TestGetNameRecord(t *testing.T) {
 	})
 
 	t.Run("getNameRecord with invalid connection string", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr + "123"}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr + "123"}
 
 		expectPrefixRegexErr := `error parsing uri: lookup _mongodb._tcp.ps-command-cluster.h0n2k.mongodb.net123`
 
@@ -107,48 +107,48 @@ func TestPS(t *testing.T) {
 	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
 
 	t.Run(`ps with valid connection string dbNameFilter = ""`, func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr}
 		givenDBNameFilter := ""
 
-		expected := nameRecord{"admin": map[string]struct{}{}, "local": map[string]struct{}{"clustermanager": {}, "oplog.rs": {}, "replset.election": {}, "replset.initialSyncId": {}, "replset.minvalid": {}, "replset.oplogTruncateAfterPoint": {}, "startup_log": {}}, "sample_airbnb": map[string]struct{}{"listingsAndReviews": {}}, "sample_analytics": map[string]struct{}{"accounts": {}, "customers": {}, "transactions": {}}, "sample_geospatial": map[string]struct{}{"shipwrecks": {}}, "sample_mflix": map[string]struct{}{"comments": {}, "movies": {}, "sessions": {}, "theaters": {}, "users": {}}, "sample_restaurants": map[string]struct{}{"neighborhoods": {}, "restaurants": {}}, "sample_supplies": map[string]struct{}{"sales": {}}, "sample_training": map[string]struct{}{"companies": {}, "grades": {}, "inspections": {}, "posts": {}, "routes": {}, "trips": {}, "zips": {}}, "sample_weatherdata": map[string]struct{}{"data": {}}}
+		expected := NameRecord{"admin": map[string]struct{}{}, "local": map[string]struct{}{"clustermanager": {}, "oplog.rs": {}, "replset.election": {}, "replset.initialSyncId": {}, "replset.minvalid": {}, "replset.oplogTruncateAfterPoint": {}, "startup_log": {}}, "sample_airbnb": map[string]struct{}{"listingsAndReviews": {}}, "sample_analytics": map[string]struct{}{"accounts": {}, "customers": {}, "transactions": {}}, "sample_geospatial": map[string]struct{}{"shipwrecks": {}}, "sample_mflix": map[string]struct{}{"comments": {}, "movies": {}, "sessions": {}, "theaters": {}, "users": {}}, "sample_restaurants": map[string]struct{}{"neighborhoods": {}, "restaurants": {}}, "sample_supplies": map[string]struct{}{"sales": {}}, "sample_training": map[string]struct{}{"companies": {}, "grades": {}, "inspections": {}, "posts": {}, "routes": {}, "trips": {}, "zips": {}}, "sample_weatherdata": map[string]struct{}{"data": {}}}
 
-		gotRecord, gotErr := givenController.ps(givenDBNameFilter)
+		gotRecord, gotErr := givenController.PS(givenDBNameFilter)
 
 		assert.Nil(t, gotErr)
 		assert.Equal(t, expected, gotRecord)
 	})
 
 	t.Run("ps with valid connection string dbNameFilter is the database that exist", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr}
 		givenDBNameFilter := "local"
 
-		expected := nameRecord{"local": map[string]struct{}{"clustermanager": {}, "oplog.rs": {}, "replset.election": {}, "replset.initialSyncId": {}, "replset.minvalid": {}, "replset.oplogTruncateAfterPoint": {}, "startup_log": {}}}
+		expected := NameRecord{"local": map[string]struct{}{"clustermanager": {}, "oplog.rs": {}, "replset.election": {}, "replset.initialSyncId": {}, "replset.minvalid": {}, "replset.oplogTruncateAfterPoint": {}, "startup_log": {}}}
 
-		gotRecord, gotErr := givenController.ps(givenDBNameFilter)
+		gotRecord, gotErr := givenController.PS(givenDBNameFilter)
 
 		assert.Nil(t, gotErr)
 		assert.Equal(t, expected, gotRecord)
 	})
 
 	t.Run("ps with valid connection string dbNameFilter is the database that not exist", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr}
 		givenDBNameFilter := "not-exists"
 
-		expected := nameRecord{}
+		expected := NameRecord{}
 
-		gotRecord, gotErr := givenController.ps(givenDBNameFilter)
+		gotRecord, gotErr := givenController.PS(givenDBNameFilter)
 
 		assert.Nil(t, gotErr)
 		assert.Equal(t, expected, gotRecord)
 	})
 
 	t.Run("ps with invalid connection string ", func(t *testing.T) {
-		givenController := mongoDBWorker{cntStr: valid_mongo_cntStr + "123"}
+		givenController := mongoDBController{cntStr: valid_mongo_cntStr + "123"}
 		givenDBNameFilter := ""
 
 		expectPrefixRegexErr := `error parsing uri: lookup _mongodb._tcp.ps-command-cluster.h0n2k.mongodb.net123`
 
-		gotRecord, gotErr := givenController.ps(givenDBNameFilter)
+		gotRecord, gotErr := givenController.PS(givenDBNameFilter)
 
 		assert.Regexp(t, regexp.MustCompile(expectPrefixRegexErr), gotErr.Error())
 		assert.Nil(t, gotRecord)
@@ -158,7 +158,7 @@ func TestPS(t *testing.T) {
 
 func TestGetCursor(t *testing.T) {
 	const valid_mongo_cntStr = "mongodb+srv://testReadOnly:testSeeStern@ps-command-cluster.h0n2k.mongodb.net"
-	givenValidController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+	givenValidController := mongoDBController{cntStr: valid_mongo_cntStr}
 
 	t.Parallel()
 
@@ -186,7 +186,7 @@ func TestGetCursor(t *testing.T) {
 		givenDB := "sample_mflix"
 		givenColl := "users"
 
-		givenNewValidController := mongoDBWorker{cntStr: valid_mongo_cntStr}
+		givenNewValidController := mongoDBController{cntStr: valid_mongo_cntStr}
 		_, err := givenNewValidController.connect()
 		assert.Nil(t, err)
 		givenNewValidController.client = nil
@@ -200,7 +200,7 @@ func TestGetCursor(t *testing.T) {
 	})
 
 	t.Run("with invalid client, valid database and valid collection", func(t *testing.T) {
-		givenInValidController := mongoDBWorker{cntStr: valid_mongo_cntStr + "123"}
+		givenInValidController := mongoDBController{cntStr: valid_mongo_cntStr + "123"}
 
 		givenDB := "sample_mflix"
 		givenColl := "users"

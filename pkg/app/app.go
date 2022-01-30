@@ -3,49 +3,34 @@ package app
 import (
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/cchaiyatad/seestern/internal/file"
 	"github.com/cchaiyatad/seestern/internal/log"
 	"github.com/cchaiyatad/seestern/pkg/cf"
+	"github.com/cchaiyatad/seestern/pkg/db"
 )
 
-type DBController struct {
-	worker dbWorker
+type AppController struct {
+	dbController db.DBController
 }
 
-type dbWorker interface {
-	ping() error
-	ps(string) (nameRecord, error)
-	initConfigFile(*InitParam, *cf.ConfigFileGenerator) error
-	insert(string, string, ...interface{}) error
-	drop(string, string) error
-}
-
-type nameRecord map[string]map[string]struct{}
-
-func createDBController(cntStr string, vendor string) (*DBController, error) {
-	controller := DBController{}
-	switch vendor {
-	case "mongo":
-		controller.worker = createMongoDBWorker(cntStr)
-	default:
-		return nil, &ErrVendorNotSupport{vendor}
+func createAppController(cntStr string, vendor string) (*AppController, error) {
+	controller := AppController{}
+	dbController, err := db.CreateAppController(cntStr, vendor)
+	if err != nil {
+		return nil, err
 	}
-
-	if err := controller.worker.ping(); err != nil {
-		return nil, &ErrConnectionStringIsInvalid{err}
-	}
+	controller.dbController = dbController
 
 	return &controller, nil
 }
 
-func PS(param *PSParam) (nameRecord, error) {
-	controller, err := createDBController(param.CntStr, param.Vendor)
+func PS(param *PSParam) (db.NameRecord, error) {
+	controller, err := createAppController(param.CntStr, param.Vendor)
 	if err != nil {
 		return nil, err
 	}
-	return controller.worker.ps(param.DBName)
+	return controller.dbController.PS(param.DBName)
 }
 
 func Init(param *InitParam) (string, error) {
@@ -55,13 +40,13 @@ func Init(param *InitParam) (string, error) {
 		}
 	}
 
-	controller, err := createDBController(param.CntStr, param.Vendor)
+	controller, err := createAppController(param.CntStr, param.Vendor)
 	if err != nil {
 		return "", err
 	}
 
 	configGen := cf.NewConfigFileGenerator(param.FileType)
-	if err := controller.worker.initConfigFile(param, configGen); err != nil {
+	if err := controller.dbController.InitConfigFile(param.TargetColls, configGen); err != nil {
 		return "", err
 	}
 
@@ -103,11 +88,11 @@ func Gen(param *GenParam) error {
 		}
 	}
 
-	var controller *DBController
+	var controller *AppController
 	var err error
 
 	if param.shouldConnectDB() {
-		controller, err = createDBController(param.CntStr, param.Vendor)
+		controller, err = createAppController(param.CntStr, param.Vendor)
 		if err != nil {
 			return err
 		}
@@ -126,7 +111,7 @@ func Gen(param *GenParam) error {
 	for db, colls := range result {
 		for coll := range colls {
 			if param.IsDrop {
-				if err := controller.worker.drop(db, coll); err == nil {
+				if err := controller.dbController.Drop(db, coll); err == nil {
 					log.Logf(log.Info, "drop database %s collection %s\n", db, coll)
 				} else {
 					log.Logf(log.Warning, "drop database %s collection %s fail with reason %s\n", db, coll, err.Error())
@@ -139,7 +124,7 @@ func Gen(param *GenParam) error {
 			}
 
 			if param.IsInsert {
-				if err := controller.worker.insert(db, coll, documents.ToInterfaceSlice()...); err == nil {
+				if err := controller.dbController.Insert(db, coll, documents.ToInterfaceSlice()...); err == nil {
 					log.Logf(log.Info, "insert database %s collection %s\n", db, coll)
 				} else {
 					log.Logf(log.Warning, "insert database %s collection %s fail with reason\n %s", db, coll, err.Error())
@@ -173,32 +158,4 @@ func Gen(param *GenParam) error {
 	}
 
 	return nil
-}
-
-func (record nameRecord) empty() bool {
-	return len(record) == 0
-}
-
-func (record nameRecord) String() string {
-	if record.empty() {
-		return "database does not exists\n"
-	}
-
-	var strBuilder strings.Builder
-
-	for dbName, collNames := range record {
-		fmt.Fprintf(&strBuilder, "database: %s\n", dbName)
-
-		if len(collNames) == 0 {
-			strBuilder.WriteString(" None\n")
-			continue
-		}
-
-		idx := 1
-		for collName := range collNames {
-			fmt.Fprintf(&strBuilder, " %-2d: %s\n", idx, collName)
-			idx += 1
-		}
-	}
-	return strBuilder.String()
 }

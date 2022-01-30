@@ -1,9 +1,11 @@
-package app
+package db
 
 import "github.com/cchaiyatad/seestern/pkg/cf"
 
-func parseCollectionInputFromArgs(args []string) map[string][]string {
-	output := make(map[string][]string)
+type collsToGen map[string][]string
+
+func parseCollectionInputFromArgs(args []string) collsToGen {
+	output := make(collsToGen)
 
 	for _, arg := range args {
 		db, coll, ok := cf.SplitNym(arg)

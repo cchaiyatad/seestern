@@ -1,14 +1,17 @@
-package app
+package db
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestParseCollectionInputFromArgs(t *testing.T) {
+	toString := func(c collsToGen) string {
+		return fmt.Sprintf("%T", c)
+	}
+
 	t.Parallel()
 
 	t.Run("ParseCollectionInputFromArgs on empty slice", func(t *testing.T) {
@@ -17,7 +20,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		expected := map[string][]string{}
 		got := parseCollectionInputFromArgs(givenArgs)
 
-		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
+		assert.Equal(t, toString(expected), toString(got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 
 	t.Run("ParseCollectionInputFromArgs on one correct item", func(t *testing.T) {
@@ -26,7 +29,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		expected := map[string][]string{"db1": {"coll1"}}
 		got := parseCollectionInputFromArgs(givenArgs)
 
-		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
+		assert.Equal(t, toString(expected), toString(got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 
 	t.Run("ParseCollectionInputFromArgs on two correct item with same db", func(t *testing.T) {
@@ -35,7 +38,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		expected := map[string][]string{"db1": {"coll1", "coll2"}}
 		got := parseCollectionInputFromArgs(givenArgs)
 
-		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
+		assert.Equal(t, toString(expected), toString(got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 
 	t.Run("ParseCollectionInputFromArgs on two correct item with same db same coll", func(t *testing.T) {
@@ -44,7 +47,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		expected := map[string][]string{"db1": {"coll1"}}
 		got := parseCollectionInputFromArgs(givenArgs)
 
-		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
+		assert.Equal(t, toString(expected), toString(got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 
 	t.Run("ParseCollectionInputFromArgs on two correct item with same coll", func(t *testing.T) {
@@ -53,7 +56,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		expected := map[string][]string{"db1": {"coll1"}, "db2": {"coll1"}}
 		got := parseCollectionInputFromArgs(givenArgs)
 
-		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
+		assert.Equal(t, toString(expected), toString(got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 
 	t.Run("ParseCollectionInputFromArgs on incorrect format", func(t *testing.T) {
@@ -62,7 +65,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		expected := map[string][]string{}
 		got := parseCollectionInputFromArgs(givenArgs)
 
-		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
+		assert.Equal(t, toString(expected), toString(got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 	t.Run("ParseCollectionInputFromArgs on two dot", func(t *testing.T) {
 		// collection name should not be two dot to avoid ambigious
@@ -71,7 +74,7 @@ func TestParseCollectionInputFromArgs(t *testing.T) {
 		expected := map[string][]string{"db1": {"coll1"}}
 		got := parseCollectionInputFromArgs(givenArgs)
 
-		assert.Equal(t, true, reflect.DeepEqual(expected, got), fmt.Sprintf("expected: %s got: %s", expected, got))
+		assert.Equal(t, toString(expected), toString(got), fmt.Sprintf("expected: %s got: %s", expected, got))
 	})
 
 }

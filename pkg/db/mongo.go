@@ -1,4 +1,4 @@
-package app
+package db
 
 import (
 	"sync"
@@ -11,18 +11,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type mongoDBWorker struct {
+type mongoDBController struct {
 	cntStr string
 
 	client     *mongo.Client
 	initClient sync.Once
 }
 
-func createMongoDBWorker(connectionString string) *mongoDBWorker {
-	return &mongoDBWorker{cntStr: connectionString}
+func createMongoDBController(connectionString string) *mongoDBController {
+	return &mongoDBController{cntStr: connectionString}
 }
 
-func (w *mongoDBWorker) connect() (*mongo.Client, error) {
+func (w *mongoDBController) connect() (*mongo.Client, error) {
 	var err error
 	w.initClient.Do(func() {
 		ctx, cancel := getCtxForConnect()
@@ -41,7 +41,7 @@ func (w *mongoDBWorker) connect() (*mongo.Client, error) {
 	return w.client, nil
 }
 
-func (w *mongoDBWorker) ping() error {
+func (w *mongoDBController) ping() error {
 	client, err := w.connect()
 	if err != nil {
 		return err
@@ -52,13 +52,13 @@ func (w *mongoDBWorker) ping() error {
 	return client.Ping(ctx, readpref.Primary())
 }
 
-func (w *mongoDBWorker) ps(dbNameFilter string) (nameRecord, error) {
+func (w *mongoDBController) PS(dbNameFilter string) (NameRecord, error) {
 	record, err := w.getNameRecord()
 	if err != nil || dbNameFilter == "" {
 		return record, err
 	}
 
-	specificDBInfo := make(nameRecord)
+	specificDBInfo := make(NameRecord)
 	if colls, ok := record[dbNameFilter]; ok {
 		specificDBInfo[dbNameFilter] = colls
 	}
@@ -66,13 +66,13 @@ func (w *mongoDBWorker) ps(dbNameFilter string) (nameRecord, error) {
 	return specificDBInfo, nil
 }
 
-func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.ConfigFileGenerator) error {
+func (w *mongoDBController) InitConfigFile(targetColls []string, configGenerator *cf.ConfigFileGenerator) error {
 	records, err := w.getNameRecord()
 	if err != nil {
 		return err
 	}
 
-	collsToGen := parseCollectionInputFromArgs(param.TargetColls)
+	collsToGen := parseCollectionInputFromArgs(targetColls)
 
 	for db, colls := range collsToGen {
 		for _, coll := range colls {
@@ -94,7 +94,7 @@ func (w *mongoDBWorker) initConfigFile(param *InitParam, configGenerator *cf.Con
 	return nil
 }
 
-func (w *mongoDBWorker) insert(dbName, collName string, documents ...interface{}) error {
+func (w *mongoDBController) Insert(dbName, collName string, documents ...interface{}) error {
 	client, err := w.connect()
 	if err != nil {
 		return err
@@ -108,7 +108,7 @@ func (w *mongoDBWorker) insert(dbName, collName string, documents ...interface{}
 	return err
 }
 
-func (w *mongoDBWorker) drop(dbName, collName string) error {
+func (w *mongoDBController) Drop(dbName, collName string) error {
 	client, err := w.connect()
 	if err != nil {
 		return err
@@ -118,13 +118,13 @@ func (w *mongoDBWorker) drop(dbName, collName string) error {
 	return client.Database(dbName).Collection(collName).Drop(ctx)
 }
 
-func (w *mongoDBWorker) getNameRecord() (nameRecord, error) {
+func (w *mongoDBController) getNameRecord() (NameRecord, error) {
 	client, err := w.connect()
 	if err != nil {
 		return nil, err
 	}
 
-	record := make(nameRecord)
+	record := make(NameRecord)
 
 	ctx, cancel := getCtxForTransaction()
 	defer cancel()
@@ -150,7 +150,7 @@ func (w *mongoDBWorker) getNameRecord() (nameRecord, error) {
 	return record, nil
 }
 
-func (w *mongoDBWorker) getCursor(dbName string, collName string) (*mongo.Cursor, error) {
+func (w *mongoDBController) getCursor(dbName string, collName string) (*mongo.Cursor, error) {
 	client, err := w.connect()
 	if err != nil {
 		return nil, err
@@ -161,7 +161,7 @@ func (w *mongoDBWorker) getCursor(dbName string, collName string) (*mongo.Cursor
 	return coll.Find(ctx, bson.M{})
 }
 
-func (*mongoDBWorker) iterateByCursor(cursor *mongo.Cursor, dbName string, collName string, callBack func(map[string]interface{}), onFinish func()) {
+func (*mongoDBController) iterateByCursor(cursor *mongo.Cursor, dbName string, collName string, callBack func(map[string]interface{}), onFinish func()) {
 	if cursor == nil {
 		return
 	}
