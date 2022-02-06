@@ -138,13 +138,16 @@ func genArray(t Type, fieldGen *fieldGenerator) interface{} {
 
 	constraintRandomTree := NewConstraintRandomTree(t.ElementType())
 	setMap := newSetMap(t.Sets())
+	dataLen := rand.Intn(maxItem) + minItem
+	if dataLen > maxItem {
+		dataLen = maxItem
+	}
 
-	maxItem = rand.Intn(maxItem-minItem) + minItem
-
-	for i := minItem; i < maxItem; i++ {
+	for i := 0; i < dataLen; i++ {
 		if item, ok := setMap.getItem(i); ok {
 			value := getValueFromItem(item, fieldGen)
 			data = append(data, value)
+			continue
 		}
 
 		item := constraintRandomTree.getItem()
