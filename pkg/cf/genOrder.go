@@ -4,8 +4,8 @@ import (
 	"errors"
 )
 
-var ErrRefIsCyclic = errors.New("a ref can not be cyclic")
-var ErrSelfReference = errors.New("a ref can not reference to itself")
+var ErrRefIsCyclic = errors.New("reference can not be cyclic")
+var ErrSelfReference = errors.New("a ref can not reference to its database and collection")
 var ErrRefInvalid = errors.New("invalid ref format")
 var ErrRefToNotExist = errors.New("a ref can not point to not exist database and collection")
 
