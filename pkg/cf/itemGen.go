@@ -129,6 +129,11 @@ func genObjectID(_ Type, fieldGen *fieldGenerator) interface{} {
 
 func genArray(t Type, fieldGen *fieldGenerator) interface{} {
 	data := []interface{}{}
+
+	if len(t.ElementType()) == 0 {
+		return data
+	}
+
 	minItem := t.MinItem()
 	maxItem := t.MaxItem()
 
@@ -151,6 +156,9 @@ func genArray(t Type, fieldGen *fieldGenerator) interface{} {
 		}
 
 		item := constraintRandomTree.getItem()
+		if item == nil {
+			continue
+		}
 		value := getValueFromItem(item, fieldGen)
 		data = append(data, value)
 	}
