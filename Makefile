@@ -9,6 +9,9 @@ build: build-mac build-window
 run:
 	go run main.go $(ARGS)
 
+install:
+	go install
+
 clean:
 	rm -rf bin
 	rm -rf out
