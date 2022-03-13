@@ -6,15 +6,734 @@ seesterntutorial - A tutorial introduction to seestern
 seestern *
 
 .SH DESCRIPTION
+A short instruction to install and use program.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu commodo est.
+.SS Installation
+.IP "1." 3
+install go version 1.7 or later
+.IP "2." 3
+run \f[V]make install\f[R]
+.SS Tutorial
+.PP
+Before generate the test data, a tool need configuration file that can
+either generate by the tool or write by hand.
+This tutorial will cover both case, but for deep understand of syntax
+please see seesternsyntax.
+.SS use tool to create configuration file
+.PP
+In this section, you will learn how to use \f[B]ps\f[R] to list a
+collection inside database, \f[B]init\f[R] to create configuration file
+and \f[B]generate\f[R] command to generate data.
+.SS 1. Set up database
+.PP
+We will use MongoDB with sample
+dataset (https://hub.docker.com/r/weshigbee/docker-mongo-sample-datasets)
+docker.
+Execute
+\f[V]$ docker run -it --rm -p 27017:27017 weshigbee/docker-mongo-sample-datasets\f[R].
+now the connection string for this database is
+\f[V]mongodb://localhost:27017\f[R]
+.SS 2. list database and collection with ps command
+.PP
+Now if we want to list database and its collections inside.
+Execute \f[V]$ seestern ps -s mongodb://localhost:27017\f[R].
+The output should look like this
+.IP
+.nf
+\f[C]
+[    Info]: 2022/03/13 15:25:22 list collections form mongodb://localhost:27017 connection string
+database: test
+ 1 : restaurants
+database: admin
+ 1 : system.version
+database: config
+ 1 : system.sessions
+database: local
+ 1 : startup_log
+\f[R]
+.fi
+.PP
+The first line is a log that was printed on standard error and the rest
+was printed on standard output.
+In this MongoDB instance, there are four databases but we only
+interested on \f[V]test\f[R] database.
+We can also, list collections in specific database by execute
+\f[V]$ seestern ps -s mongodb://localhost:27017 -d test\f[R] now an
+output should look like this
+.IP
+.nf
+\f[C]
+[    Info]: 2022/03/13 15:33:58 list collections form mongodb://localhost:27017 connection string
+database: test
+ 1 : restaurants
+\f[R]
+.fi
+.SS 3. generate configuration file with init command
+.PP
+After we know the name of database and collection that we want to
+generate a configuration file, we then execute
+\f[V]seestern init -s mongodb://localhost:27017 -c \[dq]test.restaurants\[dq] -o \[dq].\[dq]\f[R].
+.PP
+After executing, the result will look like this
+.IP
+.nf
+\f[C]
+[    Info]: 2022/03/13 15:42:27 init with mongodb://localhost:27017 connection string
+[    Info]: 2022/03/13 15:42:27 generate: database test collection restaurants
+[    Info]: 2022/03/13 15:42:29 config file is saved to 1647160949.ss.yaml
+\f[R]
+.fi
+.PP
+The \f[V]1647160949.ss.yaml\f[R] is configuration file that contain
+schema of data inside restaurants collection.
+The file should look like this
+.IP
+.nf
+\f[C]
+databases:
+    - d_name: test
+      collection:
+        c_name: restaurants
+        fields:
+            - f_name: _id
+              constraints:
+                - type: objectID
+            - f_name: address
+              constraints:
+                - type: object
+                  fields:
+                    - f_name: building
+                      constraints:
+                        - type: string
+                    - f_name: coord
+                      constraints:
+                        - type: array
+                          element_type:
+                            - type: double
+                    - f_name: street
+                      constraints:
+                        - type: string
+                    - f_name: zipcode
+                      constraints:
+                        - type: string
+                - type: object
+                  fields:
+                    - f_name: building
+                      constraints:
+                        - type: string
+                    - f_name: coord
+                      constraints:
+                        - type: array
+                    - f_name: street
+                      constraints:
+                        - type: string
+                    - f_name: zipcode
+                      constraints:
+                        - type: string
+            - f_name: borough
+              constraints:
+                - type: string
+            - f_name: cuisine
+              constraints:
+                - type: string
+            - f_name: grades
+              constraints:
+                - type: array
+                  element_type:
+                    - type: object
+                      fields:
+                        - f_name: date
+                          constraints:
+                            - type: integer
+                        - f_name: grade
+                          constraints:
+                            - type: string
+                        - f_name: score
+                          constraints:
+                            - type: integer
+                - type: array
+                  element_type:
+                    - type: object
+                      fields:
+                        - f_name: date
+                          constraints:
+                            - type: integer
+                        - f_name: grade
+                          constraints:
+                            - type: string
+                - type: array
+            - f_name: name
+              constraints:
+                - type: string
+            - f_name: restaurant_id
+              constraints:
+                - type: string
+\f[R]
+.fi
+.PP
+Our tool analyzed and found that the document inside
+\f[V]restaurants\f[R] collection has following fields.
+.IP \[bu] 2
+**_id** as id
+.IP \[bu] 2
+\f[B]address\f[R] as object that has field
+.RS 2
+.IP \[bu] 2
+\f[B]building\f[R] as string
+.IP \[bu] 2
+\f[B]coord\f[R] as array contains (can be empty) double
+.IP \[bu] 2
+\f[B]street\f[R] as string
+.IP \[bu] 2
+\f[B]zipcode\f[R] as string
+.RE
+.IP \[bu] 2
+\f[B]borough\f[R] as string
+.IP \[bu] 2
+\f[B]cuisine\f[R] as string
+.IP \[bu] 2
+\f[B]grades\f[R] as array contains (can be empty) objects that has field
+.RS 2
+.IP \[bu] 2
+\f[B]date\f[R] as integer
+.IP \[bu] 2
+\f[B]grade\f[R] as string
+.IP \[bu] 2
+\f[B]score\f[R] as integer (can be left off)
+.RE
+.IP \[bu] 2
+\f[B]name\f[R] as string
+.IP \[bu] 2
+\f[B]restaurant_id\f[R] as string
+.PP
+One thing to noted that, at this version, the tool doesn\[cq]t support
+datetime type so the date is convert to integer.
+.SS 4. generate data with generate command
+.PP
+After we got configuration file (\f[V]1647160949.ss.yaml\f[R]), we can
+execute \f[V]$ seestern generate -f 1647160949.ss.yaml -v\f[R] to see
+the output.
+Which will look like this
+.IP
+.nf
+\f[C]
+[    Info]: 2022/03/13 16:02:26 generate with configuration file 1647160949.ss.yaml
+[ Warning]: 2022/03/13 16:02:26 can not generate database test collection restaurants with reason count have to be more than zero got: 0 (db: test, coll: restaurants)
+// database test collection restaurants
+null
+\f[R]
+.fi
+.PP
+That\[cq]s right, we can not generate yet.
+We have to specific field \f[V]count\f[R] which will determine how many
+documents we will generate first.
+So, edit configuration file like this
+.IP
+.nf
+\f[C]
+databases:
+    - d_name: test
+      collection:
+        c_name: restaurants
+        count: 3 # add this line
+        fields:
+\&....
+\f[R]
+.fi
+.PP
+Then if we generate with the same command an output should look like
+this
+.IP
+.nf
+\f[C]
+[    Info]: 2022/03/13 16:09:24 generate with configuration file 1647160949.ss.yaml
+// database test collection restaurants
+[
+    {
+        \[dq]_id\[dq]: \[dq]622db71c1b325ba6db97c3ea\[dq],
+        \[dq]address\[dq]: {
+            \[dq]building\[dq]: \[dq]0Sc0Rqv13BqKi\[dq],
+            \[dq]coord\[dq]: [],
+            \[dq]street\[dq]: \[dq]CjD\[dq],
+            \[dq]zipcode\[dq]: \[dq]e\[dq]
+        },
+        \[dq]borough\[dq]: \[dq]u1pH\[dq],
+        \[dq]cuisine\[dq]: \[dq]lalyiBMhsazbyUQj6u\[dq],
+        \[dq]grades\[dq]: [],
+        \[dq]name\[dq]: \[dq]QP73VsqMOiKS4NtG\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]RPsm\[dq]
+    },
+    {
+        \[dq]_id\[dq]: \[dq]622db71c1b325ba6db97c3eb\[dq],
+        \[dq]address\[dq]: {
+            \[dq]building\[dq]: \[dq]\[dq],
+            \[dq]coord\[dq]: [
+                96.74254955040003,
+                3.8138881021617816,
+                43.45470891544519
+            ],
+            \[dq]street\[dq]: \[dq]RXx1miAaOnSGb\[dq],
+            \[dq]zipcode\[dq]: \[dq]cfnyE2MoJi\[dq]
+        },
+        \[dq]borough\[dq]: \[dq]XDJ0ERhMP09XFPmT\[dq],
+        \[dq]cuisine\[dq]: \[dq]8eV8DY0Ge\[dq],
+        \[dq]grades\[dq]: [],
+        \[dq]name\[dq]: \[dq]UdRDphTnhS2p2abt\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]Qa5zY9vkbg8qUfboB\[dq]
+    },
+    {
+        \[dq]_id\[dq]: \[dq]622db71c1b325ba6db97c3ec\[dq],
+        \[dq]address\[dq]: {
+            \[dq]building\[dq]: \[dq]XSq8nBR6p5h\[dq],
+            \[dq]coord\[dq]: [
+                0.24571618383621482,
+                12.282523956489666
+            ],
+            \[dq]street\[dq]: \[dq]ifYx6Cd9AARj6k\[dq],
+            \[dq]zipcode\[dq]: \[dq]0dSfHgwqOmeNQvwp\[dq]
+        },
+        \[dq]borough\[dq]: \[dq]2KPsVKBoCM\[dq],
+        \[dq]cuisine\[dq]: \[dq]boj06dZNP1pXe4IVtr\[dq],
+        \[dq]grades\[dq]: [
+            {
+                \[dq]date\[dq]: 68,
+                \[dq]grade\[dq]: \[dq]9x64\[dq]
+            },
+            {
+                \[dq]date\[dq]: 78,
+                \[dq]grade\[dq]: \[dq]BKHPvpEudL\[dq]
+            },
+        ],
+        \[dq]name\[dq]: \[dq]PncQVI0\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]3zBn2SM4w7t\[dq]
+    }
+]
+\f[R]
+.fi
+.PP
+Congratulation!
+we have finished generate test data.
+.SS create configuration file by hand
+.PP
+Now, let\[cq]s try to create a configuration file that got the same data
+above.
+We will create as \f[V].toml\f[R] because it is easier to read.
+.SS 1. init file
+.PP
+Let\[cq]s name the configuration file \f[V]config.ss.toml\f[R] then open
+it with your favorite editor.
+Add the following line
+.IP
+.nf
+\f[C]
+[[databases]]
+d_name = \[dq]test\[dq]
 
-.SH OPTIONS
-\fB-h\fP, \fB--help\fP[=false]
-	help for seestern
+# collection: student
+[databases.collection]
+c_name = \[dq]restaurants\[dq]
+count = 3
+\f[R]
+.fi
+.PP
+this is equavalent to the generated configuration
+.IP
+.nf
+\f[C]
+databases:
+    - d_name: test
+      collection:
+        c_name: restaurants
+        count: 3 
+\f[R]
+.fi
+.PP
+\f[B]d_name\f[R] and \f[B]c_name\f[R] is used to specific the name of
+database and collection respectively.
+.PP
+If we try to execute \f[V]$ seestern generate -f config.ss.toml -v\f[R],
+it will has output like this
+.IP
+.nf
+\f[C]
+// database test collection restaurants
+[
+    {},
+    {},
+    {}
+]
+\f[R]
+.fi
+.SS 2. add simple data type fields
+.PP
+Let\[cq]s recap that our data will have field like this
+.IP \[bu] 2
+**_id** as id
+.IP \[bu] 2
+\f[B]address\f[R] as object that has field
+.RS 2
+.IP \[bu] 2
+\f[B]building\f[R] as string
+.IP \[bu] 2
+\f[B]coord\f[R] as array contains (can be empty) double
+.IP \[bu] 2
+\f[B]street\f[R] as string
+.IP \[bu] 2
+\f[B]zipcode\f[R] as string
+.RE
+.IP \[bu] 2
+\f[B]borough\f[R] as string
+.IP \[bu] 2
+\f[B]cuisine\f[R] as string
+.IP \[bu] 2
+\f[B]grades\f[R] as array contains (can be empty) objects that has field
+.RS 2
+.IP \[bu] 2
+\f[B]date\f[R] as integer
+.IP \[bu] 2
+\f[B]grade\f[R] as string
+.IP \[bu] 2
+\f[B]score\f[R] as integer (can be left off)
+.RE
+.IP \[bu] 2
+\f[B]name\f[R] as string
+.IP \[bu] 2
+\f[B]restaurant_id\f[R] as string
+.PP
+So call simple data type for this tool is \f[V]id\f[R],
+\f[V]string\f[R], \f[V]double\f[R] and \f[V]integer\f[R].
+To add a field we need a name of field and its data type.
+For **__id** field, the configuration file can be edited like this
+.IP
+.nf
+\f[C]
+\&....
+count = 3
 
-.SH GUIDES
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu commodo est.
+[[databases.collection.fields]]
+constraints = [{type = \[dq]objectID\[dq]}]
+f_name = \[dq]_id\[dq]
+\f[R]
+.fi
+.PP
+Actually the data type is not \f[V]id\f[R] but \f[V]objectID\f[R] so we
+need to specific it \[lq]objectID\[rq] in \f[B]type\f[R] inside
+\f[B]constraints\f[R] field, If we try to execute
+\f[V]$ seestern generate -f config.ss.toml -v\f[R], it will has output
+like this
+.IP
+.nf
+\f[C]
+[
+    {
+        \[dq]_id\[dq]: \[dq]622dbb2c806512c9e86306b3\[dq]
+    },
+    {
+        \[dq]_id\[dq]: \[dq]622dbb2c806512c9e86306b4\[dq]
+    },
+    {
+        \[dq]_id\[dq]: \[dq]622dbb2c806512c9e86306b5\[dq]
+    }
+]
+\f[R]
+.fi
+.PP
+Other than \f[B]constraints\f[R] a field can also has \f[B]enum\f[R] and
+\f[B]value\f[R], inside \f[B]constraints\f[R] can also has multiple
+\f[B]type\f[R], please see \f[B]seesternsyntax\f[R] for more information
+.PP
+Now come back to finish what we start, we can simple add to generate
+field \f[V]borough\f[R], \f[V]cuisine\f[R], \f[V]name\f[R] and
+\f[V]restaurant_id\f[R] that have type \f[V]string\f[R]
+.IP
+.nf
+\f[C]
+\&....
+f_name = \[dq]_id\[dq]
+
+[[databases.collection.fields]]
+constraints = [{type = \[dq]string\[dq]}]
+f_name = \[dq]borough\[dq]
+
+[[databases.collection.fields]]
+constraints = [{type = \[dq]string\[dq]}]
+f_name = \[dq]cuisine\[dq]
+
+[[databases.collection.fields]]
+constraints = [{type = \[dq]string\[dq]}]
+f_name = \[dq]name\[dq]
+
+[[databases.collection.fields]]
+constraints = [{type = \[dq]string\[dq]}]
+f_name = \[dq]restaurant_id\[dq]
+\f[R]
+.fi
+.PP
+And try to execute generate command will has output like this.
+.IP
+.nf
+\f[C]
+[
+    {
+        \[dq]_id\[dq]: \[dq]622dbc6c13b2bcf89b071e4c\[dq],
+        \[dq]borough\[dq]: \[dq]cpdQ07NOr0o\[dq],
+        \[dq]cuisine\[dq]: \[dq]pWnIT5Btl2YjVn\[dq],
+        \[dq]name\[dq]: \[dq]V0wMWmYzu86XJ1X73l5\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]9LVyFWDGTMEQ3\[dq]
+    },
+    {
+        \[dq]_id\[dq]: \[dq]622dbc6c13b2bcf89b071e4d\[dq],
+        \[dq]borough\[dq]: \[dq]szpE0\[dq],
+        \[dq]cuisine\[dq]: \[dq]aq08pDEO0y0PC5f\[dq],
+        \[dq]name\[dq]: \[dq]MGUp9vnbuf2Vrh0m\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]iKwEWAkj8L0WGlkZHa0\[dq]
+    },
+    {
+        \[dq]_id\[dq]: \[dq]622dbc6c13b2bcf89b071e4e\[dq],
+        \[dq]borough\[dq]: \[dq]4w9SyrGGSETixUF4TA\[dq],
+        \[dq]cuisine\[dq]: \[dq]\[dq],
+        \[dq]name\[dq]: \[dq]S2z4J1xeZGe2MAfT6\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]il1MtG\[dq]
+    }
+]
+\f[R]
+.fi
+.SS 3. add composite data type fields
+.PP
+Start with \f[B]address\f[R] field that has schema following schema
+.IP \[bu] 2
+\f[B]address\f[R] as object that has field
+.RS 2
+.IP \[bu] 2
+\f[B]building\f[R] as string
+.IP \[bu] 2
+\f[B]coord\f[R] as array contains (can be empty) double
+.IP \[bu] 2
+\f[B]street\f[R] as string
+.IP \[bu] 2
+\f[B]zipcode\f[R] as string
+.RE
+.PP
+We will start with field \f[B]building\f[R], \f[B]street\f[R] and
+\f[B]zipcode\f[R] inside \f[B]address\f[R] first, add the following code
+.IP
+.nf
+\f[C]
+\&....
+f_name = \[dq]restaurant_id\[dq]
+
+[[databases.collection.fields]]
+constraints = [
+  {type = \[dq]object\[dq], fields = [
+    {f_name = \[dq]building\[dq], constraints = [{type = \[dq]string\[dq]}]},
+    {f_name = \[dq]street\[dq], constraints = [{type = \[dq]string\[dq]}]},
+    {f_name = \[dq]zipcode\[dq], constraints = [{type = \[dq]string\[dq]}]},
+  ]},
+]
+f_name = \[dq]address\[dq]
+\f[R]
+.fi
+.PP
+And try to execute generate command will has output like this (show only
+one document).
+.IP
+.nf
+\f[C]
+[
+    {
+        \[dq]_id\[dq]: \[dq]622dbf8049d01692302da698\[dq],
+        \[dq]address\[dq]: {
+            \[dq]building\[dq]: \[dq]g\[dq],
+            \[dq]street\[dq]: \[dq]Gh76a2srxt3y9\[dq],
+            \[dq]zipcode\[dq]: \[dq]\[dq]
+        },
+        \[dq]borough\[dq]: \[dq]IOI7cXeM0F\[dq],
+        \[dq]cuisine\[dq]: \[dq]UbNFiOdk\[dq],
+        \[dq]name\[dq]: \[dq]zuKlX2ft6tdy\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]3Tvq0ixb820aP3\[dq]
+    }
+    ...
+]
+\f[R]
+.fi
+.PP
+Next, for \f[B]coord\f[R] field that is \f[V]array\f[R] with
+\f[V]double\f[R].
+this can be easily done by add following code
+.IP
+.nf
+\f[C]
+\&....
+f_name = \[dq]restaurant_id\[dq]
+
+[[databases.collection.fields]]
+constraints = [
+  {type = \[dq]object\[dq], fields = [
+    {f_name = \[dq]building\[dq], constraints = [{type = \[dq]string\[dq]}]},
+    {f_name = \[dq]street\[dq], constraints = [{type = \[dq]string\[dq]}]},
+    {f_name = \[dq]zipcode\[dq], constraints = [{type = \[dq]string\[dq]}]},
+    {f_name = \[dq]coord\[dq], constraints = [{type = \[dq]array\[dq], element_type = [{type = \[dq]double\[dq]}]}]},
+  ]},
+]
+f_name = \[dq]address\[dq]
+\f[R]
+.fi
+.PP
+And try to execute generate command will has output like this (show only
+one document).
+.IP
+.nf
+\f[C]
+[
+   {
+        \[dq]_id\[dq]: \[dq]622dc04c48fd124c2953c8b9\[dq],
+        \[dq]address\[dq]: {
+            \[dq]building\[dq]: \[dq]xlCxeE95RwrUfRqVGsw\[dq],
+            \[dq]coord\[dq]: [
+                33.59234768839571
+            ],
+            \[dq]street\[dq]: \[dq]9H\[dq],
+            \[dq]zipcode\[dq]: \[dq]LtPl\[dq]
+        },
+        \[dq]borough\[dq]: \[dq]i22M8NMQqSZp\[dq],
+        \[dq]cuisine\[dq]: \[dq]evBm\[dq],
+        \[dq]name\[dq]: \[dq]eR\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]6j80pt3Jx\[dq]
+    }
+    ...
+]
+\f[R]
+.fi
+.PP
+For the last field, \f[B]grades\f[R], is array of objects, it can be
+done by add following code.
+.IP
+.nf
+\f[C]
+\&....
+f_name = \[dq]address\[dq]
+
+[[databases.collection.fields]]
+f_name = \[dq]grades\[dq]
+
+[[databases.collection.fields.constraints]]
+element_type = [
+{type = \[dq]object\[dq], fields = [
+        {f_name = \[dq]date\[dq], constraints = [{type = \[dq]integer\[dq]}]},
+        {f_name = \[dq]grade\[dq], constraints = [{type = \[dq]string\[dq]}]},
+        {f_name = \[dq]score\[dq], constraints = [{type = \[dq]integer\[dq]}]}
+    ]}
+]
+type = \[dq]array\[dq]
+\f[R]
+.fi
+.PP
+And try to execute generate command will has output like this (show only
+one document).
+.IP
+.nf
+\f[C]
+[
+    {
+        \[dq]_id\[dq]: \[dq]622dc2cf1337e6b491005107\[dq],
+        \[dq]address\[dq]: {
+            \[dq]building\[dq]: \[dq]AoeOB2\[dq],
+            \[dq]coord\[dq]: [
+                35.57844767799763,
+                34.51697929110399,
+                24.920308188431363
+            ],
+            \[dq]street\[dq]: \[dq]1m\[dq],
+            \[dq]zipcode\[dq]: \[dq]\[dq]
+        },
+        \[dq]borough\[dq]: \[dq]hmiwurC\[dq],
+        \[dq]cuisine\[dq]: \[dq]MSJJIzyk\[dq],
+        \[dq]grades\[dq]: [
+            {
+                \[dq]date\[dq]: 77,
+                \[dq]grade\[dq]: \[dq]y3drMWVH1o74lcvh\[dq],
+                \[dq]score\[dq]: 36
+            }
+        ],
+        \[dq]name\[dq]: \[dq]YlUFvG7IXOzSi\[dq],
+        \[dq]restaurant_id\[dq]: \[dq]PRzNK\[dq]
+    }
+    ...
+]
+\f[R]
+.fi
+.PP
+We nearly done the work, but one last thing is that
+\f[B]grades.score\f[R] can be omited, this can be done by add following
+code
+.IP
+.nf
+\f[C]
+\&...
+[[databases.collection.fields.constraints]]
+element_type = [
+{type = \[dq]object\[dq], fields = [
+        {f_name = \[dq]date\[dq], constraints = [{type = \[dq]integer\[dq]}]},
+        {f_name = \[dq]grade\[dq], constraints = [{type = \[dq]string\[dq]}]},
+        {f_name = \[dq]score\[dq], constraints = [{type = \[dq]integer\[dq]}], omit_weight = 0.5} # add omit_weight
+    ]}
+]
+type = \[dq]array\[dq]
+\f[R]
+.fi
+.PP
+When add \f[V]omit_weight\f[R] field, the value has to be between
+0.0-1.0.
+It is represent the percentage of how likely that this field will be
+omitted.
+1.0 is it always be omitted and 0.0 is not omitted at all (default).
+So, after edited the code and execute generate command the output for
+\f[B]grades\f[R] field will look like this
+.IP
+.nf
+\f[C]
+\[dq]grades\[dq]: [
+            {
+                \[dq]date\[dq]: 10,
+                \[dq]grade\[dq]: \[dq]nYmrBR0W\[dq]
+            },
+            {
+                \[dq]date\[dq]: 77,
+                \[dq]grade\[dq]: \[dq]PdL4ZWAJOt\[dq]
+            },
+            {
+                \[dq]date\[dq]: 61,
+                \[dq]grade\[dq]: \[dq]qNGCmu\[dq]
+            },
+            {
+                \[dq]date\[dq]: 21,
+                \[dq]grade\[dq]: \[dq]0gmANnL\[dq]
+            },
+            {
+                \[dq]date\[dq]: 39,
+                \[dq]grade\[dq]: \[dq]vAnMNdAN\[dq],
+                \[dq]score\[dq]: 43
+            },
+            {
+                \[dq]date\[dq]: 38,
+                \[dq]grade\[dq]: \[dq]qEHRB9ycu6WwQ\[dq]
+            },
+            {
+                \[dq]date\[dq]: 95,
+                \[dq]grade\[dq]: \[dq]HcrgMmkXppZFy\[dq]
+            }
+        ]
+\f[R]
+.fi
+.PP
+Look at the result, some has \f[B]score\f[R] field and some don\[cq]t,
+so we already finish and got the same configuration file that is the
+same with the generated file.
+.PP
+Hooray!
+now we already finished the tutorial, please see
+\f[V]seesternsyntax\f[R] for more information about each fields and
+their arrtibutes.
 
 .SH SEE ALSO
 \fBseestern\fP(1), \fBseestern-ps\fP(1), \fBseestern-init\fP(1), \fBseestern-generate\fP(1)
