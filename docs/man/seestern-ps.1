@@ -1,24 +1,42 @@
-.TH "SEESTERN-PS" 1 "13/03/2022" "Version 0.0.3" "Seestern Manual"
+.TH "SEESTERN-PS" 1 "13/03/2022" "Version 0.0.4" "Seestern Manual"
 .SH NAME
 seestern-ps - List collections of given connection string
 
 .SH SYNOPSIS
-\fBseestern ps [flags]\fP
+\fIseestern ps\fR [--help|-h] 
+[(--connectionString|-s) <connection-string>] [(--database|-d) <database-name>]
 
 .SH DESCRIPTION
-List collections of given connection string
+List collections of given connection string. If user want to see collection name on specific database in the connection string, use \fB-d\fP instead of include database name after connection string.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu commodo est.
+A \fB-c\fP must be specificed else the program will exit.
 
+At current version, this tool only support MongoDB.
 .SH OPTIONS
-\fB-s\fP, \fB--connectionString\fP=""
-	connection string to database
+\fB-s\fP, \fB--connectionString\fP <connection-string>
+.RS 4
+connection string to database.
+.RE
 
-\fB-d\fP, \fB--database\fP=""
-	specific database to list collection
+\fB-d\fP, \fB--database\fP <database-name>
+.RS 4
+specific database to list collection.
+.RE
 
-\fB-h\fP, \fB--help\fP[=false]
-	help for ps
+\fB-h\fP, \fB--help\fP
+.RS 4
+help for ps command.
+.RE
+
+.SH EXAMPLES
+
+- List all of collection on every database in connection string
+
+$ seestern ps -s mongodb+srv://...mongodb.net
+
+- List all of collection on specific database in connection string
+
+$ seestern ps -s mongodb+srv://...mongodb.net -d stores
 
 .SH SEE ALSO
 \fBseestern-init\fP(1), \fBseestern-generate\fP(1)

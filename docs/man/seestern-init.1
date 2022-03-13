@@ -1,35 +1,72 @@
-.TH "SEESTERN-INIT" 1 "13/03/2022" "Version 0.0.3" "Seestern Manual"
+.TH "SEESTERN-INIT" 1 "13/03/2022" "Version 0.0.4" "Seestern Manual"
 .SH NAME
 seestern-init - Create a configuration file
 
-
 .SH SYNOPSIS
-\fBseestern init [flags]\fP
-
+\fIseestern init\fR [(--help|-h)] [(--connectionString|-s) <connection-string>]
+    [(--collection|-c) <database-and-collection-name>]
+    [(--output|-o) <path>] [(--type|-t) <output-file-type>] [(--verbose|-v)]
 
 .SH DESCRIPTION
-Create a configuration file
+Create a configuration file with given connection string and (database and )collection names. This command will not fail if the collection name is not exist in database but will log an error on standard output. The generated configuration file will has \fB.ss\fP and suffix with specific type in \fB-t\fP flag.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu commodo est.
+A \fB-c\fP must be specificed and at least one of \fB-v\fP or \fB-o\fP flag must be given else the program will exit.
+
+At current version, this tool only support MongoDB.
 
 .SH OPTIONS
-\fB-c\fP, \fB--collection\fP=[]
-	specific database and collection to create (in \&. format)
+\fB-c\fP, \fB--collection\fP [<database-and-collection-name>]
+.RS 4
+specific database and collection to create (in database\&.collection format).
 
-\fB-s\fP, \fB--connectionString\fP=""
-	connection string to database
+for example, if a user want to generate configuration file for database name school collection name teacher, it has to be written as \fBschool.teacher\fP.
 
-\fB-h\fP, \fB--help\fP[=false]
-	help for init
+collection names can be specificed as many as one want.
+.RE
 
-\fB-o\fP, \fB--output\fP=""
-	path to create output file
+\fB-s\fP, \fB--connectionString\fP <connection-string>
+.RS 4
+connection string to database.
+.RE
 
-\fB-t\fP, \fB--type\fP="yaml"
-	file type of output file (json, yaml, toml)
+\fB-h\fP, \fB--help\fP
+.RS 4
+help for init command.
+.RE
 
-\fB-v\fP, \fB--verbose\fP[=false]
-	verbose output
+\fB-o\fP, \fB--output\fP <path>
+.RS 4
+path to create output file.
+
+the output configuration file will have name as <epoch-timestamp>.ss.<output-file-type> format. If more than one collection names are given, all of the specification will also be in the same file.
+.RE
+
+\fB-t\fP, \fB--type\fP <output-file-type>
+.RS 4
+file type of configuration file (json, yaml, toml), default is yaml.
+.RE
+
+\fB-v\fP, \fB--verbose\fP
+.RS 4
+print out generated configuration file on standard output.
+.RE
+
+.SH EXAMPLES
+- Generate configuration file from on one collection and print on standard output
+
+$ seestern init -s mongodb+srv://...mongodb.net -c "db.coll1" -v
+
+- Generate configuration file (.ss.yaml) from on one collection and save in to file
+
+$ seestern init -s mongodb+srv://...mongodb.net -c "db.coll1" -o "/tmp"
+
+- Generate configuration file from on one collection as json format
+
+$ seestern init -s mongodb+srv://...mongodb.net -c "db.coll1" -v -t "json"
+
+- Generate configuration file from on more than one collection
+
+$ seestern init -s mongodb+srv://...mongodb.net -c "db.coll1" -c "db.coll2" -v
 
 .SH SEE ALSO
 \fBseestern-ps(\fP1), \fBseestern-generate\fP(1)
