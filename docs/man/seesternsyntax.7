@@ -7,14 +7,761 @@ seestern *
 
 .SH DESCRIPTION
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu commodo est.
+A reference for configuration file. This syntax reference examples were written in TOML format.
 
-.SH OPTIONS
-\fB-h\fP, \fB--help\fP[=false]
-	help for seestern
+.SS Database (Database)
+.PP
+This object represent the database.
+.SS field: d_name
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign database name
+.IP \[bu] 2
+\f[B]Value type\f[R]: string
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+d_name = \[dq]school\[dq]
+\f[R]
+.fi
+.SS field: collection
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to represent a collection inside database
+.IP \[bu] 2
+\f[B]Value type\f[R]: Database.Collection
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+[[databases]]
+d_name = \[dq]school\[dq]
 
-.SH GUIDES
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu commodo est.
+[databases.collection]
+c_name = \[dq]student\[dq]
+count = 30
+\f[R]
+.fi
+.SS Collection (Database.Collection)
+.PP
+This object represent the collection inside database.
+.SS field: c_name
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign collection name
+.IP \[bu] 2
+\f[B]Value type\f[R]: string
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+c_name = \[dq]student\[dq]
+\f[R]
+.fi
+.SS field: count
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign number of document to be generate
+for the collection
+.IP \[bu] 2
+\f[B]Value type\f[R]: integer
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+count = 30
+\f[R]
+.fi
+.SS field: fields
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign a field that will be in generated
+document
+.IP \[bu] 2
+\f[B]Value type\f[R]: [Database.Collection.Field]
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+fields = [{f_name = \[dq]name\[dq], constraint = [ {type=\[dq]string\[dq]} ]}]
+\f[R]
+.fi
+.SS Field (Database.Collection.Field)
+.PP
+This object represent a field of object.
+A document is also an object.
+.SS field: f_name
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign a name of the field
+.IP \[bu] 2
+\f[B]Value type\f[R]: string
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+f_name = \[dq]name\[dq]
+\f[R]
+.fi
+.SS field: omit_weight
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign a possibility whether the field
+should be omited or not.
+1 is always omit, 0 is always show.
+.IP \[bu] 2
+\f[B]Value type\f[R]: double (between 0.0 to 1.0)
+.IP \[bu] 2
+\f[B]Require\f[R]: no (default = 0.0)
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+omit_weight = 0.5
+# which mean if there are ten documents, five of them will not have this field
+\f[R]
+.fi
+.SS field: constraint
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign constraint(s) of the field.
+if more than one Constraint are given, the possibilty that the field
+constraint will be decide base on weight field (see Constraint below)
+.IP \[bu] 2
+\f[B]Value type\f[R]: [Database.Collection.Field.Constraint]
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# example 1
+# this field will always be string
+constraint = [{type = \[dq]string\[dq]}]
+
+# example 2
+# this field will have 50% chance to be string and 50% chance to be integer
+constraint = [{type = \[dq]string\[dq]}, {type = \[dq]integer\[dq]}]
+\f[R]
+.fi
+.SS field: set
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to specific fields in the object to have
+specific value.
+Index of the object is start at 0
+.IP \[bu] 2
+\f[B]Value type\f[R]: [Database.Collection.Field.Set]
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# since index start at 0
+# the field in second, third and fouth object will have value equal to \[dq]alice\[dq]
+# the field in first object and other will be (random) string
+set = [{value = \[dq]alice\[dq], at = [1, 2, 3]}]
+constraint = [{type = \[dq]string\[dq]}]
+\f[R]
+.fi
+.PP
+If both \f[B]constraint\f[R] and \f[B]set\f[R] are not given and not be
+omited, the value of this field will be \f[B]null\f[R]
+.SS Constraint (Database.Collection.Field.Constraint)
+.PP
+This object represent the constraint of the generated value.
+.PP
+In this object, there is one optional field, \f[B]weight\f[R], and one
+required field which can be either \f[B]value\f[R], \f[B]enum\f[R] or
+\f[B]type\f[R].
+.SS field: weight
+.IP \[bu] 2
+\f[B]Description\f[R]: the possibility ratio that this constraint will
+be picked to generate
+.IP \[bu] 2
+\f[B]Value type\f[R]: int
+.IP \[bu] 2
+\f[B]Require\f[R]: no (default 1)
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+weight = 2
+
+# for example
+# if we want 75% of generate documents/object\[ss] to has a sex = \[dq]M\[dq] 
+# and the other will be \[dq]F\[dq] it can be written like this
+[[database.collection.fields]]
+f_name = \[dq]sex\[dq] 
+
+[[database.collection.fields.constraint]]
+value = \[dq]M\[dq]
+weight = 3
+
+
+[[database.collection.fields.constraint]]
+value = \[dq]F\[dq]
+\f[R]
+.fi
+.SS field: value
+.IP \[bu] 2
+\f[B]Description\f[R]: see \f[B]Database.Collection.Field.Value\f[R]
+.IP \[bu] 2
+\f[B]Value type\f[R]: Database.Collection.Field.Value
+.IP \[bu] 2
+\f[B]Require\f[R]: no, if enum or type was already assigned
+.IP \[bu] 2
+\f[B]Example\f[R]: see \f[B]Database.Collection.Field.Value\f[R]
+.SS field: enum
+.IP \[bu] 2
+\f[B]Description\f[R]: see \f[B]Database.Collection.Field.Enum\f[R]
+.IP \[bu] 2
+\f[B]Value type\f[R]: Database.Collection.Field.Enum
+.IP \[bu] 2
+\f[B]Require\f[R]: no, if value or type was already assigned
+.IP \[bu] 2
+\f[B]Example\f[R]: see \f[B]Database.Collection.Field.Enum\f[R]
+.SS field: type
+.IP \[bu] 2
+\f[B]Description\f[R]: see \f[B]Database.Collection.Field.Type\f[R]
+.IP \[bu] 2
+\f[B]Value type\f[R]: Database.Collection.Field.Type
+.IP \[bu] 2
+\f[B]Require\f[R]: no, if value or enum was already assigned
+.IP \[bu] 2
+\f[B]Example\f[R]: see \f[B]Database.Collection.Field.Type\f[R]
+.SS example
+.PP
+Constraint with Value
+.IP
+.nf
+\f[C]
+[[databases.collection.fields.constraints]]
+value = 3.14
+\f[R]
+.fi
+.PP
+Constraint with Enum
+.IP
+.nf
+\f[C]
+[[databases.collection.fields.constraints]]
+enum = [\[dq]freshman\[dq], \[dq]sophomore\[dq], \[dq]junior\[dq], \[dq]senior\[dq]]
+weight = 2
+\f[R]
+.fi
+.PP
+Constraint with Type
+.IP
+.nf
+\f[C]
+[[databases.collection.fields.constraints]]
+type = \[dq]boolean\[dq]
+\f[R]
+.fi
+.SS Set (Database.Collection.Field.Set)
+.PP
+This object represent the constraint of the generated value \f[B]at
+specific index\f[R].
+.PP
+In this object, there is two required fields, \f[B]at\f[R], and either
+\f[B]value\f[R], \f[B]enum\f[R] or \f[B]type\f[R].
+.SS field: at
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to specific the order that will have a
+specific value that is define by set.
+Index of the object is start at 0
+.IP \[bu] 2
+\f[B]Value type\f[R]: [int]
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# since index start at 0
+# the field in second, third and fouth object will have that is specific in Set
+# the field in first object and other will be (random) string
+at = [1, 2, 3]
+\f[R]
+.fi
+.SS field: value
+.IP \[bu] 2
+\f[B]Description\f[R]: see \f[B]Database.Collection.Field.Value\f[R]
+.IP \[bu] 2
+\f[B]Value type\f[R]: Database.Collection.Field.Value
+.IP \[bu] 2
+\f[B]Require\f[R]: no, if enum or type was already assigned
+.IP \[bu] 2
+\f[B]Example\f[R]: see \f[B]Database.Collection.Field.Value\f[R]
+.SS field: enum
+.IP \[bu] 2
+\f[B]Description\f[R]: see \f[B]Database.Collection.Field.Enum\f[R]
+.IP \[bu] 2
+\f[B]Value type\f[R]: Database.Collection.Field.Enum
+.IP \[bu] 2
+\f[B]Require\f[R]: no, if value or type was already assigned
+.IP \[bu] 2
+\f[B]Example\f[R]: see \f[B]Database.Collection.Field.Enum\f[R]
+.SS field: type
+.IP \[bu] 2
+\f[B]Description\f[R]: see \f[B]Database.Collection.Field.Type\f[R]
+.IP \[bu] 2
+\f[B]Value type\f[R]: Database.Collection.Field.Type
+.IP \[bu] 2
+\f[B]Require\f[R]: no, if value or enum was already assigned
+.IP \[bu] 2
+\f[B]Example\f[R]: see \f[B]Database.Collection.Field.Type\f[R]
+.SS example
+.PP
+Set with Value
+.IP
+.nf
+\f[C]
+[[databases.collection.fields.sets]]
+value = 3.14
+at = [0, 1]
+\f[R]
+.fi
+.PP
+Set with Enum
+.IP
+.nf
+\f[C]
+[[databases.collection.fields.sets]]
+enum = [\[dq]freshman\[dq], \[dq]sophomore\[dq], \[dq]junior\[dq], \[dq]senior\[dq]]
+at = [20]
+\f[R]
+.fi
+.PP
+Set with Type
+.IP
+.nf
+\f[C]
+[[databases.collection.fields.sets]]
+type = \[dq]boolean\[dq]
+at = [3, 5, 7]
+\f[R]
+.fi
+.SS Value (Database.Collection.Field.Value)
+.PP
+This object is used to assign a specific value to generate.
+.SS field: value
+.IP \[bu] 2
+\f[B]Description\f[R]: Use to assign a field that will be in generated
+document
+.IP \[bu] 2
+\f[B]Value type\f[R]: any
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# simple
+value = 420
+
+# for array
+value = [\[dq]test\[dq], \[dq]array\[dq]]
+
+# for object
+[[databases.collection.fields]]
+f_name = \[dq]name\[dq]
+
+[[databases.collection.fields.constraints]]
+constraints = {value = {first_name = \[dq]John\[dq], last_name = \[dq]Doe\[dq]}}
+
+# or just
+[[databases.collection.fields]]
+f_name = \[dq]name\[dq]
+constraints = [{value = {first_name = \[dq]John\[dq], last_name = \[dq]Doe\[dq]}}]
+\f[R]
+.fi
+.SS Enum (Database.Collection.Field.Enum)
+.PP
+This object is used to assign specific values that will be randomly
+picked to generate.
+.SS field: enum
+.IP \[bu] 2
+\f[B]Description\f[R]: Used to assign specific values that will be
+randomly picked to generate.
+.IP \[bu] 2
+\f[B]Value type\f[R]: [any]
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# simple
+enum = [\[dq]freshman\[dq], \[dq]sophomore\[dq], \[dq]junior\[dq], \[dq]senior\[dq]]
+
+# for array
+enum = [[\[dq]test\[dq], \[dq]array\[dq], \[dq]one\[dq]], [\[dq]test\[dq], \[dq]array\[dq], \[dq]two\[dq]]]
+
+
+# for object
+# this will generate either  \[dq]name\[dq]: {\[dq]first_name\[dq]: \[dq]John\[dq], \[dq]last_name\[dq]: \[dq]Doe\[dq] } 
+# or \[dq]name\[dq]: {\[dq]first_name\[dq]: \[dq]Jane\[dq], \[dq]last_name\[dq]: \[dq]Doe\[dq] }
+[[databases.collection.fields]]
+f_name = \[dq]name\[dq]
+
+[[databases.collection.fields.constraints]]
+enum = [{first_name = \[dq]John\[dq], last_name = \[dq]Doe\[dq]}, {first_name = \[dq]Jane\[dq], last_name = \[dq]Doe\[dq]}]
+\f[R]
+.fi
+.SS Type (Database.Collection.Field.Type)
+.PP
+This object is used to assign specific type of value that will be
+generate.
+Each type will have it own properties.
+Also, if this object is assigned inside the \f[B]Constraint
+(Database.Collection.Field.Constraint)\f[R], it will have one additional
+field ,\f[B]ref\f[R].
+.SS field: type
+.IP \[bu] 2
+\f[B]Description\f[R]: type of data that will be generated
+.IP \[bu] 2
+\f[B]Value type\f[R]: string (only \[lq]string\[rq], \[lq]integer\[rq],
+\[lq]double\[rq], \[lq]boolean\[rq], \[lq]null\[rq], \[lq]objectId\[rq],
+\[lq]array\[rq], \[lq]object\[rq])
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+type = \[dq]string\[dq]
+\f[R]
+.fi
+.SS field: ref
+.IP \[bu] 2
+\f[B]Description\f[R]: use to make this field to be a foreign key to
+other collection
+.IP \[bu] 2
+\f[B]Value type\f[R]: string (in the format
+\[lq]database.collection.document_field[.document_field_1.document_field_2\&...])
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# reference to database school collection student field name
+ref = \[dq]school.student.name\[dq]
+\f[R]
+.fi
+.PP
+if the value in \f[B]type\f[R] field is string, int, double, array or
+object.
+the \f[B]Type\f[R] will has additional field.
+.SS when type = \[lq]string\[rq]
+.SS field: prefix
+.IP \[bu] 2
+\f[B]Description\f[R]: prefix of the generated value
+.IP \[bu] 2
+\f[B]Value type\f[R]: string
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+prefix = \[dq]Al\[dq]
+\f[R]
+.fi
+.SS field: suffix
+.IP \[bu] 2
+\f[B]Description\f[R]: suffix of the generated value
+.IP \[bu] 2
+\f[B]Value type\f[R]: string
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+prefix = \[dq]est\[dq]
+\f[R]
+.fi
+.SS field: length
+.IP \[bu] 2
+\f[B]Description\f[R]: maximum length of generated string
+.IP \[bu] 2
+\f[B]Value type\f[R]: int (default = 20)
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+length = 15
+\f[R]
+.fi
+.SS when type = \[lq]integer\[rq]
+.SS field: min
+.IP \[bu] 2
+\f[B]Description\f[R]: minimum value of the generated value (inclusive)
+.IP \[bu] 2
+\f[B]Value type\f[R]: int (default 0)
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+min = -4 # ([4, max))
+\f[R]
+.fi
+.SS field: max
+.IP \[bu] 2
+\f[B]Description\f[R]: maximum value of the generated value (exclusive)
+.IP \[bu] 2
+\f[B]Value type\f[R]: int (if not given or less than min field value,
+this value will equal to min + 100)
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+max = 100 # ([min, 100))
+\f[R]
+.fi
+.SS when type = \[lq]double\[rq]
+.SS field: min
+.IP \[bu] 2
+\f[B]Description\f[R]: minimum value of the generated value (inclusive)
+.IP \[bu] 2
+\f[B]Value type\f[R]: double (default 0)
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+min = -4.5 # ([4.5, max))
+\f[R]
+.fi
+.SS field: max
+.IP \[bu] 2
+\f[B]Description\f[R]: maximum value of the generated value (exclusive)
+.IP \[bu] 2
+\f[B]Value type\f[R]: double (if not given or less than min field value,
+this value will equal to min + 100)
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+max = 37.35 # ([min, 37.35))
+\f[R]
+.fi
+.SS when type = \[lq]array\[rq]
+.SS field: element_type
+.IP \[bu] 2
+\f[B]Description\f[R]: a possible constraint of member in generated
+array
+.IP \[bu] 2
+\f[B]Value type\f[R]: [Database.Collection.Field.Constraint]
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# member in generated array can be a value 5 or a random string
+element_type = [ {value = 5, weight = 2}, {type = \[dq]string\[dq]}]
+\f[R]
+.fi
+.SS field: set
+.IP \[bu] 2
+\f[B]Description\f[R]: a value of member in generated array
+.IP \[bu] 2
+\f[B]Value type\f[R]: [Database.Collection.Field.Set]
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+# member in generated array index equal to 1 or 3 will has value = [3.14, \[dq]test\[dq], \[dq]array\[dq]] 
+set = [{value = [3.14, \[dq]test\[dq], \[dq]array\[dq]], at = [1, 3]}]
+\f[R]
+.fi
+.SS field: min_item
+.IP \[bu] 2
+\f[B]Description\f[R]: minimum number of members of the generated value
+(inclusive)
+.IP \[bu] 2
+\f[B]Value type\f[R]: int (default 0)
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+min_item = 3
+\f[R]
+.fi
+.SS field: max_item
+.IP \[bu] 2
+\f[B]Description\f[R]: maximum number of members of the generated value
+(inclusive)
+.IP \[bu] 2
+\f[B]Value type\f[R]: int (default 10)
+.IP \[bu] 2
+\f[B]Require\f[R]: no
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+max_item = 30
+
+# if one want a exact number of member,
+# it can be done by assign min = max value
+# Ex. the following array will have exact 2 members
+min_item = 2
+max_item = 2
+\f[R]
+.fi
+.SS when type = \[lq]object\[rq]
+.SS field: fields
+.IP \[bu] 2
+\f[B]Description\f[R]: a field of the generated object
+.IP \[bu] 2
+\f[B]Value type\f[R]: [Database.Collection.Field]
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+fields = [
+    {f_name = \[dq]class_name\[dq], constraint = [{type = \[dq]string\[dq]}]}, 
+    {f_name = \[dq]instructor\[dq], constraint = [{type = \[dq]string\[dq]}]}, 
+]
+# the above value will represent the following object
+# { 
+#    \[dq]class_name\[dq]: string,
+#    \[dq]instructor\[dq]: string
+# } 
+\f[R]
+.fi
+.SS Alias (Alias)
+.PP
+work like a variable to reduce the number of duplicate value.
+\f[B]Only support in toml\f[R].
+.SS example
+.PP
+if there is a configuration file that was written like this
+.IP
+.nf
+\f[C]
+[[collection]]
+c_name = \[dq]student\[dq]
+count = 10
+
+[[database.collection.fields]] 
+f_name = \[dq]first_name\[dq] 
+constraint = [{type = \[dq]string\[dq], length = 12}]
+
+[[database.collection.fields]] 
+f_name = \[dq]last_name\[dq] 
+constraint = [{type = \[dq]string\[dq], length = 12}]
+\f[R]
+.fi
+.PP
+the \f[V][{type = \[dq]string\[dq], length = 12}]\f[R] was written two
+time so to reduce the duplicate code, with Alias it can be written like
+this
+.IP
+.nf
+\f[C]
+[[collection]]
+c_name = \[dq]student\[dq]
+count = 10
+
+[[database.collection.fields]]
+f_name = \[dq]first_name\[dq]
+constraint = \[dq]#{{string_12_constraint}}\[dq]
+
+[[database.collection.fields]]
+f_name = \[dq]last_name\[dq]
+constraint = \[dq]#{{string_12_constraint}}\[dq]
+
+[[alias]]
+key = \[dq]string_12_constraint\[dq]
+value = [{type = \[dq]string\[dq], length = 12}]
+\f[R]
+.fi
+.PP
+when using the alias, we have to assign its key and value before, then
+the \f[V]#{{key_name}}\f[R] will be interpret to the value that it
+represent.
+.SS field: Key
+.IP \[bu] 2
+\f[B]Description\f[R]: a key (name) of alias
+.IP \[bu] 2
+\f[B]Value type\f[R]: string
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+key = \[dq]class_constraint\[dq]
+\f[R]
+.fi
+.SS field: Value
+.IP \[bu] 2
+\f[B]Description\f[R]: a value that the it represent
+.IP \[bu] 2
+\f[B]Value type\f[R]: any
+.IP \[bu] 2
+\f[B]Require\f[R]: yes
+.IP \[bu] 2
+\f[B]Example\f[R]:
+.IP
+.nf
+\f[C]
+value = [{type=\[rq]string\[rq], length=12}]
+\f[R]
+.fi
 
 .SH SEE ALSO
 \fBseestern\fP(1), \fBseesterntutorial\fP(1), \fBseestern-init\fP(1), \fBseestern-generate\fP(1)
