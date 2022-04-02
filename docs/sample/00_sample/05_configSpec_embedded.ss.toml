@@ -1,0 +1,139 @@
+# sample One-to-One Relationships with Embedded Documents
+
+[[databases]]
+d_name = "imdb"
+
+# collection: movie
+[databases.collection]
+c_name = "movie"
+count = 10
+
+# collection: movie field:_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "_id"
+
+# collection: movie field:title
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "title"
+
+# collection: movie field:runtime
+[[databases.collection.fields]]
+constraints = [{type = "integer"}]
+f_name = "runtime"
+
+# collection: movie field:released
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "released"
+
+# collection: movie field:type
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "type"
+
+# collection: movie field:directors
+[[databases.collection.fields]]
+constraints = [{type = "array", element_type = [{type = "string"}]}]
+f_name = "directors"
+
+# collection: movie field:countries
+[[databases.collection.fields]]
+constraints = [{type = "array", element_type = [{type = "string"}]}]
+f_name = "countries"
+
+# collection: movie field:genres
+[[databases.collection.fields]]
+constraints = [{type = "array", element_type = [{type = "string"}]}]
+f_name = "genres"
+
+[[databases]]
+d_name = "imdb"
+
+# collection: movie_details
+[databases.collection]
+c_name = "movie_details"
+count = 20
+
+# collection: movie_details field:_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "_id"
+
+# collection: movie_details field:movie_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID", ref = "imdb.movie._id"}]
+f_name = "movie_id"
+
+# collection: movie_details field:poster
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "poster"
+
+# collection: movie_details field:plot
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "plot"
+
+# collection: movie_details field:fullplot
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "fullplot"
+
+# collection: movie_details field:lastupdated
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "lastupdated"
+
+# collection: movie_details field:imdb
+[[databases.collection.fields]]
+constraints = "#{{imdb_constraints}}"
+f_name = "imdb"
+
+# collection: movie_details field:tomatoes
+[[databases.collection.fields]]
+constraints = "#{{tomatoes_constraints}}"
+f_name = "tomatoes"
+
+[[alias]]
+key = "imdb_constraints"
+value = [{type = "object", fields = [
+  {f_name = "rating", constraints = [{type = "double"}]},
+  {f_name = "votes", constraints = [{type = "integer"}]},
+  {f_name = "id", constraints = [{type = "integer"}]},
+]}]
+
+[[alias]]
+key = "tomatoes_constraints"
+value = [{type = "object", fields = [
+  {f_name = "viewer", constraints = "#{{tomatoes_viewer_constraints}}"},
+  {f_name = "lastUpdated", constraints = [{type = "integer"}]},
+]}]
+
+[[alias]]
+key = "tomatoes_viewer_constraints"
+value = [{type = "object", fields = [
+  {f_name = "rating", constraints = [{type = "double"}]},
+  {f_name = "numReviews", constraints = [{type = "integer"}]},
+]}]
+
+# collection: movie
+# collection: movie field:_id
+# collection: movie field:title
+# collection: movie field:runtime
+# collection: movie field:released
+# collection: movie field:type
+# collection: movie field:directors
+# collection: movie field:countries
+# collection: movie field:genres
+
+# collection: movie_details
+# collection: movie_details field:_id
+# collection: movie_details field:movie_id
+# collection: movie_details field:poster
+# collection: movie_details field:plot
+# collection: movie_details field:fullplot
+# collection: movie_details field:lastupdated
+# collection: movie_details field:imdb
+# collection: movie_details field:tomatoes

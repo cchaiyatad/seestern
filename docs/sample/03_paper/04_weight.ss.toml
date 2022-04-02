@@ -1,0 +1,25 @@
+[[databases]]
+d_name = "school"
+
+[databases.collection]
+c_name = "student"
+count = 1000000
+
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "s_id"
+
+[[databases.collection.fields]]
+f_name = "name"
+constraints = [{type = "string"}]
+
+
+[[databases.collection.fields]]
+constraints = [{value = "M", weight = 2}, {value = "F", weight = 3}]
+f_name = "sex"
+omit_weight = 0.5
+
+# | grep s_id | wc -l
+# | grep sex | wc -l
+# | grep '"sex": "M"' | wc -l
+# | grep '"sex": "F"' | wc -l

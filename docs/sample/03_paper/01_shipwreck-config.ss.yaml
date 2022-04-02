@@ -1,0 +1,69 @@
+databases:
+    - d_name: sample_geospatial
+      collection:
+        c_name: shipwrecks
+        count: 3
+        fields:
+            - f_name: _id
+              constraints:
+                - type: objectID
+            - f_name: chart
+              constraints:
+                - type: string
+            - f_name: coordinates
+              constraints:
+                - type: array
+                  max_item: 2
+                  min_item: 2
+                  sets:
+                    - type: double
+                      min: -90.0
+                      max: 90.0
+                      at: 
+                        - 0
+                    - type: double
+                      min: -180.0
+                      max: 180.0
+                      at: 
+                        - 1
+            - f_name: depth
+              constraints:
+                - type: integer
+                - type: double
+            - f_name: feature_type
+              constraints:
+                - type: string
+            - f_name: gp_quality
+              constraints:
+                - type: string
+            - f_name: history
+              constraints:
+                - type: string
+            - f_name: latdec
+              constraints:
+                - type: double
+                  min: -90.0
+                  max: 90.0
+            - f_name: londec
+              constraints:
+                - type: double
+                  min: -180.0
+                  max: 180.0
+                - type: integer
+                  min: -180
+                  max: 180
+            - f_name: quasou
+              constraints:
+                - type: string
+            - f_name: recrd
+              constraints:
+                - type: string
+            - f_name: sounding_type
+              constraints:
+                - type: string
+            - f_name: vesslterms
+              constraints:
+                - type: string
+            - f_name: watlev
+              constraints:
+                - type: string

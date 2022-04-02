@@ -1,0 +1,77 @@
+[[databases]]
+	d_name = "sample_training"
+	[databases.collection]
+		c_name = "posts"
+		count = 1		
+
+		[[databases.collection.fields]]
+			f_name = "_id"
+
+			[[databases.collection.fields.constraints]]
+				type = "objectID"
+
+		[[databases.collection.fields]]
+			f_name = "author"
+
+			[[databases.collection.fields.constraints]]
+				type = "string"
+
+		[[databases.collection.fields]]
+			f_name = "body"
+
+			[[databases.collection.fields.constraints]]
+				type = "string"
+
+		[[databases.collection.fields]]
+			f_name = "comments"
+
+			[[databases.collection.fields.constraints]]
+				type = "array"
+
+				[[databases.collection.fields.constraints.element_type]]
+					type = "object"
+
+					[[databases.collection.fields.constraints.element_type.fields]]
+						f_name = "author"
+
+						[[databases.collection.fields.constraints.element_type.fields.constraints]]
+							type = "string"
+
+					[[databases.collection.fields.constraints.element_type.fields]]
+						f_name = "body"
+
+						[[databases.collection.fields.constraints.element_type.fields.constraints]]
+							type = "string"
+
+					[[databases.collection.fields.constraints.element_type.fields]]
+						f_name = "email"
+
+						[[databases.collection.fields.constraints.element_type.fields.constraints]]
+							type = "string"
+
+		[[databases.collection.fields]]
+			f_name = "date"
+
+			[[databases.collection.fields.constraints]]
+				type = "integer"
+
+		[[databases.collection.fields]]
+			f_name = "permalink"
+
+			[[databases.collection.fields.constraints]]
+				type = "string"
+
+		[[databases.collection.fields]]
+			f_name = "tags"
+
+			[[databases.collection.fields.constraints]]
+				type = "array"
+
+				[[databases.collection.fields.constraints.element_type]]
+					type = "string"
+
+		[[databases.collection.fields]]
+			f_name = "title"
+
+			[[databases.collection.fields.constraints]]
+				type = "string"

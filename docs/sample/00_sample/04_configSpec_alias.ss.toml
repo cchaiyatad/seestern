@@ -1,0 +1,40 @@
+# sample alias
+
+[[databases]]
+d_name = "school"
+
+# collection: student
+[databases.collection]
+c_name = "student"
+count = 35
+
+# collection: student field:s_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "s_id"
+
+# collection: student field:name
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "name"
+
+# collection: student field:class
+[[databases.collection.fields]]
+constraints = "#{{class_constraint}}"
+f_name = "class"
+
+# collection: student field:elective_class
+[[databases.collection.fields]]
+constraints = "#{{class_constraint}}"
+f_name = "elective_class"
+
+[[alias]]
+key = "class_constraint"
+value = [
+  {type = "array", element_type = [
+    {type = "object", fields = [
+      {f_name = "class_name", constraints = [{type = "string"}]},
+      {f_name = "instructor", constraints = [{type = "string"}]},
+    ]},
+  ]},
+]

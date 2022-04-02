@@ -1,0 +1,66 @@
+# sample object
+
+[[databases]]
+d_name = "school"
+
+# collection: student
+[databases.collection]
+c_name = "student"
+count = 3
+
+# collection: student field:s_id
+[[databases.collection.fields]]
+constraints = [{type = "objectID"}]
+f_name = "s_id"
+
+# collection: student field:name
+[[databases.collection.fields]]
+constraints = [
+  {type = "object", fields = [
+    {f_name = "first", constraints = [{type = "string"}]},
+    {f_name = "last", constraints = [{type = "string"}]},
+  ]},
+]
+f_name = "name"
+
+# collection: student field:class
+[[databases.collection.fields]]
+f_name = "class"
+
+[[databases.collection.fields.constraints]]
+element_type = [
+  {type = "object", fields = [
+    {f_name = "class_name", constraints = [{type = "string"}]},
+    {f_name = "instructor", constraints = [{type = "string"}]},
+  ]},
+]
+max_item = 7
+type = "array"
+
+# collection: student field:elective_class
+[[databases.collection.fields]]
+f_name = "elective_class"
+
+[[databases.collection.fields.constraints]]
+element_type = [
+  {type = "object", fields = [
+    {f_name = "class_name", constraints = [{value = "some classes"}]},
+    {f_name = "instructor", constraints = [{enum = ["Mr.C", "Mrs.D"]}]},
+  ]},
+]
+maxItem = 2
+type = "array"
+
+[[databases.collection.fields.sets]]
+at = [0, 2]
+type = "object"
+fields = [
+  {f_name = "approve class", constraints = [{value = "Special Class"}]},
+  {f_name = "instructor", constraints = [{value = "No-one"}]},
+]
+
+# collection: student
+# collection: student field:s_id
+# collection: student field:name
+# collection: student field:class
+# collection: student field:elective_class

@@ -1,0 +1,60 @@
+#  D ---|
+#       |--->B ----> C
+#  A ---|
+
+[[databases]]
+d_name = "db"
+
+    [databases.collection]
+    c_name = "A"
+    count = 5
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID"}]
+    f_name = "_id"
+
+
+[[databases]]
+d_name = "db"
+
+    [databases.collection]
+    c_name = "B"
+    count = 5
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID"}]
+    f_name = "_id"
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID", ref = "db.A._id"}]
+    f_name = "a_id"
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID", ref = "db.D._id"}]
+    f_name = "d_id"
+
+[[databases]]
+d_name = "db"
+
+    [databases.collection]
+    c_name = "C"
+    count = 5
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID"}]
+    f_name = "_id"
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID", ref = "db.B._id"}]
+    f_name = "b_id"
+
+[[databases]]
+d_name = "db"
+
+    [databases.collection]
+    c_name = "D"
+    count = 5
+
+    [[databases.collection.fields]]
+    constraints = [{type = "objectID"}]
+    f_name = "_id"

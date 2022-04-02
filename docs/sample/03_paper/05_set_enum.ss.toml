@@ -1,0 +1,18 @@
+[[databases]]
+d_name = "school"
+
+# collection: student
+[databases.collection]
+c_name = "student"
+count = 15
+
+# collection: student field:name
+[[databases.collection.fields]]
+constraints = [{type = "string"}]
+f_name = "name"
+
+# collection: student field:year
+[[databases.collection.fields]]
+constraints = [{enum = ["freshman", "sophomore", "junior", "senior"]}]
+f_name = "year"
+sets = [{type = "integer", min = 5, max = 8, at = [0, 5, 10, 12, 13]}, {value = "super senior", at = [1, 3]}]
